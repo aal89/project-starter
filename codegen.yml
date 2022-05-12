@@ -1,0 +1,17 @@
+overwrite: true
+schema: "http://localhost:8000/graphql"
+documents: "(client|server)/src/**/*.(ts|graphql)"
+generates:
+  server/src/graphql/generated/graphql.ts:
+    plugins:
+      - add:
+          content: '/* eslint-disable */'
+      - "typescript"
+      - "typescript-resolvers"
+  client/src/graphql/generated/graphql.tsx:
+    plugins:
+      - add:
+          content: '/* eslint-disable */'
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
