@@ -14,35 +14,17 @@ export type Scalars = {
   Float: number;
 };
 
-export type Listing = {
-  __typename?: 'Listing';
-  address: Scalars['String'];
-  askingPrice: Scalars['Int'];
-  brokerage: Scalars['String'];
-  city: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
-  livingSpace: Scalars['Int'];
-  offeredSince?: Maybe<Scalars['String']>;
-  pictures?: Maybe<Array<Maybe<Picture>>>;
-  plotArea?: Maybe<Scalars['Int']>;
-  postalCode: Scalars['String'];
-  rooms: Scalars['Int'];
-  saleDate?: Maybe<Scalars['String']>;
-  saleDuration?: Maybe<Scalars['Int']>;
-  thumbnail: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type Picture = {
-  __typename?: 'Picture';
-  id: Scalars['ID'];
-  url: Scalars['String'];
-};
-
 export type Query = {
   __typename?: 'Query';
-  listings: Array<Maybe<Listing>>;
+  users: Array<Maybe<User>>;
+};
+
+export type User = {
+  __typename?: 'User';
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  id: Scalars['ID'];
+  lastName?: Maybe<Scalars['String']>;
 };
 
 
@@ -116,57 +98,34 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  Listing: ResolverTypeWrapper<Listing>;
-  Picture: ResolverTypeWrapper<Picture>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   ID: Scalars['ID'];
-  Int: Scalars['Int'];
-  Listing: Listing;
-  Picture: Picture;
   Query: {};
   String: Scalars['String'];
-};
-
-export type ListingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Listing'] = ResolversParentTypes['Listing']> = {
-  address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  askingPrice?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  brokerage?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  livingSpace?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  offeredSince?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  pictures?: Resolver<Maybe<Array<Maybe<ResolversTypes['Picture']>>>, ParentType, ContextType>;
-  plotArea?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  postalCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  rooms?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  saleDate?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  saleDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  thumbnail?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type PictureResolvers<ContextType = any, ParentType extends ResolversParentTypes['Picture'] = ResolversParentTypes['Picture']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  User: User;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  listings?: Resolver<Array<Maybe<ResolversTypes['Listing']>>, ParentType, ContextType>;
+  users?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
+};
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
-  Listing?: ListingResolvers<ContextType>;
-  Picture?: PictureResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 };
 

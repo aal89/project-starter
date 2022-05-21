@@ -1,6 +1,6 @@
 # project-seed
 
-Very opinionated Node.js v16 monorepo project seed using npm workspaces and TypeScript, React + router, GraphQL (Apollo) + codegen, (todo: react css framework), Express, TypeORM + postgres connection, ESLint + prettier.
+Very opinionated Node.js v16 monorepo project seed using npm workspaces and TypeScript, React + router, GraphQL (Apollo) + codegen, AntDesign, Express, TypeORM + postgres connection, ESLint + prettier.
 
 ### getting started
 

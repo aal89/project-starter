@@ -1,7 +1,8 @@
-query getListings {
-  listings {
+query getUsers {
+  users {
     id
-    url
-    address
+    firstName
+    lastName
+    email
   }
 }

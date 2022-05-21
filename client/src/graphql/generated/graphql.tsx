@@ -16,76 +16,59 @@ export type Scalars = {
   Float: number;
 };
 
-export type Listing = {
-  __typename?: 'Listing';
-  address: Scalars['String'];
-  askingPrice: Scalars['Int'];
-  brokerage: Scalars['String'];
-  city: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
-  livingSpace: Scalars['Int'];
-  offeredSince?: Maybe<Scalars['String']>;
-  pictures?: Maybe<Array<Maybe<Picture>>>;
-  plotArea?: Maybe<Scalars['Int']>;
-  postalCode: Scalars['String'];
-  rooms: Scalars['Int'];
-  saleDate?: Maybe<Scalars['String']>;
-  saleDuration?: Maybe<Scalars['Int']>;
-  thumbnail: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type Picture = {
-  __typename?: 'Picture';
-  id: Scalars['ID'];
-  url: Scalars['String'];
-};
-
 export type Query = {
   __typename?: 'Query';
-  listings: Array<Maybe<Listing>>;
+  users: Array<Maybe<User>>;
 };
 
-export type GetListingsQueryVariables = Exact<{ [key: string]: never; }>;
+export type User = {
+  __typename?: 'User';
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  id: Scalars['ID'];
+  lastName?: Maybe<Scalars['String']>;
+};
+
+export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetListingsQuery = { __typename?: 'Query', listings: Array<{ __typename?: 'Listing', id: string, url: string, address: string } | null> };
+export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, firstName: string, lastName?: string | null, email: string } | null> };
 
 
-export const GetListingsDocument = gql`
-    query getListings {
-  listings {
+export const GetUsersDocument = gql`
+    query getUsers {
+  users {
     id
-    url
-    address
+    firstName
+    lastName
+    email
   }
 }
     `;
 
 /**
- * __useGetListingsQuery__
+ * __useGetUsersQuery__
  *
- * To run a query within a React component, call `useGetListingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetListingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetListingsQuery({
+ * const { data, loading, error } = useGetUsersQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetListingsQuery(baseOptions?: Apollo.QueryHookOptions<GetListingsQuery, GetListingsQueryVariables>) {
+export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetListingsQuery, GetListingsQueryVariables>(GetListingsDocument, options);
+        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
       }
-export function useGetListingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetListingsQuery, GetListingsQueryVariables>) {
+export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetListingsQuery, GetListingsQueryVariables>(GetListingsDocument, options);
+          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
         }
-export type GetListingsQueryHookResult = ReturnType<typeof useGetListingsQuery>;
-export type GetListingsLazyQueryHookResult = ReturnType<typeof useGetListingsLazyQuery>;
-export type GetListingsQueryResult = Apollo.QueryResult<GetListingsQuery, GetListingsQueryVariables>;
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
+export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
