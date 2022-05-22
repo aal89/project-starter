@@ -6,9 +6,15 @@ import { RouteNoMatch } from './RouteNoMatch';
 
 const Home = React.lazy(() => import('../pages/Home'));
 
+export const Path = Object.freeze({
+  home: '/',
+  userLogin: '/user/login',
+  userLogout: '/user/logout',
+});
+
 export const Routing: React.FC = () => (
   <Routes>
-    <Route path="/" element={<Layout />}>
+    <Route path={Path.home} element={<Layout />}>
       <Route
         index
         element={(

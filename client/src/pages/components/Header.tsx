@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { HomeTwoTone, UserOutlined } from '@ant-design/icons';
+import { HomeTwoTone } from '@ant-design/icons';
 import {
-  Typography, Avatar, Space, Row, Col, Dropdown, Menu,
+  Typography, Space, Row, Col, Menu,
 } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import { navigation } from './Navigation';
-import { userMenu } from './UserMenu';
+import { navigation } from './navigation/NavigationItems';
+import { User } from './navigation/User';
 
 const { Text } = Typography;
 
@@ -32,12 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ title, selectedKey }) => (
     </Col>
     <RightAlignCol span={8}>
       <a href="#" onClick={(e) => e.preventDefault()}>
-        <Dropdown overlay={<Menu items={userMenu} />} placement="bottomRight">
-          <Space>
-            <Text>User</Text>
-            <Avatar icon={<UserOutlined />} />
-          </Space>
-        </Dropdown>
+        <User />
       </a>
     </RightAlignCol>
   </Row>
