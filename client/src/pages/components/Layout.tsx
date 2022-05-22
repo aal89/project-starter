@@ -25,7 +25,7 @@ export const Layout: React.FC = () => {
       )}
       menuRender={false}
     >
-      <PageContainer title={layoutProps.title} footer={[<Footer />]}>
+      <PageContainer title={layoutProps.title} footer={[<Footer key={0} />]}>
         <Outlet context={{ setLayoutProps }} />
       </PageContainer>
     </ProLayout>

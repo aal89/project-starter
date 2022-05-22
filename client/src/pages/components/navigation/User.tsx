@@ -11,12 +11,8 @@ const { Text } = Typography;
 export const User: React.FC = () => {
   const { isLoggedIn } = useAuth();
 
-  if (isLoggedIn()) {
-    //
-  }
-
   return (
-    <Dropdown overlay={<Menu items={userMenu} />} placement="bottomRight">
+    <Dropdown overlay={<Menu items={userMenu(isLoggedIn())} />} placement="bottomRight">
       <Space>
         <Text>User</Text>
         <Avatar icon={<UserOutlined />} />
