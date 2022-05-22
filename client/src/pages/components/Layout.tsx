@@ -7,6 +7,7 @@ import { Header } from './Header';
 
 type LayoutContext = {
   title?: string;
+  menuKey?: string;
 };
 
 export type SetLayoutContext = {
@@ -19,7 +20,9 @@ export const Layout: React.FC = () => {
   return (
     <ProLayout
       disableMobile
-      headerContentRender={() => <Header title={config.projectName} />}
+      headerContentRender={() => (
+        <Header title={config.projectName} selectedKey={layoutProps.menuKey ?? '0'} />
+      )}
       menuRender={false}
     >
       <PageContainer title={layoutProps.title} footer={[<Footer />]}>

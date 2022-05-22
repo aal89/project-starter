@@ -5,39 +5,10 @@ import {
 } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import { navigation } from './Navigation';
+import { userMenu } from './UserMenu';
 
 const { Text } = Typography;
-
-const menu = (
-  <Menu
-    items={[
-      {
-        label: (
-          <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-            Settings
-          </a>
-        ),
-        key: '0',
-      },
-      {
-        label: (
-          <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-            Payment options
-          </a>
-        ),
-        key: '1',
-      },
-      {
-        type: 'divider',
-      },
-      {
-        label: 'Logout',
-        key: '3',
-        danger: true,
-      },
-    ]}
-  />
-);
 
 const RightAlignCol = styled(Col)`
   text-align: right;
@@ -45,9 +16,10 @@ const RightAlignCol = styled(Col)`
 
 type HeaderProps = {
   title: string;
+  selectedKey: string;
 };
 
-export const Header: React.FC<HeaderProps> = ({ title }) => (
+export const Header: React.FC<HeaderProps> = ({ title, selectedKey }) => (
   <Row>
     <Col span={2}>
       <Space>
@@ -56,21 +28,11 @@ export const Header: React.FC<HeaderProps> = ({ title }) => (
       </Space>
     </Col>
     <Col span={14}>
-      <Menu
-        mode="horizontal"
-        defaultSelectedKeys={['2']}
-        items={new Array(3).fill(null).map((_, index) => {
-          const key = index + 1;
-          return {
-            key,
-            label: `Example nav item ${key}`,
-          };
-        })}
-      />
+      <Menu mode="horizontal" selectedKeys={[selectedKey]} items={navigation} />
     </Col>
     <RightAlignCol span={8}>
       <a href="#" onClick={(e) => e.preventDefault()}>
-        <Dropdown overlay={menu} placement="bottomRight">
+        <Dropdown overlay={<Menu items={userMenu} />} placement="bottomRight">
           <Space>
             <Text>User</Text>
             <Avatar icon={<UserOutlined />} />
