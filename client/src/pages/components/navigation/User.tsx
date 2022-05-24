@@ -9,12 +9,12 @@ import { useAuth } from '../../../hooks/auth';
 const { Text } = Typography;
 
 export const User: React.FC = () => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
 
   return (
     <Dropdown overlay={<Menu items={userMenu(isLoggedIn())} />} placement="bottomRight">
       <Space>
-        <Text>User</Text>
+        <Text>{isLoggedIn() ? user?.name : 'User Management'}</Text>
         <Avatar icon={<UserOutlined />} />
       </Space>
     </Dropdown>

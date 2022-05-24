@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Path } from '../routing/Routing';
+import { Path } from '../routing/Path';
 
 export type User = {
-  username: string;
+  name: string;
   roles: string[];
   permissions: string[];
 };
