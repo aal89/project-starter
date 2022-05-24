@@ -6,6 +6,7 @@ import { Path } from './Path';
 import { RouteNoMatch } from './RouteNoMatch';
 
 const Home = React.lazy(() => import('../pages/Home'));
+const LoginCreate = React.lazy(() => import('../pages/user/LoginCreate'));
 
 export const Routing: React.FC = () => (
   <Routes>
@@ -15,6 +16,22 @@ export const Routing: React.FC = () => (
         element={(
           <Suspense fallback={<LoadingOutlined />}>
             <Home />
+          </Suspense>
+        )}
+      />
+      <Route
+        path={Path.userLogin}
+        element={(
+          <Suspense fallback={<LoadingOutlined />}>
+            <LoginCreate tab="login" />
+          </Suspense>
+        )}
+      />
+      <Route
+        path={Path.userCreate}
+        element={(
+          <Suspense fallback={<LoadingOutlined />}>
+            <LoginCreate tab="create" />
           </Suspense>
         )}
       />
