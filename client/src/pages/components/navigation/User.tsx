@@ -14,7 +14,7 @@ export const User: React.FC = () => {
   return (
     <Dropdown overlay={<Menu items={userMenu(isLoggedIn())} />} placement="bottomRight">
       <Space>
-        <Text>{isLoggedIn() ? user?.name : 'User Management'}</Text>
+        <Text>{isLoggedIn() ? user?.name : 'Account'}</Text>
         <Avatar icon={<UserOutlined />} />
       </Space>
     </Dropdown>

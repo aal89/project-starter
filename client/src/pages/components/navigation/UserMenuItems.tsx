@@ -1,6 +1,5 @@
 import {
   UserAddOutlined,
-  UserSwitchOutlined,
   LoginOutlined,
   LogoutOutlined,
   SettingFilled,
@@ -31,11 +30,6 @@ const loggedOutMenu: ItemType[] = [
     label: <Link to={Path.userCreate}>Create an account</Link>,
     icon: <UserAddOutlined />,
     key: '0',
-  },
-  {
-    label: <Link to={Path.userResetPassword}>Reset password</Link>,
-    icon: <UserSwitchOutlined />,
-    key: '1',
   },
   {
     type: 'divider',

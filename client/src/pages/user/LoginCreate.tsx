@@ -2,8 +2,9 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
 import { Tabs, Row, Col } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import { Path } from '../../routing/Path';
 import { SetLayoutContext } from '../components/Layout';
 
 type LoginType = 'login' | 'create';
@@ -16,7 +17,7 @@ type LoginCreateProps = {
 
 const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
   const { setLayoutProps } = useOutletContext<SetLayoutContext>();
-  const [loginType, setLoginType] = useState<LoginType>(tab);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLayoutProps({
@@ -31,18 +32,25 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
         <LoginForm
           submitter={{
             searchConfig: {
-              submitText: <>{upperCase(loginType)}</>,
+              submitText: <>{upperCase(tab)}</>,
             },
           }}
         >
           <Tabs
-            activeKey={loginType}
-            onChange={(activeKey) => setLoginType(activeKey as LoginType)}
+            activeKey={tab}
+            onChange={(activeKey) => {
+              if (activeKey === 'login') {
+                navigate(Path.userLogin);
+              }
+              if (activeKey === 'create') {
+                navigate(Path.userCreate);
+              }
+            }}
           >
             <Tabs.TabPane key="login" tab="Login" />
             <Tabs.TabPane key="create" tab="Create account" />
           </Tabs>
-          {loginType === 'login' && (
+          {tab === 'login' && (
             <>
               <ProFormText
                 name="login"
@@ -77,20 +85,13 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                   marginBottom: 24,
                 }}
               >
-                <ProFormCheckbox noStyle name="autoLogin">
+                <ProFormCheckbox noStyle fieldProps={{ checked: true }}>
                   Remember me
                 </ProFormCheckbox>
-                <a
-                  style={{
-                    float: 'right',
-                  }}
-                >
-                  Reset password
-                </a>
               </div>
             </>
           )}
-          {loginType === 'create' && (
+          {tab === 'create' && (
             <>
               <ProFormText
                 name="login"
