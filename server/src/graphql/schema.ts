@@ -1,13 +1,17 @@
 import { mergeTypeDefs } from '@graphql-tools/merge';
 import { ContextType } from './apollo-server';
 import { Resolvers } from './generated/graphql';
-import { typeDefs as userTypes, resolvers as userResolvers } from './queries/users';
+import { mutationTypeDefs, mutationResolvers } from './resolvers/mutations';
+import { queryTypeDefs, queryResolvers } from './resolvers/queries';
 
-const typeDefs = mergeTypeDefs([userTypes]);
+const typeDefs = mergeTypeDefs([queryTypeDefs, mutationTypeDefs]);
 
 const resolvers: Resolvers<ContextType> = {
   Query: {
-    ...userResolvers,
+    ...queryResolvers,
+  },
+  Mutation: {
+    ...mutationResolvers,
   },
 };
 

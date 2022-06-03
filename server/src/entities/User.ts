@@ -8,7 +8,7 @@ export class User extends BaseEntity {
   id: number
 
   @Column()
-  firstName: string
+  name: string
 
   @Column({ nullable: true })
   lastName?: string

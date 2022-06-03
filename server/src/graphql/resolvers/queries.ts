@@ -3,10 +3,10 @@ import { User as UserData } from '../../entities/User';
 import { ContextType } from '../apollo-server';
 import { QueryResolvers } from '../generated/graphql';
 
-const typeDefs = gql`
+const queryTypeDefs = gql`
   type User {
     id: ID!
-    firstName: String!
+    name: String!
     lastName: String
     email: String!
   }
@@ -21,11 +21,11 @@ const toGqlUser = (user: UserData) => ({
   id: String(user.id),
 });
 
-const resolvers: QueryResolvers<ContextType> = {
+const queryResolvers: QueryResolvers<ContextType> = {
   users: async (root, args, { roles, permissions }, info) => {
     const users = await UserData.find();
     return users.map(toGqlUser);
   },
 };
 
-export { typeDefs, resolvers };
+export { queryTypeDefs, queryResolvers };
