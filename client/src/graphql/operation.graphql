@@ -1,22 +1,30 @@
 query GetUsers {
   users {
     id
-    name
+    username
     lastName
-    email
+    name
   }
 }
 mutation Signup(
-  $email: String!
+  $username: String!
   $password: String!
   $name: String!
 ) {
-  signup(email: $email, password: $password, name: $name)
+  signup(username: $username, password: $password, name: $name)
 }
 
 mutation Login(
-  $email: String!
+  $username: String!
   $password: String!
 ) {
-  login(email: $email, password: $password)
+  login(username: $username, password: $password) {
+    user {
+      id
+      username
+      name
+    }
+    accessToken
+    refreshToken
+  }
 }

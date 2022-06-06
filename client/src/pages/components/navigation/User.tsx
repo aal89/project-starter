@@ -1,20 +1,26 @@
-import React from 'react';
+import { UserOutlined } from '@ant-design/icons';
 import {
   Typography, Avatar, Space, Dropdown, Menu,
 } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
-import { userMenu } from './UserMenuItems';
+import React, { useEffect } from 'react';
 import { useAuth } from '../../../hooks/auth';
+import { userMenu } from './UserMenuItems';
 
 const { Text } = Typography;
 
 export const User: React.FC = () => {
-  const { isLoggedIn, user } = useAuth();
+  const { user } = useAuth();
+
+  console.log('debug', 'header', user);
+
+  useEffect(() => {
+    console.log('debug', 'header2', user);
+  }, []);
 
   return (
-    <Dropdown overlay={<Menu items={userMenu(isLoggedIn())} />} placement="bottomRight">
+    <Dropdown overlay={<Menu items={userMenu(!!user)} />} placement="bottomRight">
       <Space>
-        <Text>{isLoggedIn() ? user?.name : 'Account'}</Text>
+        <Text>{user?.name ?? 'Account'}</Text>
         <Avatar icon={<UserOutlined />} />
       </Space>
     </Dropdown>

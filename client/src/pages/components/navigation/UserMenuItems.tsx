@@ -27,7 +27,7 @@ const loggedInMenu: ItemType[] = [
 
 const loggedOutMenu: ItemType[] = [
   {
-    label: <Link to={Path.userCreate}>Create account</Link>,
+    label: <Link to={Path.userSignup}>Create account</Link>,
     icon: <UserAddOutlined />,
     key: '0',
   },

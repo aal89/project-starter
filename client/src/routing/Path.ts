@@ -2,7 +2,7 @@ export const Path = Object.freeze({
   home: '/',
   userLogin: '/user/login',
   userLogout: '/user/logout',
-  userCreate: '/user/create',
+  userSignup: '/user/signup',
   userSettings: '/user/settings',
   userResetPassword: '/user/reset/password',
 });

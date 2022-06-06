@@ -1,9 +1,11 @@
 import { ApolloServer } from 'apollo-server-express';
 import express, { Request } from 'express';
-import isTokenValid, { fakeToken } from '../token';
+import { validateToken } from '../token';
+import { User } from './generated/graphql';
 import { typeDefs, resolvers } from './schema';
 
 export type ContextType = {
+  user?: User;
   roles: string[];
   permissions: string[];
 };
@@ -11,33 +13,22 @@ export type ContextType = {
 export default async (app: express.Application) => {
   const context = async ({ req }: { req: Request }): Promise<ContextType> => {
     const { authorization: token } = req.headers;
-    const [_, jwt] = token?.split(' ') ?? [];
+    const [, jwt] = token?.split(' ') ?? [];
 
-    if (process.env.NODE_ENV === 'development') {
-      return (
-        fakeToken['https://huistat.nl/app_metadata']?.authorization ?? {
-          roles: [],
-          permissions: [],
-        }
-      );
+    try {
+      const { user, roles, permissions } = await validateToken(jwt ?? '');
+
+      return {
+        user,
+        roles,
+        permissions,
+      };
+    } catch {
+      return {
+        roles: [],
+        permissions: [],
+      };
     }
-
-    const decoded = await isTokenValid(jwt ?? '');
-    let roles: string[] = [];
-    let permissions: string[] = [];
-
-    if (decoded['https://huistat.nl/app_metadata']) {
-      const {
-        'https://huistat.nl/app_metadata': { authorization },
-      } = decoded;
-      roles = authorization.roles;
-      permissions = authorization.permissions;
-    }
-
-    return {
-      roles,
-      permissions,
-    };
   };
 
   const server = new ApolloServer({ typeDefs, resolvers, context });

@@ -6,9 +6,9 @@ import { QueryResolvers } from '../generated/graphql';
 const queryTypeDefs = gql`
   type User {
     id: ID!
-    name: String!
+    username: String!
     lastName: String
-    email: String!
+    name: String!
   }
 
   type Query {

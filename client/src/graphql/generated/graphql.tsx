@@ -16,23 +16,30 @@ export type Scalars = {
   Float: number;
 };
 
+export type LoginResult = {
+  __typename?: 'LoginResult';
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
+  user: User;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  login: Scalars['String'];
+  login?: Maybe<LoginResult>;
   signup: Scalars['Boolean'];
 };
 
 
 export type MutationLoginArgs = {
-  email: Scalars['String'];
   password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
 export type MutationSignupArgs = {
-  email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type Query = {
@@ -42,19 +49,19 @@ export type Query = {
 
 export type User = {
   __typename?: 'User';
-  email: Scalars['String'];
   id: Scalars['ID'];
   lastName?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, name: string, lastName?: string | null, email: string } | null> };
+export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, username: string, lastName?: string | null, name: string } | null> };
 
 export type SignupMutationVariables = Exact<{
-  email: Scalars['String'];
+  username: Scalars['String'];
   password: Scalars['String'];
   name: Scalars['String'];
 }>;
@@ -63,21 +70,21 @@ export type SignupMutationVariables = Exact<{
 export type SignupMutation = { __typename?: 'Mutation', signup: boolean };
 
 export type LoginMutationVariables = Exact<{
-  email: Scalars['String'];
+  username: Scalars['String'];
   password: Scalars['String'];
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: string };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'LoginResult', accessToken: string, refreshToken: string, user: { __typename?: 'User', id: string, username: string, name: string } } | null };
 
 
 export const GetUsersDocument = gql`
     query GetUsers {
   users {
     id
-    name
+    username
     lastName
-    email
+    name
   }
 }
     `;
@@ -109,8 +116,8 @@ export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
 export const SignupDocument = gql`
-    mutation Signup($email: String!, $password: String!, $name: String!) {
-  signup(email: $email, password: $password, name: $name)
+    mutation Signup($username: String!, $password: String!, $name: String!) {
+  signup(username: $username, password: $password, name: $name)
 }
     `;
 export type SignupMutationFn = Apollo.MutationFunction<SignupMutation, SignupMutationVariables>;
@@ -128,7 +135,7 @@ export type SignupMutationFn = Apollo.MutationFunction<SignupMutation, SignupMut
  * @example
  * const [signupMutation, { data, loading, error }] = useSignupMutation({
  *   variables: {
- *      email: // value for 'email'
+ *      username: // value for 'username'
  *      password: // value for 'password'
  *      name: // value for 'name'
  *   },
@@ -142,8 +149,16 @@ export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
 export const LoginDocument = gql`
-    mutation Login($email: String!, $password: String!) {
-  login(email: $email, password: $password)
+    mutation Login($username: String!, $password: String!) {
+  login(username: $username, password: $password) {
+    user {
+      id
+      username
+      name
+    }
+    accessToken
+    refreshToken
+  }
 }
     `;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
@@ -161,7 +176,7 @@ export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutati
  * @example
  * const [loginMutation, { data, loading, error }] = useLoginMutation({
  *   variables: {
- *      email: // value for 'email'
+ *      username: // value for 'username'
  *      password: // value for 'password'
  *   },
  * });

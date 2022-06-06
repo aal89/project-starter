@@ -7,6 +7,7 @@ import { RouteNoMatch } from './RouteNoMatch';
 
 const Home = React.lazy(() => import('../pages/Home'));
 const LoginCreate = React.lazy(() => import('../pages/user/LoginCreate'));
+const Logout = React.lazy(() => import('../pages/user/Logout'));
 
 export const Routing: React.FC = () => (
   <Routes>
@@ -28,10 +29,18 @@ export const Routing: React.FC = () => (
         )}
       />
       <Route
-        path={Path.userCreate}
+        path={Path.userSignup}
         element={(
           <Suspense fallback={<LoadingOutlined />}>
-            <LoginCreate tab="create" />
+            <LoginCreate tab="signup" />
+          </Suspense>
+        )}
+      />
+      <Route
+        path={Path.userLogout}
+        element={(
+          <Suspense fallback={<LoadingOutlined />}>
+            <Logout />
           </Suspense>
         )}
       />

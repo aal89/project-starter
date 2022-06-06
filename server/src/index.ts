@@ -1,6 +1,7 @@
 import { config as configureDotEnv } from 'dotenv';
 import express from 'express';
 import { AppDataSource } from './data-source';
+import { env } from './env';
 import graphql from './graphql/apollo-server';
 
 (async () => {
@@ -11,7 +12,7 @@ import graphql from './graphql/apollo-server';
 
   await AppDataSource.initialize();
 
-  app.listen(process.env.PORT, () => {
-    console.log(`🚀 [server] live on ${process.env.PORT}`);
+  app.listen(env.port(), () => {
+    console.log(`🚀 [server] live on ${env.port()}`);
   });
 })();
