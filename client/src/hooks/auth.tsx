@@ -1,7 +1,7 @@
 import { ApolloError } from '@apollo/client';
 import { message } from 'antd';
-import * as jwtDecode from 'jwt-decode';
-import { useEffect, useState } from 'react';
+import jwtDecode from 'jwt-decode';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLoginMutation, useSignupMutation } from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
@@ -14,41 +14,33 @@ export type User = {
 };
 
 type AuthReturnType = {
-  login: () => [
-    (username: string, password: string) => void,
-    () => void,
-    { loading: boolean },
-  ];
+  login: () => [(username: string, password: string) => void, () => void, { loading: boolean }];
   signup: () => [
     (username: string, password: string, name: string) => void,
     () => void,
     { loading: boolean },
   ];
   logout: () => void;
-  user?: User;
+  user: User | null;
 };
 
 export const useAuth = (): AuthReturnType => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | undefined>();
+  const token = getToken();
 
-  useEffect(() => {
-    // if we don't have an user in memory, but we have a token, then we're
-    // logged in and we should reset the user object with the one from the
-    // token
-    const token = getToken();
-    if (!user && token) {
-      try {
-        const { user: u } = jwtDecode.default<{ user: User }>(token);
-        console.log('debug', 'useEffect', u);
-        setUser(() => u);
-      } catch {
-        // if the token decoding went wrong for w/e reason then logout and
-        // not try this again
-        logout();
-      }
+  const user = useMemo(() => {
+    if (!token) {
+      return null;
     }
-  }, []);
+
+    try {
+      const { user: decodedUser } = jwtDecode<{ user: User }>(token);
+
+      return decodedUser;
+    } catch {
+      return null;
+    }
+  }, [token]);
 
   const goHome = () => {
     navigate(Path.home);
@@ -74,15 +66,12 @@ export const useAuth = (): AuthReturnType => {
           },
         });
 
-        console.log('debug', 'doLogin', result.data?.login?.user);
-
-        setUser(() => result.data?.login?.user!);
         setToken(result.data?.login?.accessToken!);
 
-        message.success('Logged in succesfully!', 1.5);
+        message.success('Logged in succesfully!');
         goHome();
       } catch (err) {
-        message.error((err as ApolloError).message ?? 'Unknown error', 1.5);
+        message.error((err as ApolloError).message ?? 'Unknown error');
       }
     };
 
@@ -122,7 +111,6 @@ export const useAuth = (): AuthReturnType => {
 
   const logout = () => {
     removeToken();
-    setUser(() => undefined);
     message.info('Logged out succesfully');
     goHome();
   };

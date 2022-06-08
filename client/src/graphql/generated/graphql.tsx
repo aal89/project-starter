@@ -14,6 +14,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Void: void;
 };
 
 export type LoginResult = {
@@ -26,7 +27,7 @@ export type LoginResult = {
 export type Mutation = {
   __typename?: 'Mutation';
   login?: Maybe<LoginResult>;
-  signup: Scalars['Boolean'];
+  signup?: Maybe<Scalars['Void']>;
 };
 
 
@@ -67,7 +68,7 @@ export type SignupMutationVariables = Exact<{
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup: boolean };
+export type SignupMutation = { __typename?: 'Mutation', signup?: void | null };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
