@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react';
 
 type LocalStorageStateReturnType = [string, (value: string) => void];
 
-export const useLocalStorageState = (
+export const useStorageState = (
   key: string,
   defaultValue: string = '',
+  storage: Storage = localStorage,
 ): LocalStorageStateReturnType => {
   const [innerState, setInnerState] = useState(defaultValue);
-  const localValue = localStorage.getItem(key);
+  const localValue = storage.getItem(key);
 
   const setValue = (value: string) => {
-    localStorage.setItem(key, value);
+    storage.setItem(key, value);
     setInnerState(value);
   };
 

@@ -5,9 +5,10 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLoginLazyQuery, useSignupMutation } from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
-import { useLocalStorageState } from './local-storage-state';
+import { useStorageState } from './storage-state';
 
-export const TOKEN_KEY = 'token';
+export const ACCESS_TOKEN_KEY = 'accessToken';
+export const REFRESH_TOKEN_KEY = 'refreshToken';
 
 export type User = {
   id: string;
@@ -18,7 +19,8 @@ export type User = {
 
 export const useAuth = () => {
   const navigate = useNavigate();
-  const [token, setToken] = useLocalStorageState(TOKEN_KEY);
+  const [accessToken, setAccessToken] = useStorageState(ACCESS_TOKEN_KEY);
+  const [, setRefreshToken] = useStorageState(REFRESH_TOKEN_KEY);
   const [signupMutation, { loading: signupLoading }] = useSignupMutation();
   const [loginQuery, { loading: loginLoading }] = useLoginLazyQuery({
     fetchPolicy: 'no-cache',
@@ -26,15 +28,15 @@ export const useAuth = () => {
 
   const user = useMemo(() => {
     try {
-      const { user: decodedUser } = jwtDecode<{ user: User }>(token);
+      const { user: decodedUser } = jwtDecode<{ user: User }>(accessToken);
 
       return decodedUser;
     } catch {
       return null;
     }
-  }, [token]);
+  }, [accessToken]);
 
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string, rememberMe: boolean) => {
     try {
       const { data, error } = await loginQuery({
         variables: {
@@ -48,11 +50,15 @@ export const useAuth = () => {
       }
 
       // This shouldn't ever happen when login is succesful, so assert for it
-      if (!data?.login?.accessToken) {
-        throw new Error('No user token found in response');
+      if (!data?.login) {
+        throw new Error('No login information found in response');
       }
 
-      setToken(data.login.accessToken);
+      setAccessToken(data.login.accessToken);
+
+      if (rememberMe) {
+        setRefreshToken(data.login.refreshToken);
+      }
 
       message.success('Logged in succesfully!');
       goHome();
@@ -79,7 +85,8 @@ export const useAuth = () => {
   };
 
   const logout = () => {
-    setToken('');
+    setAccessToken('');
+    setRefreshToken('');
     message.info('Logged out succesfully');
     goHome();
   };

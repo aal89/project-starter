@@ -17,12 +17,6 @@ export type Scalars = {
   Void: void;
 };
 
-export type LoginResult = {
-  __typename?: 'LoginResult';
-  accessToken: Scalars['String'];
-  refreshToken: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   signup?: Maybe<Scalars['Void']>;
@@ -37,7 +31,8 @@ export type MutationSignupArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  login?: Maybe<LoginResult>;
+  login: Tokens;
+  refreshToken: Tokens;
 };
 
 
@@ -46,13 +41,24 @@ export type QueryLoginArgs = {
   username: Scalars['String'];
 };
 
+
+export type QueryRefreshTokenArgs = {
+  token: Scalars['String'];
+};
+
+export type Tokens = {
+  __typename?: 'Tokens';
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
+};
+
 export type LoginQueryVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
 }>;
 
 
-export type LoginQuery = { __typename?: 'Query', login?: { __typename?: 'LoginResult', accessToken: string, refreshToken: string } | null };
+export type LoginQuery = { __typename?: 'Query', login: { __typename?: 'Tokens', accessToken: string, refreshToken: string } };
 
 export type SignupMutationVariables = Exact<{
   username: Scalars['String'];

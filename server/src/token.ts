@@ -1,38 +1,58 @@
 import { promisify } from 'util';
 import jwt, {
-  Secret, sign, VerifyOptions, Algorithm,
+  Secret, VerifyOptions, Algorithm,
 } from 'jsonwebtoken';
 import { User } from './entities/User';
 import { env } from './env';
 
 export type ClientUser = Omit<User, 'password'>;
 
-export type DecodedToken = {
+export type DecodedAccessToken = {
   user: ClientUser;
-  permissions: Array<string>;
-  roles: Array<string>;
 };
 
-export const createToken = async (user: ClientUser) => sign(
-  {
-    user,
-    permissions: [],
-    roles: [],
-  },
-  env.signSecret(),
-  { expiresIn: '30m' },
-);
+export type DecodedRefreshToken = {
+  id: string;
+};
 
-export const validateToken = async (token: string): Promise<DecodedToken> => {
+export const createTokens = async (user: ClientUser) => {
+  const sign = promisify<object, jwt.Secret, jwt.SignOptions, string>(jwt.sign);
+  return {
+    accessToken: await sign(
+      {
+        user,
+      },
+      env.signAccessTokenSecret(),
+      { expiresIn: '1h' },
+    ),
+    refreshToken: await sign(
+      {
+        id: user.id,
+      },
+      env.signRefreshTokenSecret(),
+      { expiresIn: '2w' },
+    ),
+  };
+};
+
+export const validateAccessToken = (token: string) => {
+  return validateToken<DecodedAccessToken>(token, env.signAccessTokenSecret());
+};
+
+export const validateRefreshToken = (token: string) => {
+  return validateToken<DecodedRefreshToken>(token, env.signRefreshTokenSecret());
+};
+
+const validateToken = async <T>(token: string, secret: string): Promise<T> => {
   if (!token || token.split('.').length !== 3) {
     throw new Error('Missing or invalid token');
   }
 
   const alg: Algorithm = 'HS256';
-  const verify = promisify<string, Secret, VerifyOptions, DecodedToken>(jwt.verify);
+  const verify = promisify<string, Secret, VerifyOptions, T>(jwt.verify);
   const jwtOptions = {
     algorithms: [alg],
   };
 
-  return verify(token, env.signSecret(), jwtOptions);
+  return verify(token, secret, jwtOptions);
 };

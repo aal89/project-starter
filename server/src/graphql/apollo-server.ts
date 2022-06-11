@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-express';
 import express, { Request } from 'express';
-import { ClientUser, validateToken } from '../token';
+import { ClientUser, validateAccessToken } from '../token';
 import { typeDefs, resolvers } from './schema';
 
 export type ContextType = {
@@ -15,12 +15,12 @@ export default async (app: express.Application) => {
     const [, jwt] = token?.split(' ') ?? [];
 
     try {
-      const { user, roles, permissions } = await validateToken(jwt ?? '');
+      const { user } = await validateAccessToken(jwt ?? '');
 
       return {
         user,
-        roles,
-        permissions,
+        roles: [],
+        permissions: [],
       };
     } catch {
       return {

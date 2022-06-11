@@ -1,7 +1,7 @@
 import { EditOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
 import { Tabs, Row, Col } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../../hooks/auth';
@@ -20,6 +20,7 @@ type LoginCreateProps = {
 };
 
 const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
+  const [rememberMe, setRememberMe] = useState(true);
   const { setLayoutProps } = useOutletContext<SetLayoutContext>();
   const {
     signup, login, loginLoading, signupLoading, goLogin, goSignup,
@@ -38,7 +39,7 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
         <LoginForm
           onFinish={async (values) => {
             if (tab === 'login') {
-              login(values.username, values.password);
+              login(values.username, values.password, rememberMe);
             }
             if (tab === 'signup') {
               signup(values.username, values.password, values.name);
@@ -102,7 +103,15 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                 ]}
               />
               <DivBottomSpacing>
-                <ProFormCheckbox noStyle fieldProps={{ checked: true }}>
+                <ProFormCheckbox
+                  noStyle
+                  fieldProps={{
+                    checked: rememberMe,
+                    onChange: (e) => {
+                      setRememberMe(e.target.checked);
+                    },
+                  }}
+                >
                   Remember me
                 </ProFormCheckbox>
               </DivBottomSpacing>
