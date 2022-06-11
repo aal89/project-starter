@@ -1,11 +1,10 @@
 import { ApolloServer } from 'apollo-server-express';
 import express, { Request } from 'express';
-import { validateToken } from '../token';
-import { User } from './generated/graphql';
+import { ClientUser, validateToken } from '../token';
 import { typeDefs, resolvers } from './schema';
 
 export type ContextType = {
-  user?: User;
+  user?: ClientUser;
   roles: string[];
   permissions: string[];
 };

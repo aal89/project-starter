@@ -20,19 +20,11 @@ export type LoginResult = {
   __typename?: 'LoginResult';
   accessToken: Scalars['String'];
   refreshToken: Scalars['String'];
-  user: User;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  login?: Maybe<LoginResult>;
   signup?: Maybe<Scalars['Void']>;
-};
-
-
-export type MutationLoginArgs = {
-  password: Scalars['String'];
-  username: Scalars['String'];
 };
 
 
@@ -44,14 +36,12 @@ export type MutationSignupArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  users: Array<Maybe<User>>;
+  login?: Maybe<LoginResult>;
 };
 
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  lastName?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
+
+export type QueryLoginArgs = {
+  password: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -125,49 +115,35 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   LoginResult: ResolverTypeWrapper<LoginResult>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  User: ResolverTypeWrapper<User>;
   Void: ResolverTypeWrapper<Scalars['Void']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
-  ID: Scalars['ID'];
   LoginResult: LoginResult;
   Mutation: {};
   Query: {};
   String: Scalars['String'];
-  User: User;
   Void: Scalars['Void'];
 };
 
 export type LoginResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']> = {
   accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  login?: Resolver<Maybe<ResolversTypes['LoginResult']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   signup?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'password' | 'username'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  users?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
-};
-
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  login?: Resolver<Maybe<ResolversTypes['LoginResult']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'password' | 'username'>>;
 };
 
 export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Void'], any> {
@@ -178,7 +154,6 @@ export type Resolvers<ContextType = any> = {
   LoginResult?: LoginResultResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
   Void?: GraphQLScalarType;
 };
 

@@ -11,10 +11,10 @@ export class User extends BaseEntity {
 
   @IsNotEmpty()
   @Column({ unique: true })
+  @MinLength(4)
   username: string
 
   @Exclude()
-  @MinLength(100)
   @IsNotEmpty()
   @Column()
   password: string

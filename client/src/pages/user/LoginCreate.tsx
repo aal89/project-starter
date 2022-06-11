@@ -21,9 +21,9 @@ type LoginCreateProps = {
 
 const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
   const { setLayoutProps } = useOutletContext<SetLayoutContext>();
-  const { signup, login } = useAuth();
-  const [doLogin, goLogin, { loading: loginLoading }] = login();
-  const [doSignup, goSignup, { loading: signupLoading }] = signup();
+  const {
+    signup, login, loginLoading, signupLoading, goLogin, goSignup,
+  } = useAuth();
 
   useEffect(() => {
     setLayoutProps({
@@ -38,10 +38,10 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
         <LoginForm
           onFinish={async (values) => {
             if (tab === 'login') {
-              doLogin(values.username, values.password);
+              login(values.username, values.password);
             }
             if (tab === 'signup') {
-              doSignup(values.username, values.password, values.name);
+              signup(values.username, values.password, values.name);
             }
           }}
           submitter={{

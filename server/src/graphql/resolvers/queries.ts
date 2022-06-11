@@ -1,30 +1,41 @@
 import { gql } from 'apollo-server-express';
-import { User as UserData } from '../../entities/User';
+import { compare } from 'bcrypt';
+import { User } from '../../entities/User';
+import { createToken } from '../../token';
 import { ContextType } from '../apollo-server';
 import { QueryResolvers } from '../generated/graphql';
 
 const queryTypeDefs = gql`
-  type User {
-    id: ID!
-    username: String!
-    lastName: String
-    name: String!
+  type LoginResult {
+    accessToken: String!
+    refreshToken: String!
   }
 
   type Query {
-    users: [User]!
+    login(username: String!, password: String!): LoginResult
   }
 `;
 
-const toGqlUser = (user: UserData) => ({
-  ...user,
-  id: String(user.id),
-});
-
 const queryResolvers: QueryResolvers<ContextType> = {
-  users: async (root, args, { roles, permissions }, info) => {
-    const users = await UserData.find();
-    return users.map(toGqlUser);
+  login: async (_, { username, password }) => {
+    const user = await User.findOneBy({ username });
+
+    if (!user) {
+      throw new Error('Unknown user');
+    }
+
+    const isValid = await compare(password, user.password);
+
+    if (!isValid) {
+      throw new Error('Incorrect password');
+    }
+
+    const accessToken = await createToken(user);
+
+    return {
+      accessToken,
+      refreshToken: '',
+    };
   },
 };
 

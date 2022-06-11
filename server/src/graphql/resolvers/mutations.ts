@@ -1,23 +1,15 @@
 import { gql } from 'apollo-server-express';
-import { hash, compare } from 'bcrypt';
+import { hash } from 'bcrypt';
 import { validateOrReject } from 'class-validator';
 import { User } from '../../entities/User';
-import { DatabaseError, translateError } from '../../errors/translateError';
-import { createToken } from '../../token';
+import { DatabaseError, translateError, ValidationError } from '../../errors/translateError';
 import { MutationResolvers } from '../generated/graphql';
 
 const mutationTypeDefs = gql`
   scalar Void
 
-  type LoginResult {
-    user: User!
-    accessToken: String!
-    refreshToken: String!
-  }
-
   type Mutation {
     signup(username: String!, password: String!, name: String!): Void
-    login(username: String!, password: String!): LoginResult
   }
 `;
 
@@ -30,40 +22,21 @@ const mutationResolvers: MutationResolvers = {
       user.password = await hash(password, 12);
       user.name = name;
 
-      const validationErrors = await validateOrReject(user);
-      console.log(validationErrors);
+      await validateOrReject(user);
 
       await user.save();
     } catch (err) {
-      if (translateError(err) === DatabaseError.Duplicate) {
-        throw new Error('This user already exists');
+      const translatedError = translateError(err);
+      if (translatedError === DatabaseError.Duplicate) {
+        throw new Error('This username is already taken, please pick another');
       }
 
-      console.log(err);
+      if (translatedError === ValidationError.Username4MinLength) {
+        throw new Error('Username needs to be at least 4 characters');
+      }
 
       throw new Error('Something went wrong, please try again');
     }
-  },
-  login: async (_, { username, password }) => {
-    const user = await User.findOneBy({ username });
-
-    if (!user) {
-      throw new Error('Unknown user');
-    }
-
-    const isValid = await compare(password, user.password);
-
-    if (!isValid) {
-      throw new Error('Incorrect password');
-    }
-
-    const accessToken = await createToken(user);
-
-    return {
-      user,
-      accessToken,
-      refreshToken: '',
-    };
   },
 };
 

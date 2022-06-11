@@ -2,23 +2,25 @@ import { promisify } from 'util';
 import jwt, {
   Secret, sign, VerifyOptions, Algorithm,
 } from 'jsonwebtoken';
+import { User } from './entities/User';
 import { env } from './env';
-import { User } from './graphql/generated/graphql';
+
+export type ClientUser = Omit<User, 'password'>;
 
 export type DecodedToken = {
-  user: User;
+  user: ClientUser;
   permissions: Array<string>;
   roles: Array<string>;
 };
 
-export const createToken = async (user: User) => sign(
+export const createToken = async (user: ClientUser) => sign(
   {
     user,
     permissions: [],
     roles: [],
   },
   env.signSecret(),
-  { expiresIn: '1y' },
+  { expiresIn: '30m' },
 );
 
 export const validateToken = async (token: string): Promise<DecodedToken> => {
