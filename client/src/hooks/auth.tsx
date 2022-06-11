@@ -60,7 +60,7 @@ export const useAuth = () => {
         setRefreshToken(data.login.refreshToken);
       }
 
-      message.success('Logged in succesfully!');
+      message.success('Logged in successfully!');
       goHome();
     } catch (err) {
       message.error((err as ApolloError).message ?? 'Unknown error');
@@ -77,7 +77,7 @@ export const useAuth = () => {
         },
       });
 
-      message.success('Account created succesfully!');
+      message.success('Account created successfully!');
       goLogin();
     } catch (err) {
       message.error((err as ApolloError).message ?? 'Unknown error');
@@ -87,7 +87,7 @@ export const useAuth = () => {
   const logout = () => {
     setAccessToken('');
     setRefreshToken('');
-    message.info('Logged out succesfully');
+    message.info('Logged out successfully!');
     goHome();
   };
 
