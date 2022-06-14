@@ -1,4 +1,4 @@
-query Login(
+mutation Login(
   $username: String!
   $password: String!
 ) {

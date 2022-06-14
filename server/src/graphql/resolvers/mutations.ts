@@ -1,15 +1,23 @@
 import { gql } from 'apollo-server-express';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { validateOrReject } from 'class-validator';
 import { User } from '../../entities/User';
 import { DatabaseError, translateError, ValidationError } from '../../errors/translateError';
+import { createTokens, validateRefreshToken } from '../../token';
 import { MutationResolvers } from '../generated/graphql';
 
 const mutationTypeDefs = gql`
   scalar Void
 
+  type Tokens {
+    accessToken: String!
+    refreshToken: String!
+  }
+
   type Mutation {
     signup(username: String!, password: String!, name: String!): Void
+    login(username: String!, password: String!): Tokens!
+    refreshToken(token: String!): Tokens!
   }
 `;
 
@@ -37,6 +45,42 @@ const mutationResolvers: MutationResolvers = {
 
       throw new Error('Something went wrong, please try again');
     }
+  },
+  login: async (_, { username, password }) => {
+    const user = await User.findOneBy({ username });
+
+    if (!user) {
+      throw new Error('Unknown user');
+    }
+
+    const isValid = await compare(password, user.password);
+
+    if (!isValid) {
+      throw new Error('Incorrect password');
+    }
+
+    const { accessToken, refreshToken } = await createTokens(user);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  },
+  refreshToken: async (_, { token }) => {
+    const { id } = await validateRefreshToken(token);
+
+    const user = await User.findOneBy({ id });
+
+    if (!user) {
+      throw new Error('Unknown user');
+    }
+
+    const { accessToken, refreshToken } = await createTokens(user);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   },
 };
 

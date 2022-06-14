@@ -3,7 +3,7 @@ import { message } from 'antd';
 import jwtDecode from 'jwt-decode';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLoginLazyQuery, useSignupMutation } from '../graphql/generated/graphql';
+import { useSignupMutation, useLoginMutation } from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
 import { useStorageState } from './storage-state';
 
@@ -22,9 +22,7 @@ export const useAuth = () => {
   const [accessToken, setAccessToken] = useStorageState(ACCESS_TOKEN_KEY);
   const [, setRefreshToken] = useStorageState(REFRESH_TOKEN_KEY);
   const [signupMutation, { loading: signupLoading }] = useSignupMutation();
-  const [loginQuery, { loading: loginLoading }] = useLoginLazyQuery({
-    fetchPolicy: 'no-cache',
-  });
+  const [loginMutation, { loading: loginLoading }] = useLoginMutation();
 
   const user = useMemo(() => {
     try {
@@ -38,16 +36,12 @@ export const useAuth = () => {
 
   const login = async (username: string, password: string, rememberMe: boolean) => {
     try {
-      const { data, error } = await loginQuery({
+      const { data } = await loginMutation({
         variables: {
           username,
           password,
         },
       });
-
-      if (error) {
-        throw error;
-      }
 
       // This shouldn't ever happen when login is succesful, so assert for it
       if (!data?.login) {

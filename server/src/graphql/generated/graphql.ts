@@ -18,7 +18,20 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  login: Tokens;
+  refreshToken: Tokens;
   signup?: Maybe<Scalars['Void']>;
+};
+
+
+export type MutationLoginArgs = {
+  password: Scalars['String'];
+  username: Scalars['String'];
+};
+
+
+export type MutationRefreshTokenArgs = {
+  token: Scalars['String'];
 };
 
 
@@ -30,25 +43,21 @@ export type MutationSignupArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  login: Tokens;
-  refreshToken: Tokens;
-};
-
-
-export type QueryLoginArgs = {
-  password: Scalars['String'];
-  username: Scalars['String'];
-};
-
-
-export type QueryRefreshTokenArgs = {
-  token: Scalars['String'];
+  users: Array<User>;
 };
 
 export type Tokens = {
   __typename?: 'Tokens';
   accessToken: Scalars['String'];
   refreshToken: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['String'];
+  lastName?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -125,6 +134,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Tokens: ResolverTypeWrapper<Tokens>;
+  User: ResolverTypeWrapper<User>;
   Void: ResolverTypeWrapper<Scalars['Void']>;
 };
 
@@ -135,21 +145,31 @@ export type ResolversParentTypes = {
   Query: {};
   String: Scalars['String'];
   Tokens: Tokens;
+  User: User;
   Void: Scalars['Void'];
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
+  refreshToken?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshTokenArgs, 'token'>>;
   signup?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'password' | 'username'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<QueryLoginArgs, 'password' | 'username'>>;
-  refreshToken?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<QueryRefreshTokenArgs, 'token'>>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
 export type TokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tokens'] = ResolversParentTypes['Tokens']> = {
   accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -161,6 +181,7 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Tokens?: TokensResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
   Void?: GraphQLScalarType;
 };
 
