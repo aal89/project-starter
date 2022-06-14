@@ -20,7 +20,7 @@ export type Scalars = {
 export type Mutation = {
   __typename?: 'Mutation';
   login: Tokens;
-  refreshToken: Tokens;
+  refresh: Tokens;
   signup?: Maybe<Scalars['Void']>;
 };
 
@@ -31,7 +31,7 @@ export type MutationLoginArgs = {
 };
 
 
-export type MutationRefreshTokenArgs = {
+export type MutationRefreshArgs = {
   token: Scalars['String'];
 };
 
@@ -77,6 +77,13 @@ export type SignupMutationVariables = Exact<{
 
 
 export type SignupMutation = { __typename?: 'Mutation', signup?: void | null };
+
+export type RefreshMutationVariables = Exact<{
+  refreshToken: Scalars['String'];
+}>;
+
+
+export type RefreshMutation = { __typename?: 'Mutation', refresh: { __typename?: 'Tokens', accessToken: string, refreshToken: string } };
 
 
 export const LoginDocument = gql`
@@ -147,3 +154,37 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const RefreshDocument = gql`
+    mutation Refresh($refreshToken: String!) {
+  refresh(token: $refreshToken) {
+    accessToken
+    refreshToken
+  }
+}
+    `;
+export type RefreshMutationFn = Apollo.MutationFunction<RefreshMutation, RefreshMutationVariables>;
+
+/**
+ * __useRefreshMutation__
+ *
+ * To run a mutation, you first call `useRefreshMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRefreshMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [refreshMutation, { data, loading, error }] = useRefreshMutation({
+ *   variables: {
+ *      refreshToken: // value for 'refreshToken'
+ *   },
+ * });
+ */
+export function useRefreshMutation(baseOptions?: Apollo.MutationHookOptions<RefreshMutation, RefreshMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RefreshMutation, RefreshMutationVariables>(RefreshDocument, options);
+      }
+export type RefreshMutationHookResult = ReturnType<typeof useRefreshMutation>;
+export type RefreshMutationResult = Apollo.MutationResult<RefreshMutation>;
+export type RefreshMutationOptions = Apollo.BaseMutationOptions<RefreshMutation, RefreshMutationVariables>;

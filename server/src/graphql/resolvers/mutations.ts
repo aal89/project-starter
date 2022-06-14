@@ -17,7 +17,7 @@ const mutationTypeDefs = gql`
   type Mutation {
     signup(username: String!, password: String!, name: String!): Void
     login(username: String!, password: String!): Tokens!
-    refreshToken(token: String!): Tokens!
+    refresh(token: String!): Tokens!
   }
 `;
 
@@ -66,7 +66,7 @@ const mutationResolvers: MutationResolvers = {
       refreshToken,
     };
   },
-  refreshToken: async (_, { token }) => {
+  refresh: async (_, { token }) => {
     const { id } = await validateRefreshToken(token);
 
     const user = await User.findOneBy({ id });

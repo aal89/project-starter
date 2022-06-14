@@ -15,3 +15,12 @@ mutation Signup(
 ) {
   signup(username: $username, password: $password, name: $name)
 }
+
+mutation Refresh(
+  $refreshToken: String!
+) {
+  refresh(token: $refreshToken) {
+    accessToken
+    refreshToken
+  }
+}

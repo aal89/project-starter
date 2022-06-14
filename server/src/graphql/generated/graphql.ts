@@ -19,7 +19,7 @@ export type Scalars = {
 export type Mutation = {
   __typename?: 'Mutation';
   login: Tokens;
-  refreshToken: Tokens;
+  refresh: Tokens;
   signup?: Maybe<Scalars['Void']>;
 };
 
@@ -30,7 +30,7 @@ export type MutationLoginArgs = {
 };
 
 
-export type MutationRefreshTokenArgs = {
+export type MutationRefreshArgs = {
   token: Scalars['String'];
 };
 
@@ -151,7 +151,7 @@ export type ResolversParentTypes = {
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
-  refreshToken?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshTokenArgs, 'token'>>;
+  refresh?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;
   signup?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'password' | 'username'>>;
 };
 

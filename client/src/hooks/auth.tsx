@@ -3,7 +3,7 @@ import { message } from 'antd';
 import jwtDecode from 'jwt-decode';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSignupMutation, useLoginMutation } from '../graphql/generated/graphql';
+import { useSignupMutation, useLoginMutation, useRefreshMutation } from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
 import { useStorageState } from './storage-state';
 
@@ -20,9 +20,10 @@ export type User = {
 export const useAuth = () => {
   const navigate = useNavigate();
   const [accessToken, setAccessToken] = useStorageState(ACCESS_TOKEN_KEY);
-  const [, setRefreshToken] = useStorageState(REFRESH_TOKEN_KEY);
+  const [refreshToken, setRefreshToken] = useStorageState(REFRESH_TOKEN_KEY);
   const [signupMutation, { loading: signupLoading }] = useSignupMutation();
   const [loginMutation, { loading: loginLoading }] = useLoginMutation();
+  const [refreshMutation, { loading: refreshLoading }] = useRefreshMutation();
 
   const user = useMemo(() => {
     try {
@@ -33,6 +34,30 @@ export const useAuth = () => {
       return null;
     }
   }, [accessToken]);
+
+  const refresh = async () => {
+    try {
+      if (!refreshToken) {
+        throw new Error('No refresh token found');
+      }
+
+      const { data } = await refreshMutation({
+        variables: {
+          refreshToken,
+        },
+      });
+
+      // This shouldn't ever happen when login is succesful, so assert for it
+      if (!data?.refresh) {
+        throw new Error('No refresh information found in response');
+      }
+
+      setAccessToken(data.refresh.accessToken);
+      setRefreshToken(data.refresh.refreshToken);
+    } catch (err) {
+      message.error((err as ApolloError).message ?? 'Unknown error');
+    }
+  };
 
   const login = async (username: string, password: string, rememberMe: boolean) => {
     try {
@@ -102,6 +127,8 @@ export const useAuth = () => {
     loginLoading,
     signup,
     signupLoading,
+    refresh,
+    refreshLoading,
     logout,
     user,
     goHome,
