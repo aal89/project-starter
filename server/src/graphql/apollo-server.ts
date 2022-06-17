@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-express';
 import express, { Request } from 'express';
-import { ClientUser, validateAccessToken } from '../token';
+import { ClientUser, validateAccessToken } from './auth/token';
 import { typeDefs, resolvers } from './schema';
 
 export type ContextType = {

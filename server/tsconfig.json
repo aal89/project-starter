@@ -9,5 +9,6 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "emitDecoratorMetadata": true,
+    "allowJs": true,
   }
 }

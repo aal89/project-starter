@@ -1,9 +1,10 @@
 import { gql } from 'apollo-server-express';
-import { compare, hash } from 'bcrypt';
+import { hash } from 'bcrypt';
 import { validateOrReject } from 'class-validator';
 import { User } from '../../entities/User';
 import { DatabaseError, translateError, ValidationError } from '../../errors/translateError';
-import { createTokens, validateRefreshToken } from '../../token';
+import { compareOrReject } from '../auth/auth';
+import { createTokens, validateRefreshToken } from '../auth/token';
 import { MutationResolvers } from '../generated/graphql';
 
 const mutationTypeDefs = gql`
@@ -47,40 +48,36 @@ const mutationResolvers: MutationResolvers = {
     }
   },
   login: async (_, { username, password }) => {
-    const user = await User.findOneBy({ username });
+    try {
+      const user = await User.findOneOrFail({ where: { username }, cache: true });
+      await compareOrReject(password, user?.password ?? '');
 
-    if (!user) {
-      throw new Error('Unknown user');
-    }
+      const { accessToken, refreshToken } = await createTokens(user);
 
-    const isValid = await compare(password, user.password);
-
-    if (!isValid) {
+      return {
+        accessToken,
+        refreshToken,
+      };
+    } catch {
       throw new Error('Incorrect password');
     }
-
-    const { accessToken, refreshToken } = await createTokens(user);
-
-    return {
-      accessToken,
-      refreshToken,
-    };
   },
   refresh: async (_, { token }) => {
-    const { id } = await validateRefreshToken(token);
+    try {
+      const { username } = await validateRefreshToken(token);
+      const user = await User.findOneOrFail({ where: { username }, cache: true });
 
-    const user = await User.findOneBy({ id });
+      // TODO: invalidate refresh token
 
-    if (!user) {
+      const { accessToken, refreshToken } = await createTokens(user);
+
+      return {
+        accessToken,
+        refreshToken,
+      };
+    } catch {
       throw new Error('Unknown user');
     }
-
-    const { accessToken, refreshToken } = await createTokens(user);
-
-    return {
-      accessToken,
-      refreshToken,
-    };
   },
 };
 
