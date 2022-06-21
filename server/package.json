@@ -8,6 +8,8 @@
     "start": "nodemon src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "build": "tsc --project ./",
+    "migration:create": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:create src/migrations/$npm_config_name",
+    "migration:revert": "TYPEORM_CACHE=false ts-node --transpile-only ./node_modules/typeorm/cli.js migration:revert -d src/data-source.ts",
     "migration:run": "TYPEORM_CACHE=false ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run -d src/data-source.ts"
   },
   "author": "Alex",

@@ -1,5 +1,4 @@
 import { gql } from 'apollo-server-express';
-import { hash } from 'bcrypt';
 import { validateOrReject } from 'class-validator';
 import { User } from '../../entities/User';
 import { DatabaseError, translateError, ValidationError } from '../../errors/translateError';
@@ -28,7 +27,7 @@ const mutationResolvers: MutationResolvers = {
       const user = new User();
 
       user.username = username;
-      user.password = await hash(password, 12);
+      await user.setPassword(password);
       user.name = name;
 
       await validateOrReject(user);

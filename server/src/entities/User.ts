@@ -1,3 +1,4 @@
+import { hash } from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
 import { IsNotEmpty, MinLength } from 'class-validator';
 import {
@@ -33,5 +34,9 @@ export class User extends BaseEntity {
 
   toJSON() {
     return instanceToPlain(this);
+  }
+
+  async setPassword(plain: string) {
+    this.password = await hash(plain, 12);
   }
 }
