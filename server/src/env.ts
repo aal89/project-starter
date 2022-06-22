@@ -18,6 +18,7 @@ export const env = {
     log: () => process.env.TYPEORM_LOGGING === 'true',
     entities: () => process.env.TYPEORM_ENTITIES ?? '',
     migrations: () => process.env.TYPEORM_MIGRATIONS ?? '',
+    subscribers: () => process.env.TYPEORM_SUBSCRIBERS ?? '',
     cache: () => process.env.TYPEORM_CACHE ?? '',
     cacheOptions: () => {
       try {

@@ -28,7 +28,7 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   lastName?: string
 
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany(() => Role, (role) => role.users, { eager: true })
   @JoinTable()
   roles: Role[];
 

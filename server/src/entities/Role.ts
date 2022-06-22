@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   BaseEntity,
   Column,
@@ -11,13 +12,14 @@ import { User } from './User';
 
 @Entity()
 export class Role extends BaseEntity {
+  @Exclude()
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ unique: true })
   name: string;
 
-  @ManyToMany(() => Permission, (permission) => permission.roles)
+  @ManyToMany(() => Permission, (permission) => permission.roles, { eager: true })
   @JoinTable()
   permissions: Permission[];
 

@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
   logging: env.dataSource.log(),
   entities: [env.dataSource.entities()],
   migrations: [env.dataSource.migrations()],
-  subscribers: [],
+  subscribers: [env.dataSource.subscribers()],
   cache: {
     type: env.dataSource.cache() as 'database',
     options: env.dataSource.cacheOptions(),

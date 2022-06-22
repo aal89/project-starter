@@ -7,12 +7,19 @@ export class InitialSeed1655475766558 implements MigrationInterface {
   public async up(): Promise<void> {
     const canLogin = new Permission();
     canLogin.name = 'can:login';
+    canLogin.encodeId = '1';
     await canLogin.save();
+
+    const canAdministrate = new Permission();
+    canAdministrate.name = 'can:administrate';
+    canAdministrate.encodeId = '2';
+    await canAdministrate.save();
 
     const adminRole = new Role();
     adminRole.name = 'Administrator';
     adminRole.permissions = [
       canLogin,
+      canAdministrate,
     ];
     await adminRole.save();
 
@@ -35,5 +42,8 @@ export class InitialSeed1655475766558 implements MigrationInterface {
 
     const canLogin = await Permission.findOneBy({ name: 'can:login' });
     await canLogin?.remove();
+
+    const canAdministrate = await Permission.findOneBy({ name: 'can:administrate' });
+    await canAdministrate?.remove();
   }
 }
