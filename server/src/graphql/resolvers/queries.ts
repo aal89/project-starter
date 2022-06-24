@@ -8,6 +8,7 @@ const queryTypeDefs = gql`
     username: String!
     name: String!
     lastName: String
+    permission: String!
   }
 
   type Query {

@@ -58,6 +58,7 @@ export type User = {
   id: Scalars['String'];
   lastName?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  permission: Scalars['String'];
   username: Scalars['String'];
 };
 
