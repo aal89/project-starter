@@ -23,7 +23,9 @@
     "@trivago/prettier-plugin-sort-imports": "^3.2.0"
   },
   "workspaces": [
-    "client", "server", "shared"
+    "client",
+    "server",
+    "shared"
   ],
   "author": "",
   "license": "MIT"
