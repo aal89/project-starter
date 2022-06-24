@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import {
   BaseEntity,
   Column,
@@ -10,7 +9,6 @@ import { Role } from './Role';
 
 @Entity()
 export class Permission extends BaseEntity {
-  @Exclude()
   @PrimaryGeneratedColumn()
   id: number;
 
