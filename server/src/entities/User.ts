@@ -1,10 +1,10 @@
+import { encodePermissionSet } from '@project-starter/shared';
 import { hash } from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
 import { IsNotEmpty, MinLength } from 'class-validator';
 import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
-import { encodePowerOfTwoSetAsHex } from '../utils/powerSet';
 import { Role } from './Role';
 
 @Entity()
@@ -36,8 +36,7 @@ export class User extends BaseEntity {
 
   get permissions() {
     if (this.roles) {
-      const permissionIds = new Set(this.permissionIds.map(BigInt));
-      return encodePowerOfTwoSetAsHex(permissionIds);
+      return encodePermissionSet(new Set(this.permissionIds));
     }
 
     return '';
@@ -46,7 +45,8 @@ export class User extends BaseEntity {
   get permissionIds() {
     return this.roles
       .flatMap((role) => role.permissions)
-      .map((permission) => permission.encodeId);
+      .map((permission) => permission.encodeId)
+      .map(BigInt);
   }
 
   toJSON() {

@@ -1,9 +1,15 @@
+import { Permission } from "./permissions";
+
 const powerOfTwo = (x: bigint) => {
   return x && !(x & (x - 1n));
 };
 
+export const encodePermissions = (permission: Permission[]) => {
+  return null;
+}
+
 // encodes power of two set as hex string
-export const encodePermissionSet = (set: Set<bigint>) => {
+const encodePermissionSet = (set: Set<bigint>) => {
   let big = 0n;
 
   const numbers = Array.from(set).filter(powerOfTwo);
@@ -16,7 +22,7 @@ export const encodePermissionSet = (set: Set<bigint>) => {
 };
 
 // decodes hex string as a power of two set
-export const decodePermissionSet = (hex: string) => {
+const decodePermissionSet = (hex: string) => {
   const set = new Set<bigint>();
   const big = BigInt(`0x${hex}`);
   const bigBitLength = big.toString(2).length;
