@@ -15,9 +15,6 @@ export class Permission extends BaseEntity {
   @Column({ unique: true })
   name: string;
 
-  @Column({ unique: true })
-  encodeId: string;
-
   @ManyToMany(() => Role, (role) => role.permissions, { onDelete: 'RESTRICT' })
   roles: Role[];
 }

@@ -1,3 +1,4 @@
+import { Permission as PermissionShared } from '@project-starter/shared';
 import { MigrationInterface } from 'typeorm';
 import { Permission } from '../entities/Permission';
 import { Role } from '../entities/Role';
@@ -6,13 +7,11 @@ import { User } from '../entities/User';
 export class InitialSeed1655475766558 implements MigrationInterface {
   public async up(): Promise<void> {
     const canLogin = new Permission();
-    canLogin.name = 'can:login';
-    canLogin.encodeId = '1';
+    canLogin.name = PermissionShared.LOGIN;
     await canLogin.save();
 
     const canAdministrate = new Permission();
-    canAdministrate.name = 'can:administrate';
-    canAdministrate.encodeId = '2';
+    canAdministrate.name = PermissionShared.ADMINISTRATE;
     await canAdministrate.save();
 
     const adminRole = new Role();

@@ -1,10 +1,11 @@
-import { encodePermissionSet } from '@project-starter/shared';
+import { encodePermissions } from '@project-starter/shared';
 import { hash } from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
 import { IsNotEmpty, MinLength } from 'class-validator';
 import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
+import { MemoizeExpiring } from 'typescript-memoize';
 import { Role } from './Role';
 
 @Entity()
@@ -34,19 +35,15 @@ export class User extends BaseEntity {
   @JoinTable()
   roles: Role[];
 
+  // it takes about x mins for changed permissions to take effect
+  @MemoizeExpiring(10 * 60 * 1000)
   get permissions() {
-    if (this.roles) {
-      return encodePermissionSet(new Set(this.permissionIds));
+    if (this.roles && this.roles.every((role) => role.permissions)) {
+      const perms = this.roles.flatMap((role) => role.permissions).map((p) => p.name);
+      return encodePermissions(perms);
     }
 
     return '';
-  }
-
-  get permissionIds() {
-    return this.roles
-      .flatMap((role) => role.permissions)
-      .map((permission) => permission.encodeId)
-      .map(BigInt);
   }
 
   toJSON() {
