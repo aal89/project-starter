@@ -1,5 +1,5 @@
 import { decodeHexInSet } from './permissionCodec';
-import { Permission } from './permissions';
+import { inPermissionMapAt, Permission } from './permissions';
 
 type Permissions = {
   permissions: string;

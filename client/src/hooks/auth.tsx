@@ -3,7 +3,12 @@ import { message } from 'antd';
 import jwtDecode from 'jwt-decode';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSignupMutation, useLoginMutation, useRefreshMutation, User } from '../graphql/generated/graphql';
+import {
+  useSignupMutation,
+  useLoginMutation,
+  useRefreshMutation,
+  User,
+} from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
 import { useStorageState } from './storage-state';
 
