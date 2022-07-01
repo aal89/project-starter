@@ -4,6 +4,7 @@ export enum Permission {
 }
 
 let memoMap: Map<string, bigint> | null = null;
+let reversedMemoMap: Map<bigint, string> | null = null;
 
 export const permissionMap = () => {
   if (memoMap) {
@@ -20,4 +21,13 @@ export const permissionMap = () => {
   return memoMap;
 }
 
-export const inPermissionMapAt = (idx: bigint, value: string) => permissionMap().get(value) === idx;
+export const reversedPermissionMap = () => {
+  if (reversedMemoMap) {
+    return reversedMemoMap;
+  }
+
+  reversedMemoMap = new Map(Array.from(permissionMap().entries()).map(([key, value]) => [value, key]));
+  console.log(memoMap, reversedMemoMap);
+
+  return reversedMemoMap;
+}

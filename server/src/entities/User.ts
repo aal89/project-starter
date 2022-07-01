@@ -36,6 +36,7 @@ export class User extends BaseEntity {
   roles: Role[];
 
   // it takes about x mins for changed permissions to take effect
+  // TODO: this doesnt work for new classes, make some util function
   @MemoizeExpiring(10 * 60 * 1000)
   get permissions() {
     if (this.roles && this.roles.every((role) => role.permissions)) {

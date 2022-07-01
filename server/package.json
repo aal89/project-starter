@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@graphql-tools/merge": "^8.2.9",
+    "@project-starter/shared": "file:shared",
     "apollo-server": "^3.6.1",
     "apollo-server-express": "^3.6.6",
     "bcrypt": "^5.0.1",

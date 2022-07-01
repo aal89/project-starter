@@ -1,4 +1,4 @@
-import { permissionMap } from "./permissions";
+import { permissionMap, reversedPermissionMap } from "./permissions";
 
 const powerOfTwo = (x: bigint) => {
   return x && !(x & (x - 1n));
@@ -9,6 +9,12 @@ export const encodePermissions = (permissions: Array<string>) => {
     .map((str) => permissionMap().get(str) ?? 0n)
 
   return encodeSetInHex(new Set(mappedPermissions));
+}
+
+export const decodePermissions = (hex: string) => {
+  const set = decodeHexInSet(hex);
+
+  return Array.from(set).map((n) => reversedPermissionMap().get(n) ?? '').filter((e) => e);
 }
 
 // encodes power of two set as hex string
@@ -25,7 +31,7 @@ const encodeSetInHex = (set: Set<bigint>) => {
 };
 
 // decodes hex string as a power of two set
-export const decodeHexInSet = (hex: string) => {
+const decodeHexInSet = (hex: string) => {
   const set = new Set<bigint>();
   const big = BigInt(`0x${hex}`);
   const bigBitLength = big.toString(2).length;
