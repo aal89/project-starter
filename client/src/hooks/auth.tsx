@@ -1,4 +1,5 @@
 import { ApolloError } from '@apollo/client';
+import { can as sharedCan, Permission } from '@project-starter/shared';
 import { message } from 'antd';
 import jwtDecode from 'jwt-decode';
 import { useMemo } from 'react';
@@ -32,6 +33,8 @@ export const useAuth = () => {
       return null;
     }
   }, [accessToken]);
+
+  const can = (permission: Permission) => sharedCan(permission, user?.permissions ?? '');
 
   const refresh = async () => {
     try {
@@ -121,6 +124,7 @@ export const useAuth = () => {
   };
 
   return {
+    can,
     login,
     loginLoading,
     signup,
