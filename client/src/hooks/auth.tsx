@@ -1,5 +1,5 @@
 import { ApolloError } from '@apollo/client';
-import { can as sharedCan, Permission } from '@project-starter/shared';
+import { can as sharedCan, Permission } from '@project-starter/shared/build';
 import { message } from 'antd';
 import jwtDecode from 'jwt-decode';
 import { useMemo } from 'react';

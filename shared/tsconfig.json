@@ -9,5 +9,4 @@
     "declaration": true,
     "strictPropertyInitialization": false,
   },
-  "exclude": ["./index.ts", "./build"]
 }

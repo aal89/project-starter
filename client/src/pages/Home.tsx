@@ -1,3 +1,4 @@
+import { Permission } from '@project-starter/shared/build';
 import { Button, Typography } from 'antd';
 import React, { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
@@ -8,7 +9,7 @@ const { Text } = Typography;
 
 const Home: React.FC = () => {
   const { setLayoutProps } = useOutletContext<SetLayoutContext>();
-  const { refresh, refreshLoading } = useAuth();
+  const { refresh, refreshLoading, can } = useAuth();
 
   useEffect(() => {
     setLayoutProps({
@@ -18,9 +19,15 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Text>Hello world</Text>
+      <Text>
+        Hello world (is admin:&nbsp;
+        {can(Permission.ADMINISTRATE) ? 'yes' : 'no'}
+        )
+      </Text>
       <br />
-      <Button type="primary" onClick={refresh} loading={refreshLoading}>Get started</Button>
+      <Button type="primary" onClick={refresh} loading={refreshLoading}>
+        Get started
+      </Button>
     </>
   );
 };

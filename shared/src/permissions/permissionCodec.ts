@@ -2,9 +2,7 @@ import JSBI from 'jsbi';
 import { permissionMap, reversedPermissionMap } from "./permissions";
 
 const powerOfTwo = (x: JSBI) => {
-  const bigOne = JSBI.BigInt(1);
-  
-  return x && !JSBI.bitwiseAnd(x, JSBI.subtract(x, bigOne));
+  return x && JSBI.equal(JSBI.bitwiseAnd(x, JSBI.subtract(x, JSBI.BigInt(1))), JSBI.BigInt(0));
 };
 
 export const encodePermissions = (permissions: Array<string>) => {
@@ -36,6 +34,11 @@ const encodeSetInHex = (set: Set<JSBI>) => {
 // decodes hex string as a power of two set
 const decodeHexInSet = (hex: string) => {
   const set = new Set<JSBI>();
+
+  if (hex === '') {
+    return set;
+  }
+
   const big = JSBI.BigInt(`0x${hex}`);
   const bigBitLength = big.toString(2).length;
 
