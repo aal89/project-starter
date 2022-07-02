@@ -11,5 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "jsbi": "^4.3.0"
   }
 }

@@ -1,12 +1,15 @@
+import JSBI from 'jsbi';
 import { permissionMap, reversedPermissionMap } from "./permissions";
 
-const powerOfTwo = (x: bigint) => {
-  return x && !(x & (x - 1n));
+const powerOfTwo = (x: JSBI) => {
+  const bigOne = JSBI.BigInt(1);
+  
+  return x && !JSBI.bitwiseAnd(x, JSBI.subtract(x, bigOne));
 };
 
 export const encodePermissions = (permissions: Array<string>) => {
   const mappedPermissions = permissions
-    .map((str) => permissionMap().get(str) ?? 0n)
+    .map((str) => permissionMap().get(str) ?? JSBI.BigInt(0))
 
   return encodeSetInHex(new Set(mappedPermissions));
 }
@@ -18,13 +21,13 @@ export const decodePermissions = (hex: string) => {
 }
 
 // encodes power of two set as hex string
-const encodeSetInHex = (set: Set<bigint>) => {
-  let big = 0n;
+const encodeSetInHex = (set: Set<JSBI>) => {
+  let big = JSBI.BigInt(0);
 
   const numbers = Array.from(set).filter(powerOfTwo);
 
   numbers.forEach((number) => {
-    big |= number;
+    big = JSBI.bitwiseOr(big, number);
   });
 
   return big.toString(16);
@@ -32,15 +35,18 @@ const encodeSetInHex = (set: Set<bigint>) => {
 
 // decodes hex string as a power of two set
 const decodeHexInSet = (hex: string) => {
-  const set = new Set<bigint>();
-  const big = BigInt(`0x${hex}`);
+  const set = new Set<JSBI>();
+  const big = JSBI.BigInt(`0x${hex}`);
   const bigBitLength = big.toString(2).length;
 
-  for (let power = 1n; power < 2 ** bigBitLength; power *= 2n) {
-    if ((big & power) === power) {
-      set.add(power);
+  for (
+    let power = JSBI.BigInt('1');
+    JSBI.LT(power, 2 ** bigBitLength);
+    power = JSBI.multiply(JSBI.BigInt('2'), power)) {
+      if (JSBI.equal(JSBI.bitwiseAnd(big, power), power)) {
+        set.add(power);
+      }
     }
-  }
 
   return set;
 };

@@ -1,10 +1,12 @@
+import JSBI from 'jsbi';
+
 export enum Permission {
   LOGIN = 'can:login',
   ADMINISTRATE = 'can:administrate',
 }
 
-let memoMap: Map<string, bigint> | null = null;
-let reversedMemoMap: Map<bigint, string> | null = null;
+let memoMap: Map<string, JSBI> | null = null;
+let reversedMemoMap: Map<JSBI, string> | null = null;
 
 export const permissionMap = () => {
   if (memoMap) {
@@ -12,10 +14,10 @@ export const permissionMap = () => {
   }
 
   // initialize permission map
-  memoMap = new Map<string, bigint>();
+  memoMap = new Map<string, JSBI>();
 
   Object.values(Permission).forEach((permission, idx) => {
-    memoMap?.set(permission, BigInt(2 ** idx));
+    memoMap?.set(permission, JSBI.leftShift(JSBI.BigInt(1), JSBI.BigInt(idx)));
   });
 
   return memoMap;
