@@ -5,8 +5,8 @@ export enum Permission {
   ADMINISTRATE = 'can:administrate',
 }
 
-let memoMap: Map<string, JSBI> | null = null;
-let reversedMemoMap: Map<JSBI, string> | null = null;
+let memoMap: Map<Permission, string> | null = null;
+let reversedMemoMap: Map<string, Permission> | null = null;
 
 export const permissionMap = () => {
   if (memoMap) {
@@ -14,10 +14,10 @@ export const permissionMap = () => {
   }
 
   // initialize permission map
-  memoMap = new Map<string, JSBI>();
+  memoMap = new Map<Permission, string>();
 
   Object.values(Permission).forEach((permission, idx) => {
-    memoMap?.set(permission, JSBI.leftShift(JSBI.BigInt(1), JSBI.BigInt(idx)));
+    memoMap?.set(permission, JSBI.leftShift(JSBI.BigInt(1), JSBI.BigInt(idx)).toString());
   });
 
   return memoMap;
@@ -29,7 +29,6 @@ export const reversedPermissionMap = () => {
   }
 
   reversedMemoMap = new Map(Array.from(permissionMap().entries()).map(([key, value]) => [value, key]));
-  console.log(memoMap, reversedMemoMap);
 
   return reversedMemoMap;
 }
