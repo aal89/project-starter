@@ -8,19 +8,19 @@ enum TokenType {
   RefreshToken = 'refreshToken',
 }
 
-export type ClientUser = Omit<User, 'password'>;
+export type DataUser = Omit<Omit<User, 'password'>, 'roles'>;
 
 export type DecodedAccessToken = {
-  type: TokenType;
-  user: ClientUser;
+  type: TokenType.AccessToken;
+  user: DataUser;
 };
 
 export type DecodedRefreshToken = {
-  type: TokenType;
+  type: TokenType.RefreshToken;
   username: string;
 };
 
-export const createTokens = async (user: ClientUser) => {
+export const createTokens = async (user: DataUser) => {
   const sign = promisify<object, jwt.Secret, jwt.SignOptions, string>(jwt.sign);
   return {
     accessToken: await sign(

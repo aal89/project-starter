@@ -1,7 +1,9 @@
+import { Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { User } from '../../entities/User';
 import { DatabaseError, translateError, ValidationError } from '../../errors/translateError';
+import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
 import { createTokens, validateRefreshToken } from '../auth/token';
 import { MutationResolvers } from '../generated/graphql';
@@ -21,7 +23,7 @@ const mutationTypeDefs = gql`
   }
 `;
 
-const mutationResolvers: MutationResolvers = {
+const mutationResolvers: MutationResolvers<ContextType> = {
   signup: async (_, { username, password, name }) => {
     try {
       const user = new User();
@@ -61,8 +63,12 @@ const mutationResolvers: MutationResolvers = {
       throw new Error('Incorrect password');
     }
   },
-  refresh: async (_, { token }) => {
+  refresh: async (_, { token }, { can }) => {
     try {
+      if (!can(Permission.LOGIN)) {
+        throw new Error('User is not allowed to login');
+      }
+
       const { username } = await validateRefreshToken(token);
       const user = await User.findOneOrFail({ where: { username }, cache: true });
 

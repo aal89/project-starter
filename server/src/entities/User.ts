@@ -34,10 +34,14 @@ export class User extends BaseEntity {
   @JoinTable()
   roles: Role[];
 
+  get permissions() {
+    return PermissionsHelper.get(this);
+  }
+
   toJSON() {
     return {
       ...instanceToPlain(this),
-      permissions: PermissionsHelper.get(this),
+      permissions: this.permissions,
     };
   }
 

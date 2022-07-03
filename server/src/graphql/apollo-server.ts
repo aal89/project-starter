@@ -1,12 +1,13 @@
+import { can as sharedCan, Permission } from '@project-starter/shared';
 import { ApolloServer } from 'apollo-server-express';
 import express, { Request } from 'express';
-import { ClientUser, validateAccessToken } from './auth/token';
+import { validateAccessToken } from './auth/token';
+import { User } from './generated/graphql';
 import { typeDefs, resolvers } from './schema';
 
 export type ContextType = {
-  user?: ClientUser;
-  roles: string[];
-  permissions: string[];
+  user?: User;
+  can: (assertedPermission: Permission) => boolean;
 };
 
 export default async (app: express.Application) => {
@@ -16,16 +17,15 @@ export default async (app: express.Application) => {
 
     try {
       const { user } = await validateAccessToken(jwt ?? '');
+      const can = (p: Permission) => sharedCan(p, user.permissions);
 
       return {
         user,
-        roles: [],
-        permissions: [],
+        can,
       };
     } catch {
       return {
-        roles: [],
-        permissions: [],
+        can: () => false,
       };
     }
   };
