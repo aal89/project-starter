@@ -1,10 +1,10 @@
+import { PermissionCodec } from '@project-starter/shared';
 import { hash } from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
 import { IsNotEmpty, MinLength } from 'class-validator';
 import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
-import { PermissionsHelper } from '../utils/permissions';
 import { Role } from './Role';
 
 @Entity()
@@ -35,7 +35,12 @@ export class User extends BaseEntity {
   roles: Role[];
 
   get permissions() {
-    return PermissionsHelper.get(this);
+    if (this.roles && this.roles.every((role) => role.permissions)) {
+      const perms = this.roles.flatMap((role) => role.permissions).map((p) => p.name);
+      return PermissionCodec.encode(perms);
+    }
+
+    return '';
   }
 
   toJSON() {
