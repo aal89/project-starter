@@ -8,6 +8,7 @@ import { RouteNoMatch } from './RouteNoMatch';
 const Home = React.lazy(() => import('../pages/Home'));
 const LoginCreate = React.lazy(() => import('../pages/user/LoginCreate'));
 const Logout = React.lazy(() => import('../pages/user/Logout'));
+const Settings = React.lazy(() => import('../pages/user/Settings'));
 
 export const Routing: React.FC = () => (
   <Routes>
@@ -33,6 +34,14 @@ export const Routing: React.FC = () => (
         element={(
           <Suspense fallback={<LoadingOutlined />}>
             <LoginCreate tab="signup" />
+          </Suspense>
+        )}
+      />
+      <Route
+        path={Path.userSettings}
+        element={(
+          <Suspense fallback={<LoadingOutlined />}>
+            <Settings />
           </Suspense>
         )}
       />

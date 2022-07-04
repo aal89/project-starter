@@ -5,8 +5,10 @@ import {
   Typography, Space, Row, Col, Menu, Button,
 } from 'antd';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../../hooks/auth';
+import { Path } from '../../routing/Path';
 import { navigation } from './navigation/NavigationItems';
 import { User } from './navigation/User';
 
@@ -23,6 +25,7 @@ type HeaderProps = {
 
 export const Header: React.FC<HeaderProps> = ({ title, selectedKey }) => {
   const { userCan } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <Row>
@@ -37,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({ title, selectedKey }) => {
       </Col>
       <RightAlignCol span={6}>
         {userCan(Permission.ADMINISTRATE) && (
-          <Button type="link" icon={<ControlTwoTone />}>
+          <Button type="link" icon={<ControlTwoTone />} onClick={() => navigate(Path.userSettings)}>
             Admin
           </Button>
         )}

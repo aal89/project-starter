@@ -30,6 +30,9 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   lastName?: string
 
+  @Column({ nullable: true })
+  image?: string
+
   @Exclude()
   @ManyToMany(() => Role, (role) => role.users)
   @JoinTable()
