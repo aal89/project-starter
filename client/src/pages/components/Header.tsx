@@ -1,10 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { HomeTwoTone } from '@ant-design/icons';
+import { ControlTwoTone, HomeTwoTone } from '@ant-design/icons';
+import { Permission } from '@project-starter/shared/build';
 import {
-  Typography, Space, Row, Col, Menu,
+  Typography, Space, Row, Col, Menu, Button,
 } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import { useAuth } from '../../hooks/auth';
 import { navigation } from './navigation/NavigationItems';
 import { User } from './navigation/User';
 
@@ -19,21 +21,30 @@ type HeaderProps = {
   selectedKey: string;
 };
 
-export const Header: React.FC<HeaderProps> = ({ title, selectedKey }) => (
-  <Row>
-    <Col span={2}>
-      <Space>
-        <HomeTwoTone />
-        <Text strong>{title}</Text>
-      </Space>
-    </Col>
-    <Col span={14}>
-      <Menu mode="horizontal" selectedKeys={[selectedKey]} items={navigation} />
-    </Col>
-    <RightAlignCol span={8}>
-      <a href="#" onClick={(e) => e.preventDefault()}>
-        <User />
-      </a>
-    </RightAlignCol>
-  </Row>
-);
+export const Header: React.FC<HeaderProps> = ({ title, selectedKey }) => {
+  const { userCan } = useAuth();
+
+  return (
+    <Row>
+      <Col span={2}>
+        <Space>
+          <HomeTwoTone />
+          <Text strong>{title}</Text>
+        </Space>
+      </Col>
+      <Col span={16}>
+        <Menu mode="horizontal" selectedKeys={[selectedKey]} items={navigation} />
+      </Col>
+      <RightAlignCol span={6}>
+        {userCan(Permission.ADMINISTRATE) && (
+          <Button type="link" icon={<ControlTwoTone />}>
+            Admin
+          </Button>
+        )}
+        <a href="#" onClick={(e) => e.preventDefault()}>
+          <User />
+        </a>
+      </RightAlignCol>
+    </Row>
+  );
+};

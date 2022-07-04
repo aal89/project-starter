@@ -1,7 +1,7 @@
 import { PermissionCodec } from '@project-starter/shared';
 import { hash } from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
@@ -15,6 +15,7 @@ export class User extends BaseEntity {
   @IsNotEmpty()
   @Column({ unique: true })
   @MinLength(4)
+  @MaxLength(20)
   username: string
 
   @Exclude()
