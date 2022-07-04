@@ -48,29 +48,37 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       throw new Error('Something went wrong, please try again');
     }
   },
-  login: async (_, { username, password }) => {
-    try {
-      const user = await User.findOneOrFail({ where: { username }, cache: true });
-      await compareOrReject(password, user?.password ?? '');
+  login: async (_, { username, password }, { can }) => {
+    const user = await User.findOneOrFail({
+      where: { username },
+      cache: true,
+      relations: ['roles.permissions'],
+    });
+    await compareOrReject(password, user?.password ?? '');
 
-      const { accessToken, refreshToken } = await createTokens(user);
-
-      return {
-        accessToken,
-        refreshToken,
-      };
-    } catch {
-      throw new Error('Incorrect password');
+    if (!can(Permission.LOGIN, user.permissions)) {
+      throw new Error('User is not allowed to login');
     }
+
+    const { accessToken, refreshToken } = await createTokens(user);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   },
   refresh: async (_, { token }, { can }) => {
     try {
-      if (!can(Permission.LOGIN)) {
+      const { username } = await validateRefreshToken(token);
+      const user = await User.findOneOrFail({
+        where: { username },
+        cache: true,
+        relations: ['roles.permissions'],
+      });
+
+      if (!can(Permission.LOGIN, user.permissions)) {
         throw new Error('User is not allowed to login');
       }
-
-      const { username } = await validateRefreshToken(token);
-      const user = await User.findOneOrFail({ where: { username }, cache: true });
 
       // TODO: invalidate refresh token
 

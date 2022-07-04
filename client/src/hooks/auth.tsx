@@ -34,7 +34,7 @@ export const useAuth = () => {
     }
   }, [accessToken]);
 
-  const can = (permission: Permission) => sharedCan(permission, user?.permissions ?? '');
+  const userCan = (permission: Permission) => sharedCan(permission, user?.permissions ?? '');
 
   const refresh = async () => {
     try {
@@ -124,7 +124,7 @@ export const useAuth = () => {
   };
 
   return {
-    can,
+    userCan,
     login,
     loginLoading,
     signup,

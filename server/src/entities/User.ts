@@ -30,13 +30,13 @@ export class User extends BaseEntity {
   lastName?: string
 
   @Exclude()
-  @ManyToMany(() => Role, (role) => role.users, { eager: true })
+  @ManyToMany(() => Role, (role) => role.users)
   @JoinTable()
-  roles: Role[];
+  roles?: Role[];
 
   get permissions() {
     if (this.roles && this.roles.every((role) => role.permissions)) {
-      const perms = this.roles.flatMap((role) => role.permissions).map((p) => p.name);
+      const perms = this.roles.flatMap((role) => role.permissions).map((p) => p?.name ?? '');
       return PermissionCodec.encode(perms);
     }
 

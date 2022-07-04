@@ -7,7 +7,8 @@ import { typeDefs, resolvers } from './schema';
 
 export type ContextType = {
   user?: User;
-  can: (assertedPermission: Permission) => boolean;
+  userCan: (assertedPermission: Permission) => boolean;
+  can: typeof sharedCan;
 };
 
 export default async (app: express.Application) => {
@@ -17,15 +18,17 @@ export default async (app: express.Application) => {
 
     try {
       const { user } = await validateAccessToken(jwt ?? '');
-      const can = (p: Permission) => sharedCan(p, user.permissions);
+      const userCan = (p: Permission) => sharedCan(p, user.permissions);
 
       return {
         user,
-        can,
+        userCan,
+        can: sharedCan,
       };
     } catch {
       return {
-        can: () => false,
+        userCan: () => false,
+        can: sharedCan,
       };
     }
   };

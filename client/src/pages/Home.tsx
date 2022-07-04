@@ -9,7 +9,7 @@ const { Text } = Typography;
 
 const Home: React.FC = () => {
   const { setLayoutProps } = useOutletContext<SetLayoutContext>();
-  const { refresh, refreshLoading, can } = useAuth();
+  const { refresh, refreshLoading, userCan } = useAuth();
 
   useEffect(() => {
     setLayoutProps({
@@ -21,7 +21,7 @@ const Home: React.FC = () => {
     <>
       <Text>
         Hello world (is admin:&nbsp;
-        {can(Permission.ADMINISTRATE) ? 'yes' : 'no'}
+        {userCan(Permission.ADMINISTRATE) ? 'yes' : 'no'}
         )
       </Text>
       <br />

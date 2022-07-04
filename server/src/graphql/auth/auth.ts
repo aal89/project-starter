@@ -4,6 +4,6 @@ export const compareOrReject = async (leftPassword: string, rightPassword: strin
   const isEqual = await compare(leftPassword, rightPassword);
 
   if (!isEqual) {
-    throw new Error('Password mismatch');
+    throw new Error('Incorrect password');
   }
 };

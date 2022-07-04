@@ -16,5 +16,5 @@ export class Permission extends BaseEntity {
   name: string;
 
   @ManyToMany(() => Role, (role) => role.permissions, { onDelete: 'RESTRICT' })
-  roles: Role[];
+  roles?: Role[];
 }
