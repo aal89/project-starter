@@ -24,3 +24,15 @@ mutation Refresh(
     refreshToken
   }
 }
+
+query GetUsers(
+  $offset: Int!
+  $limit: Int!
+) {
+  users(offset: $offset, limit: $limit) {
+    id
+    username
+    name
+    permissions
+  }
+}
