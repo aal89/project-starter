@@ -42,10 +42,16 @@ export type MutationSignupArgs = {
   username: Scalars['String'];
 };
 
+export type PaginatedUsers = {
+  __typename?: 'PaginatedUsers';
+  total: Scalars['Int'];
+  users: Array<User>;
+};
+
 export type Query = {
   __typename?: 'Query';
   user?: Maybe<User>;
-  users: Array<User>;
+  users: PaginatedUsers;
 };
 
 
@@ -104,7 +110,7 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, username: string, name: string, permissions: string }> };
+export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, permissions: string }> } };
 
 
 export const LoginDocument = gql`
@@ -212,10 +218,13 @@ export type RefreshMutationOptions = Apollo.BaseMutationOptions<RefreshMutation,
 export const GetUsersDocument = gql`
     query GetUsers($offset: Int!, $limit: Int!) {
   users(offset: $offset, limit: $limit) {
-    id
-    username
-    name
-    permissions
+    total
+    users {
+      id
+      username
+      name
+      permissions
+    }
   }
 }
     `;

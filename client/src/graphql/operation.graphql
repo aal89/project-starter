@@ -30,9 +30,12 @@ query GetUsers(
   $limit: Int!
 ) {
   users(offset: $offset, limit: $limit) {
-    id
-    username
-    name
-    permissions
+    total
+    users {
+      id
+      username
+      name
+      permissions
+    }
   }
 }

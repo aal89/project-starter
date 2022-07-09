@@ -14,9 +14,14 @@ const queryTypeDefs = gql`
     permissions: String!
   }
 
+  type PaginatedUsers {
+    total: Int!
+    users: [User!]!
+  }
+
   type Query {
     user(id: String!): User
-    users(offset: Int!, limit: Int!): [User!]!
+    users(offset: Int!, limit: Int!): PaginatedUsers!
   }
 `;
 
@@ -27,7 +32,12 @@ const queryResolvers: QueryResolvers<ContextType> = {
     const pageSize = Math.max(1, Math.min(limit, 25));
     const pageOffset = Math.max(0, offset);
 
-    return User.find({ skip: pageOffset, take: pageSize });
+    const [users, total] = await User.findAndCount({ skip: pageOffset, take: pageSize });
+
+    return {
+      total,
+      users,
+    };
   },
 };
 
