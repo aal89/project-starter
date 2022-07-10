@@ -1,6 +1,5 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { offsetLimitPagination } from '@apollo/client/utilities';
 import { ACCESS_TOKEN_KEY } from './hooks/auth';
 
 const httpLink = createHttpLink({
@@ -29,7 +28,34 @@ export const client = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
-          users: offsetLimitPagination(),
+          users: {
+            keyArgs: false,
+            merge(existing, incoming, { args }) {
+              // Slicing is necessary because the existing data is
+              // immutable, and frozen in development.
+              const mergedUsers = existing?.users ? existing.users.slice(0) : [];
+              // eslint-disable-next-line no-plusplus
+              for (let i = 0; i < incoming.users.length; ++i) {
+                mergedUsers[(args?.offset ?? 0) + i] = incoming.users[i];
+              }
+
+              return {
+                total: incoming.total,
+                users: mergedUsers,
+              };
+            },
+            read(existing, options) {
+              const offset = options.args?.offset;
+              const limit = options.args?.limit;
+
+              const selectedUsers = existing?.users.slice(offset, offset + limit) ?? [];
+
+              return existing && !!selectedUsers.length && {
+                total: (existing.total ?? 0),
+                users: selectedUsers,
+              };
+            },
+          },
         },
       },
     },

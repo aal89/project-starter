@@ -1,5 +1,5 @@
 import { message, Pagination, Typography } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useGetUsersQuery } from '../../graphql/generated/graphql';
 import { SetLayoutContext } from '../components/Layout';
@@ -9,13 +9,10 @@ const { Text } = Typography;
 
 const Settings: React.FC = () => {
   const { setLayoutProps } = useOutletContext<SetLayoutContext>();
-  // const [oldPageSize, setOldPageSize] = useState(0);
-  const {
-    data, loading, error, fetchMore,
-  } = useGetUsersQuery({
-    fetchPolicy: 'no-cache',
+  const [offset, setOffset] = useState(0);
+  const { data, loading, error } = useGetUsersQuery({
     variables: {
-      offset: 0,
+      offset,
       limit: 1,
     },
   });
@@ -26,8 +23,6 @@ const Settings: React.FC = () => {
       menuKey: '99',
     });
   }, []);
-
-  console.log(data?.users.users);
 
   useEffect(() => {
     if (error) {
@@ -44,26 +39,11 @@ const Settings: React.FC = () => {
       <Text>{JSON.stringify(data?.users.users)}</Text>
       <Pagination
         pageSize={1}
+        current={offset + 1}
         total={data?.users.total}
         hideOnSinglePage
-        onChange={(page, pageSize) => {
-          const offset = page - 1;
-          fetchMore({ variables: { offset, limit: pageSize } });
-        }}
+        onChange={(page) => setOffset(page - 1)}
       />
-      {/* <Button
-        onClick={() => {
-          setOldPageSize(data?.users.length ?? 0);
-          return fetchMore({
-            variables: {
-              offset: data?.users.length ?? 1,
-            },
-          });
-        }}
-        disabled={!!error || oldPageSize === (data?.users.length ?? 0)}
-      >
-        Fetch more
-      </Button> */}
     </>
   );
 };
