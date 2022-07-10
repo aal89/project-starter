@@ -4,6 +4,7 @@ import { message } from 'antd';
 import jwtDecode from 'jwt-decode';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { client } from '../client';
 import {
   useSignupMutation,
   useLoginMutation,
@@ -105,6 +106,7 @@ export const useAuth = () => {
   };
 
   const logout = () => {
+    client.clearStore();
     setAccessToken('');
     setRefreshToken('');
     message.info('Logged out successfully!');
