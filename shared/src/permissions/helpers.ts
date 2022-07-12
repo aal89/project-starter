@@ -5,3 +5,6 @@ export const can = (assertedPermission: Permission, encodedPermissions: string) 
     return PermissionCodec.decode(encodedPermissions)
       .some((decodedPermission) => assertedPermission === decodedPermission);
   };
+
+export const decode = (encodedPermissions: string) => PermissionCodec.decode(encodedPermissions);
+export const encode = (decodedPermissions: Permission[]) => PermissionCodec.encode(decodedPermissions);

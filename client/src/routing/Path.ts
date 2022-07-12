@@ -5,4 +5,5 @@ export const Path = Object.freeze({
   userSignup: '/user/signup',
   userSettings: '/user/settings',
   userResetPassword: '/user/reset/password',
+  adminSettings: '/admin/settings',
 });

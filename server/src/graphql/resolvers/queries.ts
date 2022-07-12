@@ -32,7 +32,7 @@ const queryResolvers: QueryResolvers<ContextType> = {
     const pageSize = Math.max(1, Math.min(limit, 25));
     const pageOffset = Math.max(0, offset);
 
-    const [users, total] = await User.findAndCount({ skip: pageOffset, take: pageSize });
+    const [users, total] = await User.findAndCount({ skip: pageOffset, take: pageSize, relations: ['roles.permissions'] });
 
     return {
       total,

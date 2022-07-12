@@ -9,6 +9,7 @@ const Home = React.lazy(() => import('../pages/Home'));
 const LoginCreate = React.lazy(() => import('../pages/user/LoginCreate'));
 const Logout = React.lazy(() => import('../pages/user/Logout'));
 const Settings = React.lazy(() => import('../pages/user/Settings'));
+const AdminSettings = React.lazy(() => import('../pages/admin/Settings'));
 
 export const Routing: React.FC = () => (
   <Routes>
@@ -42,6 +43,14 @@ export const Routing: React.FC = () => (
         element={(
           <Suspense fallback={<LoadingOutlined />}>
             <Settings />
+          </Suspense>
+        )}
+      />
+      <Route
+        path={Path.adminSettings}
+        element={(
+          <Suspense fallback={<LoadingOutlined />}>
+            <AdminSettings />
           </Suspense>
         )}
       />

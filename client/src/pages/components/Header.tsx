@@ -40,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({ title, selectedKey }) => {
       </Col>
       <RightAlignCol span={6}>
         {userCan(Permission.ADMINISTRATE) && (
-          <Button type="link" icon={<ControlTwoTone />} onClick={() => navigate(Path.userSettings)}>
+          <Button type="link" icon={<ControlTwoTone />} onClick={() => navigate(Path.adminSettings)}>
             Admin
           </Button>
         )}
