@@ -21,16 +21,14 @@ type LoginCreateProps = {
 
 const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
   const [rememberMe, setRememberMe] = useState(true);
-  const { setLayoutProps } = useOutletContext<SetLayoutContext>();
+  const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
   const {
     signup, login, loginLoading, signupLoading, goLogin, goSignup,
   } = useAuth();
 
   useEffect(() => {
-    setLayoutProps({
-      title: '',
-      menuKey: '99',
-    });
+    setTitle('');
+    setMenuKey('99');
   }, []);
 
   return (

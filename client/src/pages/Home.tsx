@@ -6,12 +6,11 @@ import { SetLayoutContext } from './components/Layout';
 const { Text } = Typography;
 
 const Home: React.FC = () => {
-  const { setLayoutProps } = useOutletContext<SetLayoutContext>();
+  const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
 
   useEffect(() => {
-    setLayoutProps({
-      title: 'Home',
-    });
+    setTitle('Home');
+    setMenuKey('0');
   }, []);
 
   return (

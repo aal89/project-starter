@@ -8,7 +8,7 @@ import { Spinner } from '../components/Spinner';
 const { Text } = Typography;
 
 const Settings: React.FC = () => {
-  const { setLayoutProps } = useOutletContext<SetLayoutContext>();
+  const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
   const [offset, setOffset] = useState(0);
   const { data, loading, error } = useGetUsersQuery({
     variables: {
@@ -18,10 +18,8 @@ const Settings: React.FC = () => {
   });
 
   useEffect(() => {
-    setLayoutProps({
-      title: 'Settings',
-      menuKey: '99',
-    });
+    setTitle('Settings');
+    setMenuKey('99');
   }, []);
 
   useEffect(() => {

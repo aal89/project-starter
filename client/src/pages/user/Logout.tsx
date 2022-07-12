@@ -5,14 +5,12 @@ import { SetLayoutContext } from '../components/Layout';
 import { Spinner } from '../components/Spinner';
 
 const Logout: React.FC = () => {
-  const { setLayoutProps } = useOutletContext<SetLayoutContext>();
+  const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
   const { logout } = useAuth();
 
   useEffect(() => {
-    setLayoutProps({
-      title: 'Bye!',
-      menuKey: '99',
-    });
+    setTitle('Bye!');
+    setMenuKey('99');
 
     logout();
   }, []);
