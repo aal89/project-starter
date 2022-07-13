@@ -1,24 +1,21 @@
 import { UserOutlined } from '@ant-design/icons';
 import {
-  Card,
-  Col,
-  Divider,
-  Input,
-  message,
-  Pagination,
-  Row,
-  Statistic,
-  Table,
+  Card, Col, Divider, Input, message, Pagination, Row, Statistic, Table,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useGetUsersQuery } from '../../graphql/generated/graphql';
+import { useGetUsersQuery, User } from '../../graphql/generated/graphql';
 import { SetLayoutContext } from '../components/Layout';
 import { Spinner } from '../components/Spinner';
+import { EditUserModal } from './EditUserModal';
 import { columns } from './settingsColumnType';
 
 const Settings: React.FC = () => {
   const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
+  const [action, setAction] = useState<{
+    action: 'edit' | 'reset' | 'restrict' | 'delete';
+    user: User;
+  } | null>(null);
   const [offset, setOffset] = useState(0);
   const { data, loading, error } = useGetUsersQuery({
     variables: {
@@ -38,12 +35,23 @@ const Settings: React.FC = () => {
     }
   }, [error]);
 
+  const updateUser = (user: User) => {
+    console.log('asdf');
+    if (data) {
+      data.users.users[data.users.users.findIndex((u) => u.id === user.id)] = user;
+    }
+    setAction(null);
+  };
+
   if (loading) {
     return <Spinner />;
   }
 
   return (
     <>
+      {action && action.action === 'edit' && (
+        <EditUserModal user={action.user} onClose={updateUser} />
+      )}
       <Row justify="center" gutter={18}>
         <Col>
           <Card>
@@ -62,20 +70,30 @@ const Settings: React.FC = () => {
         </Col>
         <Col>
           <Card>
-            <Statistic title="Conversion rate (Active user)" value={`${((488 / 2875) * 100).toFixed(2)}%`} />
+            <Statistic
+              title="Conversion rate (Active user)"
+              value={`${((488 / 2875) * 100).toFixed(2)}%`}
+            />
           </Card>
         </Col>
       </Row>
       <Divider orientation="left">User management</Divider>
       <Row style={{ marginBottom: 10 }}>
         <Col span={6}>
-          <Input size="large" placeholder="Search by username..." allowClear prefix={<UserOutlined />} />
+          <Input
+            size="large"
+            placeholder="Search by username..."
+            allowClear
+            prefix={<UserOutlined />}
+          />
         </Col>
       </Row>
       <Row>
         <Col span={24}>
           <Table
-            columns={columns}
+            columns={columns({
+              editUser: (user: User) => setAction({ action: 'edit', user }),
+            })}
             dataSource={data?.users.users.map((u) => ({ key: u.id, ...u }))}
             pagination={false}
             locale={{
