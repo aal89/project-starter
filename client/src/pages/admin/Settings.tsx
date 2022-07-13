@@ -1,5 +1,4 @@
 import { UserOutlined } from '@ant-design/icons';
-import { decode as decodePermissions } from '@project-starter/shared/build';
 import {
   Card,
   Col,
@@ -8,20 +7,15 @@ import {
   message,
   Pagination,
   Row,
-  Space,
   Statistic,
   Table,
-  Tag,
-  Typography,
 } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
 import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useGetUsersQuery, User } from '../../graphql/generated/graphql';
+import { useGetUsersQuery } from '../../graphql/generated/graphql';
 import { SetLayoutContext } from '../components/Layout';
 import { Spinner } from '../components/Spinner';
-
-const { Text } = Typography;
+import { columns } from './settingsColumnType';
 
 const Settings: React.FC = () => {
   const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
@@ -32,49 +26,6 @@ const Settings: React.FC = () => {
       limit: 25,
     },
   });
-
-  const columns: ColumnsType<User & { key: string }> = [
-    {
-      title: 'Identifier',
-      dataIndex: 'id',
-      key: 'id',
-      width: 200,
-      render: (text) => (
-        <Text style={{ width: 200 }} ellipsis={{ tooltip: text }}>
-          {text}
-        </Text>
-      ),
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: (text) => text,
-    },
-    {
-      title: 'Last name',
-      dataIndex: 'lastName',
-      key: 'lastName',
-      render: (text) => text ?? '-',
-    },
-    {
-      title: 'Username',
-      dataIndex: 'username',
-      key: 'username',
-      render: (text) => text,
-    },
-    {
-      title: 'Permissions',
-      dataIndex: 'permissions',
-      key: 'permissions',
-      render: (text) => decodePermissions(text).map((e) => <Tag key={e}>{e}</Tag>),
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: () => <Space size="middle">Reset password Restrict access Delete</Space>,
-    },
-  ];
 
   useEffect(() => {
     setTitle('Administrator');
@@ -133,7 +84,7 @@ const Settings: React.FC = () => {
           />
         </Col>
       </Row>
-      <Row style={{ marginTop: 10 }}>
+      <Row justify="end" style={{ marginTop: 10 }}>
         <Col>
           <Pagination
             pageSize={25}
