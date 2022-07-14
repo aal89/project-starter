@@ -35,14 +35,6 @@ const Settings: React.FC = () => {
     }
   }, [error]);
 
-  const updateUser = (user: User) => {
-    console.log('asdf');
-    if (data) {
-      data.users.users[data.users.users.findIndex((u) => u.id === user.id)] = user;
-    }
-    setAction(null);
-  };
-
   if (loading) {
     return <Spinner />;
   }
@@ -50,7 +42,7 @@ const Settings: React.FC = () => {
   return (
     <>
       {action && action.action === 'edit' && (
-        <EditUserModal user={action.user} onClose={updateUser} />
+        <EditUserModal user={action.user} onClose={() => setAction(null)} />
       )}
       <Row justify="center" gutter={18}>
         <Col>
