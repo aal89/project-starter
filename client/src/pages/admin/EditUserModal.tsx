@@ -1,26 +1,33 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { decode, Permission } from '@project-starter/shared/build';
 import {
-  AutoComplete,
-  Form, Input, Modal, Tag, Tooltip,
+  AutoComplete, Button, Form, Input, Modal, Space, Tag, Tooltip, Typography,
 } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { BaseSelectRef } from 'rc-select';
+import React, {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import { User } from '../../graphql/generated/graphql';
+
+const { Text } = Typography;
 
 type EditUserModalProps = {
   user: User;
   onClose?: () => void;
 };
 
-const allPermissions = Object.values(Permission);
-
 export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) => {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInputVisible, setTagInputVisible] = useState(false);
   const inputRef = useRef<BaseSelectRef>(null);
   const [modalVisible, setmodalVisible] = useState(true);
+  const [options, setOptions] = useState<{ value: string }[]>([]);
+
+  const allPermissions = useMemo(
+    () => Object.values(Permission).map((perm) => ({ value: perm })),
+    [Permission],
+  );
 
   useEffect(() => {
     if (tagInputVisible) {
@@ -43,8 +50,9 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
     setTags(newTags);
   };
 
-  const showInput = () => {
-    setTagInputVisible(true);
+  const onSearch = (searchText: string) => {
+    const searchedPermissions = allPermissions.filter((p) => p.value.includes(searchText));
+    setOptions(!searchText ? [] : searchedPermissions);
   };
 
   const handleInputConfirm = (permission: string) => {
@@ -56,12 +64,18 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
 
   return (
     <Modal
-      title="Edit user"
+      title={(
+        <>
+          <Text strong>Edit user</Text>
+          {' '}
+          <Text type="secondary">{user.id}</Text>
+        </>
+      )}
       style={{ top: 20 }}
       visible={modalVisible}
       onOk={() => setmodalVisible(false)}
       onCancel={() => setmodalVisible(false)}
-      okText="Edit"
+      okText="Save"
       cancelText="Cancel"
     >
       <Form
@@ -73,61 +87,62 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
         // onFinish={onFinish}
         // validateMessages={validateMessages}
       >
-        <Form.Item name={['user', 'id']} label="Id">
-          <Input disabled />
-        </Form.Item>
-        <Form.Item name={['user', 'name']} label="Name">
+        <Form.Item name={['user', 'name']} label={<Text strong>Name</Text>}>
           <Input />
         </Form.Item>
-        <Form.Item name={['user', 'lastName']} label="Last name">
+        <Form.Item name={['user', 'lastName']} label={<Text strong>Last name</Text>}>
           <Input />
         </Form.Item>
-        <Form.Item name={['user', 'username']} label="Username">
+        <Form.Item name={['user', 'username']} label={<Text strong>Username</Text>}>
           <Input />
         </Form.Item>
-        <Form.Item name={['user', 'permissions']} label="Permissions">
-          {tags.map((tag) => {
-            const isLongTag = tag.length > 20;
+        <Form.Item name={['user', 'permissions']} label={<Text strong>Permissions</Text>}>
+          <Space direction="vertical">
+            {!tagInputVisible && (
+              <Button
+                type="link"
+                shape="round"
+                size="small"
+                onClick={() => setTagInputVisible(true)}
+              >
+                <PlusOutlined />
+                {' '}
+                Add permission
+              </Button>
+            )}
+            {tagInputVisible && (
+              <AutoComplete
+                ref={inputRef}
+                options={options}
+                style={{ width: 200 }}
+                onSelect={handleInputConfirm}
+                onSearch={onSearch}
+                onBlur={() => {
+                  setTagInputVisible(false);
+                  setOptions(allPermissions);
+                }}
+                placeholder="Permission..."
+              />
+            )}
+            <Space size={0}>
+              {tags.map((tag) => {
+                const isLongTag = tag.length > 20;
 
-            const tagElem = (
-              <Tag className="edit-tag" key={tag} closable onClose={() => handleClose(tag)}>
-                {isLongTag ? `${tag.slice(0, 20)}…` : tag}
-              </Tag>
-            );
-            return isLongTag ? (
-              <Tooltip title={tag} key={tag}>
-                {tagElem}
-              </Tooltip>
-            ) : (
-              tagElem
-            );
-          })}
-          {tagInputVisible && (
-            <AutoComplete
-              ref={inputRef}
-              options={allPermissions.map((perm) => ({ value: perm }))}
-              style={{ width: 200 }}
-              onSelect={handleInputConfirm}
-              placeholder="input here"
-            />
-            // <Input
-            //   ref={inputRef}
-            //   type="text"
-            //   size="small"
-            //   className="tag-input"
-            //   value={tagInputValue}
-            //   onChange={handleInputChange}
-            //   onBlur={handleInputConfirm}
-            //   onPressEnter={handleInputConfirm}
-            // />
-          )}
-          {!tagInputVisible && (
-            <Tag className="site-tag-plus" onClick={showInput}>
-              <PlusOutlined />
-              {' '}
-              Add permission
-            </Tag>
-          )}
+                const tagElem = (
+                  <Tag className="edit-tag" key={tag} closable onClose={() => handleClose(tag)}>
+                    {isLongTag ? `${tag.slice(0, 20)}…` : tag}
+                  </Tag>
+                );
+                return isLongTag ? (
+                  <Tooltip title={tag} key={tag}>
+                    {tagElem}
+                  </Tooltip>
+                ) : (
+                  tagElem
+                );
+              })}
+            </Space>
+          </Space>
         </Form.Item>
       </Form>
     </Modal>
