@@ -86,9 +86,11 @@ export type User = {
 };
 
 export type UserInput = {
+  image?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  permissions?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  oldUsername: Scalars['String'];
+  permissions: Scalars['String'];
   username: Scalars['String'];
 };
 

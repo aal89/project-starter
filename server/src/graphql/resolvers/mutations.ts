@@ -15,10 +15,12 @@ const mutationTypeDefs = gql`
   scalar Void
 
   input UserInput {
+    oldUsername: String!
     username: String!
-    name: String
+    name: String!
     lastName: String
-    permissions: String
+    image: String
+    permissions: String!
   }
 
   type Tokens {
@@ -37,20 +39,20 @@ const mutationTypeDefs = gql`
 const mutationResolvers: MutationResolvers<ContextType> = {
   editUser: async (_, {
     user: {
-      username, name, lastName, permissions,
+      oldUsername, username, name, lastName, permissions, image,
     },
   }, { userCan }) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to edit users');
 
-    const user = await User.findOneOrFail({ where: { username }, relations: ['permissions'] });
-
-    const updatedPermissions = permissions ?? user.encodedPermissions;
+    const user = await User.findOneOrFail({ where: { username: oldUsername }, relations: ['permissions'] });
     const decodedPermissions = await PermissionData.find({
-      where: { name: In(decode(updatedPermissions)) },
+      where: { name: In(decode(permissions)) },
     });
 
-    user.name = name ?? user.name;
+    user.name = name;
     user.lastName = lastName ?? user.lastName;
+    user.username = username;
+    user.image = image ?? user.image;
     user.permissions = decodedPermissions;
 
     await validateOrReject(user);

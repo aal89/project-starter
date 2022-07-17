@@ -43,6 +43,7 @@ query GetUsers(
       id
       username
       name
+      lastName
       encodedPermissions
     }
   }

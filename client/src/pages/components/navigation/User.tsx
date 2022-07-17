@@ -15,7 +15,7 @@ export const User: React.FC = () => {
     <Dropdown overlay={<Menu items={userMenu(!!user)} />} placement="bottomRight">
       <Space>
         <Text>{user?.name ?? 'Account'}</Text>
-        <Avatar icon={<UserOutlined />} />
+        <Avatar src="https://joeschmoe.io/api/v1/random" icon={<UserOutlined />} />
       </Space>
     </Dropdown>
   );

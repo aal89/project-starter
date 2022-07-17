@@ -61,6 +61,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
 
   useEffect(() => {
     setTags(decode(user.encodedPermissions));
+    setOptions(allPermissions);
   }, []);
 
   const handleClose = (removedTag: string) => {
@@ -103,6 +104,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
                 lastName: form.getFieldValue(['user', 'lastName']),
                 name: form.getFieldValue(['user', 'name']),
                 permissions: encode(tags),
+                oldUsername: user.username,
               },
             },
           });
@@ -154,7 +156,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
           ]}
           label={<Text strong>Username</Text>}
         >
-          <Input disabled />
+          <Input />
         </Form.Item>
         <Form.Item
           name={['user', 'permissions']}

@@ -1,9 +1,9 @@
 import {
-  DeleteOutlined, EditOutlined, StopOutlined, UnlockOutlined,
+  DeleteOutlined, EditOutlined, StopOutlined, UnlockOutlined, UserOutlined,
 } from '@ant-design/icons';
 import { decode } from '@project-starter/shared/build';
 import {
-  Tag, Space, Typography, Button, Tooltip,
+  Tag, Space, Typography, Button, Tooltip, Avatar,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
@@ -41,16 +41,19 @@ export const columns: (props: ColumnsProps) => ColumnsType<User & { key: string 
     key: 'name',
     width: 200,
     render: (text: string) => (
-      <Text style={{ width: 200 }} ellipsis={{ tooltip: text }}>
-        {text}
-      </Text>
+      <Space>
+        <Avatar src="https://joeschmoe.io/api/v1/random" icon={<UserOutlined />} size="small" />
+        <Text style={{ width: 200 }} ellipsis={{ tooltip: text }}>
+          {text}
+        </Text>
+      </Space>
     ),
   },
   {
     title: 'Last name',
     dataIndex: 'lastName',
     key: 'lastName',
-    render: (text: any) => text ?? '-',
+    render: (text: any) => text,
   },
   {
     title: 'Username',

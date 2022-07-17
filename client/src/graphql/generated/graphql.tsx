@@ -87,9 +87,11 @@ export type User = {
 };
 
 export type UserInput = {
+  image?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  permissions?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  oldUsername: Scalars['String'];
+  permissions: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -130,7 +132,7 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, encodedPermissions: string }> } };
+export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, encodedPermissions: string }> } };
 
 
 export const LoginDocument = gql`
@@ -276,6 +278,7 @@ export const GetUsersDocument = gql`
       id
       username
       name
+      lastName
       encodedPermissions
     }
   }

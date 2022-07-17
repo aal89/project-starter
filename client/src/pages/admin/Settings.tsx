@@ -1,6 +1,6 @@
 import { UserOutlined } from '@ant-design/icons';
 import {
-  Card, Col, Divider, Input, message, Pagination, Row, Statistic, Table,
+  Card, Col, Divider, Empty, Input, message, Pagination, Row, Statistic, Table,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
@@ -89,7 +89,7 @@ const Settings: React.FC = () => {
             dataSource={data?.users.users.map((u) => ({ key: u.id, ...u }))}
             pagination={false}
             locale={{
-              emptyText: 'No data',
+              emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No data" />,
             }}
           />
         </Col>
