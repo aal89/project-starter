@@ -26,8 +26,12 @@ mutation Refresh(
 }
 
 mutation EditUser(
-  //todo
-)
+  $input: UserInput!
+) {
+  editUser(user: $input) {
+    id
+  }
+}
 
 query GetUsers(
   $offset: Int!

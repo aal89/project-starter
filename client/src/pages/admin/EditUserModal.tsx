@@ -1,13 +1,13 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { decode, Permission } from '@project-starter/shared/build';
+import { decode, encode, Permission } from '@project-starter/shared/build';
 import {
-  AutoComplete, Button, Form, Input, Modal, Space, Tag, Tooltip, Typography,
+  AutoComplete, Button, Form, Input, message, Modal, Space, Tag, Tooltip, Typography,
 } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
-import { User } from '../../graphql/generated/graphql';
+import { useEditUserMutation, User } from '../../graphql/generated/graphql';
 
 const { Text } = Typography;
 
@@ -33,13 +33,14 @@ const validateMessages = {
 /* eslint-enable no-template-curly-in-string */
 
 export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) => {
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<Permission[]>([]);
   const [tagInputVisible, setTagInputVisible] = useState(false);
   const inputRef = useRef<AutoCompleteRef>(null);
   const [modalVisible, setModalVisible] = useState(true);
   const [options, setOptions] = useState<{ value: string }[]>([]);
   const [okDisabled, setOkDisabled] = useState(false);
   const [form] = useForm();
+  const [editUserMutation, { loading }] = useEditUserMutation();
 
   const allPermissions = useMemo(
     () => Object.values(Permission).map((perm) => ({ value: perm })),
@@ -72,7 +73,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
     setOptions(!searchText ? [] : searchedPermissions);
   };
 
-  const handleInputConfirm = (permission: string) => {
+  const handleInputConfirm = (permission: Permission) => {
     if (tags.indexOf(permission) === -1) {
       setTags([...tags, permission]);
     }
@@ -93,11 +94,25 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
       )}
       style={{ top: 20 }}
       visible={modalVisible}
-      onOk={() => {
-        setModalVisible(false);
+      onOk={async () => {
+        try {
+          await editUserMutation({
+            variables: {
+              input: {
+                username: form.getFieldValue(['user', 'username']),
+                lastName: form.getFieldValue(['user', 'lastName']),
+                name: form.getFieldValue(['user', 'name']),
+                permissions: encode(tags),
+              },
+            },
+          });
+          setModalVisible(false);
+        } catch {
+          message.error('Could not edit user! Try again later.');
+        }
       }}
       onCancel={() => setModalVisible(false)}
-      confirmLoading
+      confirmLoading={loading}
       okButtonProps={{
         disabled: okDisabled,
       }}
@@ -139,7 +154,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
           ]}
           label={<Text strong>Username</Text>}
         >
-          <Input />
+          <Input disabled />
         </Form.Item>
         <Form.Item
           name={['user', 'permissions']}

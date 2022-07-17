@@ -18,10 +18,10 @@ export class PermissionCodec {
   @MemoizeExpiring(10 * 60 * 1000, (hex: string) => {
     return hex;
   })
-  static decode(hex: string) {
+  static decode(hex: string): Permission[] {
     const set = this.decodeHexInSet(hex);
   
-    return Array.from(set).map((n) => reversedPermissionMap().get(n.toString()) ?? '').filter((e) => e);
+    return Array.from(set).map((n) => reversedPermissionMap().get(n.toString()) ?? '').filter((e) => e) as Permission[];
   }
   
   // encodes power of two set as hex string

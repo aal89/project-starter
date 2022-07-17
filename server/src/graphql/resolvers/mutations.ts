@@ -2,8 +2,9 @@ import { ok } from 'assert';
 import { decode, Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
-import { User } from '../../entities/User';
+import { In } from 'typeorm';
 import { Permission as PermissionData } from '../../entities/Permission';
+import { User } from '../../entities/User';
 import { DatabaseError, translateError, ValidationError } from '../../errors/translateError';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
@@ -41,13 +42,11 @@ const mutationResolvers: MutationResolvers<ContextType> = {
   }, { userCan }) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to edit users');
 
-    const user = await User.findOneOrFail({ where: { username }, relations: ['roles.permissions'] });
+    const user = await User.findOneOrFail({ where: { username }, relations: ['permissions'] });
 
     const updatedPermissions = permissions ?? user.encodedPermissions;
-    const decodedPermissions = decode(updatedPermissions).map((p) => {
-      const permissionData = new PermissionData();
-      permissionData.name = p;
-      return permissionData;
+    const decodedPermissions = await PermissionData.find({
+      where: { name: In(decode(updatedPermissions)) },
     });
 
     user.name = name ?? user.name;
