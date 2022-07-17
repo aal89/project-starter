@@ -19,9 +19,15 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  editUser: User;
   login: Tokens;
   refresh: Tokens;
   signup?: Maybe<Scalars['Void']>;
+};
+
+
+export type MutationEditUserArgs = {
+  user: UserInput;
 };
 
 
@@ -73,10 +79,17 @@ export type Tokens = {
 
 export type User = {
   __typename?: 'User';
+  encodedPermissions: Scalars['String'];
   id: Scalars['String'];
   lastName?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  permissions: Scalars['String'];
+  username: Scalars['String'];
+};
+
+export type UserInput = {
+  lastName?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  permissions?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
 };
 
@@ -110,7 +123,7 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, permissions: string }> } };
+export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, encodedPermissions: string }> } };
 
 
 export const LoginDocument = gql`
@@ -223,7 +236,7 @@ export const GetUsersDocument = gql`
       id
       username
       name
-      permissions
+      encodedPermissions
     }
   }
 }

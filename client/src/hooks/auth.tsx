@@ -35,7 +35,7 @@ export const useAuth = () => {
     }
   }, [accessToken]);
 
-  const userCan = (permission: Permission) => sharedCan(permission, user?.permissions ?? '');
+  const userCan = (permission: Permission) => sharedCan(permission, user?.encodedPermissions ?? '');
 
   const refresh = async () => {
     try {

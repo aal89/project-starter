@@ -25,6 +25,10 @@ mutation Refresh(
   }
 }
 
+mutation EditUser(
+  //todo
+)
+
 query GetUsers(
   $offset: Int!
   $limit: Int!
@@ -35,7 +39,7 @@ query GetUsers(
       id
       username
       name
-      permissions
+      encodedPermissions
     }
   }
 }

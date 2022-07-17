@@ -18,9 +18,15 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  editUser: User;
   login: Tokens;
   refresh: Tokens;
   signup?: Maybe<Scalars['Void']>;
+};
+
+
+export type MutationEditUserArgs = {
+  user: UserInput;
 };
 
 
@@ -72,10 +78,17 @@ export type Tokens = {
 
 export type User = {
   __typename?: 'User';
+  encodedPermissions: Scalars['String'];
   id: Scalars['String'];
   lastName?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  permissions: Scalars['String'];
+  username: Scalars['String'];
+};
+
+export type UserInput = {
+  lastName?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  permissions?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
 };
 
@@ -156,6 +169,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Tokens: ResolverTypeWrapper<Tokens>;
   User: ResolverTypeWrapper<User>;
+  UserInput: UserInput;
   Void: ResolverTypeWrapper<Scalars['Void']>;
 };
 
@@ -169,10 +183,12 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Tokens: Tokens;
   User: User;
+  UserInput: UserInput;
   Void: Scalars['Void'];
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  editUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationEditUserArgs, 'user'>>;
   login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   refresh?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;
   signup?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'password' | 'username'>>;
@@ -196,10 +212,10 @@ export type TokensResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  encodedPermissions?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  permissions?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

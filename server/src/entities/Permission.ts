@@ -5,7 +5,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Role } from './Role';
+import { User } from './User';
 
 @Entity()
 export class Permission extends BaseEntity {
@@ -15,6 +15,6 @@ export class Permission extends BaseEntity {
   @Column({ unique: true })
   name: string;
 
-  @ManyToMany(() => Role, (role) => role.permissions, { onDelete: 'RESTRICT' })
-  roles?: Role[];
+  @ManyToMany(() => User, (user) => user.permissions, { onDelete: 'RESTRICT' })
+  users?: User[];
 }

@@ -3,8 +3,7 @@ import { decode, Permission } from '@project-starter/shared/build';
 import {
   AutoComplete, Button, Form, Input, Modal, Space, Tag, Tooltip, Typography,
 } from 'antd';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { BaseSelectRef } from 'rc-select';
+import { useForm } from 'antd/lib/form/Form';
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
@@ -17,12 +16,30 @@ type EditUserModalProps = {
   onClose?: () => void;
 };
 
+type AutoCompleteRef = {
+  focus: () => void;
+  blur: () => void;
+  scrollTo: (arg: any) => void;
+};
+
+/* eslint-disable no-template-curly-in-string */
+const validateMessages = {
+  required: 'Field is required',
+  string: {
+    // eslint-disable-next-line no-template-curly-in-string
+    range: 'Must be between ${min} and ${max} characters long',
+  },
+};
+/* eslint-enable no-template-curly-in-string */
+
 export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) => {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInputVisible, setTagInputVisible] = useState(false);
-  const inputRef = useRef<BaseSelectRef>(null);
-  const [modalVisible, setmodalVisible] = useState(true);
+  const inputRef = useRef<AutoCompleteRef>(null);
+  const [modalVisible, setModalVisible] = useState(true);
   const [options, setOptions] = useState<{ value: string }[]>([]);
+  const [okDisabled, setOkDisabled] = useState(false);
+  const [form] = useForm();
 
   const allPermissions = useMemo(
     () => Object.values(Permission).map((perm) => ({ value: perm })),
@@ -42,7 +59,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
   }, [modalVisible]);
 
   useEffect(() => {
-    setTags(decode(user.permissions));
+    setTags(decode(user.encodedPermissions));
   }, []);
 
   const handleClose = (removedTag: string) => {
@@ -65,38 +82,78 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
   return (
     <Modal
       title={(
-        <>
+        <Space>
           <Text strong>Edit user</Text>
-          {' '}
-          <Text type="secondary">{user.id}</Text>
-        </>
+          <small>
+            <Text type="secondary">
+              {user.id}
+            </Text>
+          </small>
+        </Space>
       )}
       style={{ top: 20 }}
       visible={modalVisible}
-      onOk={() => setmodalVisible(false)}
-      onCancel={() => setmodalVisible(false)}
+      onOk={() => {
+        setModalVisible(false);
+      }}
+      onCancel={() => setModalVisible(false)}
+      confirmLoading
+      okButtonProps={{
+        disabled: okDisabled,
+      }}
       okText="Save"
       cancelText="Cancel"
     >
       <Form
+        onFieldsChange={async () => {
+          const formValid = !!form.getFieldsError().flatMap((field) => field.errors).length;
+          setOkDisabled(formValid);
+        }}
         name="nest-messages"
+        form={form}
         layout="vertical"
         initialValues={{
           user,
         }}
-        // onFinish={onFinish}
-        // validateMessages={validateMessages}
+        validateMessages={validateMessages}
       >
-        <Form.Item name={['user', 'name']} label={<Text strong>Name</Text>}>
+        <Form.Item
+          name={['user', 'name']}
+          rules={[{ required: true }]}
+          label={<Text strong>Name</Text>}
+        >
           <Input />
         </Form.Item>
         <Form.Item name={['user', 'lastName']} label={<Text strong>Last name</Text>}>
           <Input />
         </Form.Item>
-        <Form.Item name={['user', 'username']} label={<Text strong>Username</Text>}>
+        <Form.Item
+          name={['user', 'username']}
+          rules={[
+            {
+              required: true,
+              type: 'string',
+              min: 4,
+              max: 20,
+            },
+          ]}
+          label={<Text strong>Username</Text>}
+        >
           <Input />
         </Form.Item>
-        <Form.Item name={['user', 'permissions']} label={<Text strong>Permissions</Text>}>
+        <Form.Item
+          name={['user', 'permissions']}
+          label={(
+            <Space direction="vertical" size={0}>
+              <Text strong>Permissions</Text>
+              <small>
+                <Text type="secondary">
+                  Changes in permissions can take up to 10 minutes to come into effect.
+                </Text>
+              </small>
+            </Space>
+          )}
+        >
           <Space direction="vertical">
             {!tagInputVisible && (
               <Button
@@ -121,7 +178,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
                   setTagInputVisible(false);
                   setOptions(allPermissions);
                 }}
-                placeholder="Permission..."
+                placeholder="Permission…"
               />
             )}
             <Space size={0}>

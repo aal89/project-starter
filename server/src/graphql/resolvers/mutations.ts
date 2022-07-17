@@ -1,7 +1,9 @@
-import { Permission } from '@project-starter/shared';
+import { ok } from 'assert';
+import { decode, Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { User } from '../../entities/User';
+import { Permission as PermissionData } from '../../entities/Permission';
 import { DatabaseError, translateError, ValidationError } from '../../errors/translateError';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
@@ -10,6 +12,13 @@ import { MutationResolvers } from '../generated/graphql';
 
 const mutationTypeDefs = gql`
   scalar Void
+
+  input UserInput {
+    username: String!
+    name: String
+    lastName: String
+    permissions: String
+  }
 
   type Tokens {
     accessToken: String!
@@ -20,10 +29,37 @@ const mutationTypeDefs = gql`
     signup(username: String!, password: String!, name: String!): Void
     login(username: String!, password: String!): Tokens!
     refresh(token: String!): Tokens!
+    editUser(user: UserInput!): User!
   }
 `;
 
 const mutationResolvers: MutationResolvers<ContextType> = {
+  editUser: async (_, {
+    user: {
+      username, name, lastName, permissions,
+    },
+  }, { userCan }) => {
+    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to edit users');
+
+    const user = await User.findOneOrFail({ where: { username }, relations: ['roles.permissions'] });
+
+    const updatedPermissions = permissions ?? user.encodedPermissions;
+    const decodedPermissions = decode(updatedPermissions).map((p) => {
+      const permissionData = new PermissionData();
+      permissionData.name = p;
+      return permissionData;
+    });
+
+    user.name = name ?? user.name;
+    user.lastName = lastName ?? user.lastName;
+    user.permissions = decodedPermissions;
+
+    await validateOrReject(user);
+
+    await user.save();
+
+    return user;
+  },
   signup: async (_, { username, password, name }) => {
     try {
       const user = new User();
@@ -52,11 +88,11 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     const user = await User.findOneOrFail({
       where: { username },
       cache: true,
-      relations: ['roles.permissions'],
+      relations: ['permissions'],
     });
     await compareOrReject(password, user?.password ?? '');
 
-    if (!can(Permission.LOGIN, user.permissions)) {
+    if (!can(Permission.LOGIN, user.encodedPermissions)) {
       throw new Error('User is not allowed to login');
     }
 
@@ -73,10 +109,10 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       const user = await User.findOneOrFail({
         where: { username },
         cache: true,
-        relations: ['roles.permissions'],
+        relations: ['permissions'],
       });
 
-      if (!can(Permission.LOGIN, user.permissions)) {
+      if (!can(Permission.LOGIN, user.encodedPermissions)) {
         throw new Error('User is not allowed to login');
       }
 

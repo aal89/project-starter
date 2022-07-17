@@ -11,7 +11,7 @@ const queryTypeDefs = gql`
     username: String!
     name: String!
     lastName: String
-    permissions: String!
+    encodedPermissions: String!
   }
 
   type PaginatedUsers {
@@ -27,12 +27,12 @@ const queryTypeDefs = gql`
 
 const queryResolvers: QueryResolvers<ContextType> = {
   users: async (_, { offset, limit }, { userCan }) => {
-    ok(userCan(Permission.ADMINISTRATE), 'User is not allowed to list users');
+    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to list users');
 
     const pageSize = Math.max(1, Math.min(limit, 25));
     const pageOffset = Math.max(0, offset);
 
-    const [users, total] = await User.findAndCount({ skip: pageOffset, take: pageSize, relations: ['roles.permissions'] });
+    const [users, total] = await User.findAndCount({ skip: pageOffset, take: pageSize, relations: ['permissions'] });
 
     return {
       total,

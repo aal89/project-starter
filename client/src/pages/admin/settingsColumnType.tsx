@@ -60,7 +60,7 @@ export const columns: (props: ColumnsProps) => ColumnsType<User & { key: string 
   },
   {
     title: 'Permissions',
-    dataIndex: 'permissions',
+    dataIndex: 'encodedPermissions',
     key: 'permissions',
     render: (text: string) => decode(text).map((e) => <Tag key={e}>{e}</Tag>),
   },

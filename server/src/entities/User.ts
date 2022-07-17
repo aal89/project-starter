@@ -5,7 +5,7 @@ import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
-import { Role } from './Role';
+import { Permission } from './Permission';
 
 @Entity()
 export class User extends BaseEntity {
@@ -34,13 +34,13 @@ export class User extends BaseEntity {
   image?: string
 
   @Exclude()
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany(() => Permission, (permission) => permission.users)
   @JoinTable()
-  roles?: Role[];
+  permissions?: Permission[];
 
-  get permissions() {
-    if (this.roles && this.roles.every((role) => role.permissions)) {
-      const perms = this.roles.flatMap((role) => role.permissions).map((p) => p?.name ?? '');
+  get encodedPermissions() {
+    if (this.permissions) {
+      const perms = this.permissions.map((p) => p?.name ?? '');
       return PermissionCodec.encode(perms);
     }
 
@@ -50,7 +50,7 @@ export class User extends BaseEntity {
   toJSON() {
     return {
       ...instanceToPlain(this),
-      permissions: this.permissions,
+      encodedPermissions: this.encodedPermissions,
     };
   }
 
