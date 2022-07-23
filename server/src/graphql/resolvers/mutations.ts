@@ -6,6 +6,7 @@ import { In } from 'typeorm';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
 import { DatabaseError, translateError, ValidationError } from '../../errors/translateError';
+import { randomString } from '../../utils/string';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
 import { createTokens, validateRefreshToken } from '../auth/token';
@@ -33,10 +34,21 @@ const mutationTypeDefs = gql`
     login(username: String!, password: String!): Tokens!
     refresh(token: String!): Tokens!
     editUser(user: UserInput!): User!
+    resetPassword(id: String!): String!
   }
 `;
 
 const mutationResolvers: MutationResolvers<ContextType> = {
+  resetPassword: async (_, { id }, { userCan }) => {
+    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to reset passwords');
+
+    const user = await User.findOneOrFail({ where: { id } });
+    const newPassword = randomString();
+    await user.setPassword(newPassword);
+    await user.save();
+
+    return newPassword;
+  },
   editUser: async (_, {
     user: {
       oldUsername, username, name, lastName, permissions, image,

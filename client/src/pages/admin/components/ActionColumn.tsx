@@ -2,9 +2,15 @@ import {
   EditOutlined, UnlockOutlined, StopOutlined, DeleteOutlined,
 } from '@ant-design/icons';
 import { Permission, removePermission } from '@project-starter/shared/build';
-import { Space, Tooltip, Button } from 'antd';
+import {
+  Space, Tooltip, Button, Popconfirm, message,
+} from 'antd';
 import React, { useState } from 'react';
-import { useEditUserMutation, User } from '../../../graphql/generated/graphql';
+import {
+  useEditUserMutation,
+  User,
+  useResetPasswordMutation,
+} from '../../../graphql/generated/graphql';
 import { EditUserModal } from './EditUserModal';
 
 type ActionColumnProps = {
@@ -14,6 +20,7 @@ type ActionColumnProps = {
 
 export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged }) => {
   const [editUserMutation, { loading: resetLoading }] = useEditUserMutation();
+  const [resetPasswordMutation, { loading: passwordLoading }] = useResetPasswordMutation();
   const [editUserModalVisible, setEditUserModalVisible] = useState(false);
 
   const modalOnClose = (changes: boolean) => {
@@ -40,6 +47,19 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
     }
   };
 
+  const resetPassword = async () => {
+    try {
+      const result = await resetPasswordMutation({
+        variables: {
+          id: user.id,
+        },
+      });
+      message.success(`Password succesfully reset to: ${result.data?.resetPassword}`);
+    } catch {
+      message.error('Resetting password failed, try again later.');
+    }
+  };
+
   return (
     <Space>
       {editUserModalVisible && <EditUserModal user={user} onClose={modalOnClose} />}
@@ -53,7 +73,21 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
         />
       </Tooltip>
       <Tooltip title="Reset password">
-        <Button type="dashed" shape="circle" icon={<UnlockOutlined />} size="middle" />
+        <Popconfirm
+          title="Are you sure you wish to reset the password?"
+          okText="Yes"
+          cancelText="No"
+          placement="left"
+          onConfirm={resetPassword}
+        >
+          <Button
+            type="dashed"
+            shape="circle"
+            icon={<UnlockOutlined />}
+            size="middle"
+            loading={passwordLoading}
+          />
+        </Popconfirm>
       </Tooltip>
       <Tooltip title="Restrict access">
         <Button
@@ -66,13 +100,7 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
         />
       </Tooltip>
       <Tooltip title="Delete account">
-        <Button
-          type="text"
-          shape="circle"
-          icon={<DeleteOutlined />}
-          size="small"
-          danger
-        />
+        <Button type="text" shape="circle" icon={<DeleteOutlined />} size="small" danger />
       </Tooltip>
     </Space>
   );

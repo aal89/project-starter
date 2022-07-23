@@ -21,6 +21,7 @@ export type Mutation = {
   editUser: User;
   login: Tokens;
   refresh: Tokens;
+  resetPassword: Scalars['String'];
   signup?: Maybe<Scalars['Void']>;
 };
 
@@ -38,6 +39,11 @@ export type MutationLoginArgs = {
 
 export type MutationRefreshArgs = {
   token: Scalars['String'];
+};
+
+
+export type MutationResetPasswordArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -193,6 +199,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   editUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationEditUserArgs, 'user'>>;
   login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   refresh?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;
+  resetPassword?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'id'>>;
   signup?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'password' | 'username'>>;
 };
 

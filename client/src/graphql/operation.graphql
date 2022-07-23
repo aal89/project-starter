@@ -33,6 +33,12 @@ mutation EditUser(
   }
 }
 
+mutation ResetPassword(
+  $id: String!
+) {
+  resetPassword(id: $id)
+}
+
 query GetUsers(
   $offset: Int!
   $limit: Int!
