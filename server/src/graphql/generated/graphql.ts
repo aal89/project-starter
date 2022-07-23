@@ -18,11 +18,17 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  deleteAccount?: Maybe<Scalars['Void']>;
   editUser: User;
   login: Tokens;
   refresh: Tokens;
   resetPassword: Scalars['String'];
   signup?: Maybe<Scalars['Void']>;
+};
+
+
+export type MutationDeleteAccountArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -196,6 +202,7 @@ export type ResolversParentTypes = {
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  deleteAccount?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationDeleteAccountArgs, 'id'>>;
   editUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationEditUserArgs, 'user'>>;
   login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   refresh?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;

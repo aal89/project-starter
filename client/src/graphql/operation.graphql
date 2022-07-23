@@ -39,6 +39,12 @@ mutation ResetPassword(
   resetPassword(id: $id)
 }
 
+mutation DeleteAccount(
+  $id: String!
+) {
+  deleteAccount(id: $id)
+}
+
 query GetUsers(
   $offset: Int!
   $limit: Int!

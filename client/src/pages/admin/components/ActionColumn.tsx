@@ -7,6 +7,7 @@ import {
 } from 'antd';
 import React, { useState } from 'react';
 import {
+  useDeleteAccountMutation,
   useEditUserMutation,
   User,
   useResetPasswordMutation,
@@ -21,6 +22,7 @@ type ActionColumnProps = {
 export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged }) => {
   const [editUserMutation, { loading: resetLoading }] = useEditUserMutation();
   const [resetPasswordMutation, { loading: passwordLoading }] = useResetPasswordMutation();
+  const [deleteAccountMutation, { loading: deleteLoading }] = useDeleteAccountMutation();
   const [editUserModalVisible, setEditUserModalVisible] = useState(false);
 
   const modalOnClose = (changes: boolean) => {
@@ -57,6 +59,23 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
       message.success(`Password succesfully reset to: ${result.data?.resetPassword}`);
     } catch {
       message.error('Resetting password failed, try again later.');
+    }
+  };
+
+  const deleteAccount = async () => {
+    try {
+      await deleteAccountMutation({
+        variables: {
+          id: user.id,
+        },
+      });
+      message.success('Account succesfully deleted');
+
+      if (dataChanged) {
+        dataChanged();
+      }
+    } catch (err) {
+      message.error((err as Error).message);
     }
   };
 
@@ -100,7 +119,15 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
         />
       </Tooltip>
       <Tooltip title="Delete account">
-        <Button type="text" shape="circle" icon={<DeleteOutlined />} size="small" danger />
+        <Popconfirm
+          title="Are you sure you wish to delete this account?"
+          okText="Yes"
+          cancelText="No"
+          placement="left"
+          onConfirm={deleteAccount}
+        >
+          <Button type="text" shape="circle" icon={<DeleteOutlined />} size="small" loading={deleteLoading} danger />
+        </Popconfirm>
       </Tooltip>
     </Space>
   );

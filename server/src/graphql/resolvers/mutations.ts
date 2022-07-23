@@ -35,10 +35,20 @@ const mutationTypeDefs = gql`
     refresh(token: String!): Tokens!
     editUser(user: UserInput!): User!
     resetPassword(id: String!): String!
+    deleteAccount(id: String!): Void
   }
 `;
 
 const mutationResolvers: MutationResolvers<ContextType> = {
+  deleteAccount: async (_, { id }, { userCan, user }) => {
+    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to delete accounts');
+
+    if (user?.id === id) {
+      throw new Error('Cannot delete your own account');
+    }
+
+    await User.delete(id);
+  },
   resetPassword: async (_, { id }, { userCan }) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to reset passwords');
 
