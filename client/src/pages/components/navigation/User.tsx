@@ -9,13 +9,13 @@ import { userMenu } from './UserMenuItems';
 const { Text } = Typography;
 
 export const User: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
 
   return (
     <Dropdown overlay={<Menu items={userMenu(!!user)} />} placement="bottomRight">
       <Space>
         <Text>{user?.name ?? 'Account'}</Text>
-        <Avatar src="https://joeschmoe.io/api/v1/random" icon={<UserOutlined />} />
+        <Avatar src={isLoggedIn() ? 'https://joeschmoe.io/api/v1/random' : ''} icon={<UserOutlined />} />
       </Space>
     </Dropdown>
   );

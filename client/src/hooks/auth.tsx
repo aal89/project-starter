@@ -125,6 +125,8 @@ export const useAuth = () => {
     navigate(Path.userSignup);
   };
 
+  const isLoggedIn = () => !!user;
+
   return {
     userCan,
     login,
@@ -138,5 +140,6 @@ export const useAuth = () => {
     goHome,
     goLogin,
     goSignup,
+    isLoggedIn,
   };
 };

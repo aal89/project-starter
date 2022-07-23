@@ -4,20 +4,17 @@ import {
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useGetUsersQuery, User } from '../../graphql/generated/graphql';
+import { useGetUsersQuery } from '../../graphql/generated/graphql';
 import { SetLayoutContext } from '../components/Layout';
 import { Spinner } from '../components/Spinner';
-import { EditUserModal } from './EditUserModal';
 import { columns } from './settingsColumnType';
 
 const Settings: React.FC = () => {
   const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
-  const [action, setAction] = useState<{
-    action: 'edit' | 'reset' | 'restrict' | 'delete';
-    user: User;
-  } | null>(null);
   const [offset, setOffset] = useState(0);
-  const { data, loading, error } = useGetUsersQuery({
+  const {
+    data, loading, error, refetch,
+  } = useGetUsersQuery({
     variables: {
       offset,
       limit: 25,
@@ -41,9 +38,6 @@ const Settings: React.FC = () => {
 
   return (
     <>
-      {action && action.action === 'edit' && (
-        <EditUserModal user={action.user} onClose={() => setAction(null)} />
-      )}
       <Row justify="center" gutter={18}>
         <Col>
           <Card>
@@ -84,7 +78,9 @@ const Settings: React.FC = () => {
         <Col span={24}>
           <Table
             columns={columns({
-              editUser: (user: User) => setAction({ action: 'edit', user }),
+              dataChanged() {
+                refetch();
+              },
             })}
             dataSource={data?.users.users.map((u) => ({ key: u.id, ...u }))}
             pagination={false}

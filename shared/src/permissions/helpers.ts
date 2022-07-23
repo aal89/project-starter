@@ -8,3 +8,5 @@ export const can = (assertedPermission: Permission, encodedPermissions: string) 
 
 export const decode = (encodedPermissions: string) => PermissionCodec.decode(encodedPermissions);
 export const encode = (decodedPermissions: Permission[]) => PermissionCodec.encode(decodedPermissions);
+
+export const removePermission = (encodedPermissions: string, permission: Permission) => encode(decode(encodedPermissions).filter((p) => p !== permission));

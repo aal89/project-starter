@@ -1,19 +1,28 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { decode, encode, Permission } from '@project-starter/shared/build';
 import {
-  AutoComplete, Button, Form, Input, message, Modal, Space, Tag, Tooltip, Typography,
+  AutoComplete,
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Space,
+  Tag,
+  Tooltip,
+  Typography,
 } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
-import { useEditUserMutation, User } from '../../graphql/generated/graphql';
+import { useEditUserMutation, User } from '../../../graphql/generated/graphql';
 
 const { Text } = Typography;
 
 type EditUserModalProps = {
   user: User;
-  onClose?: () => void;
+  onClose?: (changes: boolean) => void;
 };
 
 type AutoCompleteRef = {
@@ -34,6 +43,7 @@ const validateMessages = {
 
 export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) => {
   const [tags, setTags] = useState<Permission[]>([]);
+  const [permissionsChanged, setPermissionsChanged] = useState(false);
   const [tagInputVisible, setTagInputVisible] = useState(false);
   const inputRef = useRef<AutoCompleteRef>(null);
   const [modalVisible, setModalVisible] = useState(true);
@@ -55,7 +65,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
 
   useEffect(() => {
     if (onClose && !modalVisible) {
-      setTimeout(() => onClose(), 500);
+      setTimeout(() => onClose(form.isFieldsTouched() || permissionsChanged), 500);
     }
   }, [modalVisible]);
 
@@ -67,6 +77,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter((tag) => tag !== removedTag);
     setTags(newTags);
+    setPermissionsChanged(true);
   };
 
   const onSearch = (searchText: string) => {
@@ -77,8 +88,33 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
   const handleInputConfirm = (permission: Permission) => {
     if (tags.indexOf(permission) === -1) {
       setTags([...tags, permission]);
+      setPermissionsChanged(true);
     }
     setTagInputVisible(false);
+  };
+
+  const ok = async () => {
+    try {
+      await editUserMutation({
+        variables: {
+          input: {
+            username: form.getFieldValue(['user', 'username']),
+            lastName: form.getFieldValue(['user', 'lastName']),
+            name: form.getFieldValue(['user', 'name']),
+            permissions: encode(tags),
+            oldUsername: user.username,
+          },
+        },
+      });
+      setModalVisible(false);
+    } catch {
+      message.error('Could not edit user! Try again later.');
+    }
+  };
+
+  const onFieldsChange = async () => {
+    const formValid = !!form.getFieldsError().flatMap((field) => field.errors).length;
+    setOkDisabled(formValid);
   };
 
   return (
@@ -87,32 +123,13 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
         <Space>
           <Text strong>Edit user</Text>
           <small>
-            <Text type="secondary">
-              {user.id}
-            </Text>
+            <Text type="secondary">{user.id}</Text>
           </small>
         </Space>
       )}
       style={{ top: 20 }}
       visible={modalVisible}
-      onOk={async () => {
-        try {
-          await editUserMutation({
-            variables: {
-              input: {
-                username: form.getFieldValue(['user', 'username']),
-                lastName: form.getFieldValue(['user', 'lastName']),
-                name: form.getFieldValue(['user', 'name']),
-                permissions: encode(tags),
-                oldUsername: user.username,
-              },
-            },
-          });
-          setModalVisible(false);
-        } catch {
-          message.error('Could not edit user! Try again later.');
-        }
-      }}
+      onOk={ok}
       onCancel={() => setModalVisible(false)}
       confirmLoading={loading}
       okButtonProps={{
@@ -122,10 +139,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
       cancelText="Cancel"
     >
       <Form
-        onFieldsChange={async () => {
-          const formValid = !!form.getFieldsError().flatMap((field) => field.errors).length;
-          setOkDisabled(formValid);
-        }}
+        onFieldsChange={onFieldsChange}
         name="nest-messages"
         form={form}
         layout="vertical"
