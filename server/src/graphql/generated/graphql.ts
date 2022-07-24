@@ -80,6 +80,7 @@ export type QueryUserArgs = {
 export type QueryUsersArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type Tokens = {

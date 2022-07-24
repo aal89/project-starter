@@ -46,10 +46,11 @@ mutation DeleteAccount(
 }
 
 query GetUsers(
+  $username: String
   $offset: Int!
   $limit: Int!
 ) {
-  users(offset: $offset, limit: $limit) {
+  users(username: $username, offset: $offset, limit: $limit) {
     total
     users {
       id

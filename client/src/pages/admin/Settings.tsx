@@ -7,17 +7,22 @@ import { useOutletContext } from 'react-router-dom';
 import { useGetUsersQuery } from '../../graphql/generated/graphql';
 import { SetLayoutContext } from '../components/Layout';
 import { Spinner } from '../components/Spinner';
-import { columns } from './settingsColumnType';
+import { columns } from './columns';
+
+const PAGE_SIZE = 25;
 
 const Settings: React.FC = () => {
   const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
-  const [offset, setOffset] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isSearching, setIsSearching] = useState(false);
+  const [currentSearchPage, setCurrentSearchPage] = useState(1);
   const {
     data, loading, error, refetch,
   } = useGetUsersQuery({
+    fetchPolicy: 'no-cache',
     variables: {
-      offset,
-      limit: 25,
+      offset: 0,
+      limit: PAGE_SIZE,
     },
   });
 
@@ -31,6 +36,24 @@ const Settings: React.FC = () => {
       message.error(error.message);
     }
   }, [error]);
+
+  const searchHandler = (text: string) => {
+    if (text.length > 3) {
+      setIsSearching(true);
+      refetch({
+        offset: 0,
+        username: text,
+      });
+    }
+    if (text.length === 0) {
+      setIsSearching(false);
+      setCurrentSearchPage(1);
+      refetch({
+        offset: currentPage * PAGE_SIZE - PAGE_SIZE,
+        username: null,
+      });
+    }
+  };
 
   if (loading) {
     return <Spinner />;
@@ -70,6 +93,7 @@ const Settings: React.FC = () => {
             size="large"
             placeholder="Search by username..."
             allowClear
+            onChange={(event) => searchHandler(event.target.value)}
             prefix={<UserOutlined />}
           />
         </Col>
@@ -93,10 +117,20 @@ const Settings: React.FC = () => {
       <Row justify="end" style={{ marginTop: 10 }}>
         <Col>
           <Pagination
-            pageSize={25}
-            current={offset + 1}
+            pageSize={PAGE_SIZE}
+            current={isSearching ? currentSearchPage : currentPage}
             total={data?.users.total}
-            onChange={(page) => setOffset(page - 1)}
+            onChange={(page) => {
+              if (isSearching) {
+                setCurrentSearchPage(page);
+              }
+              if (!isSearching) {
+                setCurrentPage(page);
+              }
+              refetch({
+                offset: page * PAGE_SIZE - PAGE_SIZE,
+              });
+            }}
           />
         </Col>
       </Row>

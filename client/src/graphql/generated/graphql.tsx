@@ -81,6 +81,7 @@ export type QueryUserArgs = {
 export type QueryUsersArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type Tokens = {
@@ -153,6 +154,7 @@ export type DeleteAccountMutationVariables = Exact<{
 export type DeleteAccountMutation = { __typename?: 'Mutation', deleteAccount?: void | null };
 
 export type GetUsersQueryVariables = Exact<{
+  username?: InputMaybe<Scalars['String']>;
   offset: Scalars['Int'];
   limit: Scalars['Int'];
 }>;
@@ -359,8 +361,8 @@ export type DeleteAccountMutationHookResult = ReturnType<typeof useDeleteAccount
 export type DeleteAccountMutationResult = Apollo.MutationResult<DeleteAccountMutation>;
 export type DeleteAccountMutationOptions = Apollo.BaseMutationOptions<DeleteAccountMutation, DeleteAccountMutationVariables>;
 export const GetUsersDocument = gql`
-    query GetUsers($offset: Int!, $limit: Int!) {
-  users(offset: $offset, limit: $limit) {
+    query GetUsers($username: String, $offset: Int!, $limit: Int!) {
+  users(username: $username, offset: $offset, limit: $limit) {
     total
     users {
       id
@@ -385,6 +387,7 @@ export const GetUsersDocument = gql`
  * @example
  * const { data, loading, error } = useGetUsersQuery({
  *   variables: {
+ *      username: // value for 'username'
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
  *   },
