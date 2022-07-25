@@ -21,8 +21,10 @@ const queryTypeDefs = gql`
   }
 
   type Query {
-    user(id: String!): User
     users(username: String, offset: Int!, limit: Int!): PaginatedUsers!
+    totalUsers: Int!
+    activeUsers: Int!
+    recentlyCreatedUsers: Int!
   }
 `;
 
@@ -45,6 +47,23 @@ const queryResolvers: QueryResolvers<ContextType> = {
       total,
       users,
     };
+  },
+  totalUsers: async (_, __, { userCan }) => {
+    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
+
+    return User.count();
+  },
+  activeUsers: async (_, __, { userCan }) => {
+    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
+
+    // TODO: no business rule yet, how to decide active users
+    return User.count();
+  },
+  recentlyCreatedUsers: async (_, __, { userCan }) => {
+    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
+
+    // TODO: no created_at fields yet
+    return User.count();
   },
 };
 

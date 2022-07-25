@@ -67,13 +67,10 @@ export type PaginatedUsers = {
 
 export type Query = {
   __typename?: 'Query';
-  user?: Maybe<User>;
+  activeUsers: Scalars['Int'];
+  recentlyCreatedUsers: Scalars['Int'];
+  totalUsers: Scalars['Int'];
   users: PaginatedUsers;
-};
-
-
-export type QueryUserArgs = {
-  id: Scalars['String'];
 };
 
 
@@ -218,7 +215,9 @@ export type PaginatedUsersResolvers<ContextType = any, ParentType extends Resolv
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
+  activeUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  recentlyCreatedUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   users?: Resolver<ResolversTypes['PaginatedUsers'], ParentType, ContextType, RequireFields<QueryUsersArgs, 'limit' | 'offset'>>;
 };
 
