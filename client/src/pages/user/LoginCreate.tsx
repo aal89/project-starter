@@ -1,4 +1,6 @@
-import { EditOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  EditOutlined, LockOutlined, MailOutlined, UserOutlined,
+} from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
 import { Tabs, Row, Col } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -40,7 +42,7 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
               login(values.username, values.password, rememberMe);
             }
             if (tab === 'signup') {
-              signup(values.username, values.password, values.name);
+              signup(values.username, values.password, values.email, values.name);
             }
           }}
           submitter={{
@@ -129,6 +131,21 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                     required: true,
                     message: 'Name cannot be empty',
                   },
+                ]}
+              />
+              <ProFormText
+                name="email"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <MailOutlined className="prefixIcon" />,
+                }}
+                placeholder="E-mail"
+                rules={[
+                  {
+                    required: true,
+                    message: 'E-mail cannot be empty',
+                  },
+                  { type: 'email', message: 'Not a valid e-mail address' },
                 ]}
               />
               <ProFormText

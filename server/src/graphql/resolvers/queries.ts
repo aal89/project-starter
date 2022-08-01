@@ -1,7 +1,7 @@
 import { ok } from 'assert';
 import { Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
-import { Like } from 'typeorm';
+import { Like, MoreThan } from 'typeorm';
 import { User } from '../../entities/User';
 import { ContextType } from '../apollo-server';
 import { QueryResolvers } from '../generated/graphql';
@@ -12,6 +12,7 @@ const queryTypeDefs = gql`
     username: String!
     name: String!
     lastName: String
+    email: String!
     encodedPermissions: String!
   }
 
@@ -62,8 +63,13 @@ const queryResolvers: QueryResolvers<ContextType> = {
   recentlyCreatedUsers: async (_, __, { userCan }) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
 
-    // TODO: no created_at fields yet
-    return User.count();
+    const midnight = new Date(new Date().setHours(0, 0, 0, 0));
+
+    return User.count({
+      where: {
+        createdAt: MoreThan(midnight),
+      },
+    });
   },
 };
 

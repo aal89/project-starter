@@ -6,19 +6,24 @@ enum PostgresError {
 
 export enum DatabaseError {
   Unknown,
-  Duplicate,
+  DuplicateUsername,
+  DuplicateEmail,
 }
 
 export enum ValidationError {
   Username4MinLength,
 }
 
-const hasCode = (o: any): o is { code: string } => o && o.code && typeof o.code === 'string';
+const hasCode = (o: any): o is { code: string, detail: string } => o && o.code && typeof o.code === 'string' && o.detail && typeof o.detail === 'string';
 const isValidationError = (o: any): o is VE => o && o.property && typeof o.property === 'string';
 
 export const translateError = (err: unknown) => {
-  if (hasCode(err) && err.code === PostgresError.Duplicate) {
-    return DatabaseError.Duplicate;
+  if (hasCode(err) && err.code === PostgresError.Duplicate && err.detail.includes('username')) {
+    return DatabaseError.DuplicateUsername;
+  }
+
+  if (hasCode(err) && err.code === PostgresError.Duplicate && err.detail.includes('email')) {
+    return DatabaseError.DuplicateEmail;
   }
 
   if (isValidationError(err) && err.property === 'username') {

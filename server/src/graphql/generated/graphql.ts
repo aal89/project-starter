@@ -54,6 +54,7 @@ export type MutationResetPasswordArgs = {
 
 
 export type MutationSignupArgs = {
+  email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
@@ -88,6 +89,7 @@ export type Tokens = {
 
 export type User = {
   __typename?: 'User';
+  email: Scalars['String'];
   encodedPermissions: Scalars['String'];
   id: Scalars['String'];
   lastName?: Maybe<Scalars['String']>;
@@ -205,7 +207,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   refresh?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;
   resetPassword?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'id'>>;
-  signup?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'name' | 'password' | 'username'>>;
+  signup?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'email' | 'name' | 'password' | 'username'>>;
 };
 
 export type PaginatedUsersResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginatedUsers'] = ResolversParentTypes['PaginatedUsers']> = {
@@ -228,6 +230,7 @@ export type TokensResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   encodedPermissions?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

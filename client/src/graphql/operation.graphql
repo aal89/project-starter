@@ -11,9 +11,10 @@ mutation Login(
 mutation Signup(
   $username: String!
   $password: String!
+  $email: String!
   $name: String!
 ) {
-  signup(username: $username, password: $password, name: $name)
+  signup(username: $username, password: $password, email: $email, name: $name)
 }
 
 mutation Refresh(
@@ -57,6 +58,7 @@ query GetUsers(
       username
       name
       lastName
+      email
       encodedPermissions
     }
   }

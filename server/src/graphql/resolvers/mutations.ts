@@ -30,7 +30,7 @@ const mutationTypeDefs = gql`
   }
 
   type Mutation {
-    signup(username: String!, password: String!, name: String!): Void
+    signup(username: String!, password: String!, email: String!, name: String!): Void
     login(username: String!, password: String!): Tokens!
     refresh(token: String!): Tokens!
     editUser(user: UserInput!): User!
@@ -41,7 +41,10 @@ const mutationTypeDefs = gql`
 
 const mutationResolvers: MutationResolvers<ContextType> = {
   deleteAccount: async (_, { id }, { userCan, user }) => {
-    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to delete accounts');
+    ok(
+      userCan(Permission.LOGIN, Permission.ADMINISTRATE),
+      'User is not allowed to delete accounts',
+    );
 
     if (user?.id === id) {
       throw new Error('Cannot delete your own account');
@@ -50,7 +53,10 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     await User.delete(id);
   },
   resetPassword: async (_, { id }, { userCan }) => {
-    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to reset passwords');
+    ok(
+      userCan(Permission.LOGIN, Permission.ADMINISTRATE),
+      'User is not allowed to reset passwords',
+    );
 
     const user = await User.findOneOrFail({ where: { id } });
     const newPassword = randomString();
@@ -59,14 +65,21 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
     return newPassword;
   },
-  editUser: async (_, {
-    user: {
-      oldUsername, username, name, lastName, permissions, image,
+  editUser: async (
+    _,
+    {
+      user: {
+        oldUsername, username, name, lastName, permissions, image,
+      },
     },
-  }, { userCan }) => {
+    { userCan },
+  ) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to edit users');
 
-    const user = await User.findOneOrFail({ where: { username: oldUsername }, relations: ['permissions'] });
+    const user = await User.findOneOrFail({
+      where: { username: oldUsername },
+      relations: ['permissions'],
+    });
     const decodedPermissions = await PermissionData.find({
       where: { name: In(decode(permissions)) },
     });
@@ -83,21 +96,34 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
     return user;
   },
-  signup: async (_, { username, password, name }) => {
+  signup: async (_, {
+    username, password, email, name,
+  }) => {
     try {
       const user = new User();
 
       user.username = username;
-      await user.setPassword(password);
       user.name = name;
+      user.email = email;
+      await user.setPassword(password);
 
       await validateOrReject(user);
+
+      const canLogin = await PermissionData.find({
+        where: { name: Permission.LOGIN },
+      });
+
+      user.permissions = canLogin;
 
       await user.save();
     } catch (err) {
       const translatedError = translateError(err);
-      if (translatedError === DatabaseError.Duplicate) {
+      if (translatedError === DatabaseError.DuplicateUsername) {
         throw new Error('This username is already taken, please pick another');
+      }
+
+      if (translatedError === DatabaseError.DuplicateEmail) {
+        throw new Error('This email address is already taken, please pick another');
       }
 
       if (translatedError === ValidationError.Username4MinLength) {

@@ -88,12 +88,13 @@ export const useAuth = () => {
     }
   };
 
-  const signup = async (username: string, password: string, name: string) => {
+  const signup = async (username: string, password: string, email: string, name: string) => {
     try {
       await signupMutation({
         variables: {
           username,
           password,
+          email,
           name,
         },
       });

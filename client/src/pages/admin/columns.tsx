@@ -29,9 +29,9 @@ export const columns: (props: ColumnsProps) => ColumnsType<User & { key: string 
     render: (text: string) => <NameColumn text={text} />,
   },
   {
-    title: 'Last name',
-    dataIndex: 'lastName',
-    key: 'lastName',
+    title: 'Email',
+    dataIndex: 'email',
+    key: 'email',
     width: 300,
     render: (text: any) => text,
   },

@@ -16,6 +16,7 @@ export class InitialSeed1655475766558 implements MigrationInterface {
     const user = new User();
     user.username = 'admin';
     user.name = 'admin';
+    user.email = 'admin@localhost.com';
     user.permissions = [
       canAdministrate,
       canLogin,
@@ -26,6 +27,7 @@ export class InitialSeed1655475766558 implements MigrationInterface {
     const test = new User();
     test.username = 'test';
     test.name = 'test';
+    test.email = 'test@localhost.com';
     test.permissions = [
       canLogin,
     ];
