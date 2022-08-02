@@ -101,14 +101,15 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
             username: form.getFieldValue(['user', 'username']),
             lastName: form.getFieldValue(['user', 'lastName']),
             name: form.getFieldValue(['user', 'name']),
+            email: form.getFieldValue(['user', 'email']),
             permissions: encode(tags),
             oldUsername: user.username,
           },
         },
       });
       setModalVisible(false);
-    } catch {
-      message.error('Could not edit user! Try again later.');
+    } catch (err) {
+      message.error((err as Error).message);
     }
   };
 
@@ -152,6 +153,19 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
           name={['user', 'name']}
           rules={[{ required: true }]}
           label={<Text strong>Name</Text>}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name={['user', 'email']}
+          rules={[
+            {
+              required: true,
+              message: 'E-mail cannot be empty',
+            },
+            { type: 'email', message: 'Not a valid e-mail address' },
+          ]}
+          label={<Text strong>Email</Text>}
         >
           <Input />
         </Form.Item>

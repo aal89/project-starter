@@ -19,6 +19,7 @@ const mutationTypeDefs = gql`
     oldUsername: String!
     username: String!
     name: String!
+    email: String!
     lastName: String
     image: String
     permissions: String!
@@ -69,32 +70,50 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     _,
     {
       user: {
-        oldUsername, username, name, lastName, permissions, image,
+        oldUsername, username, name, email, lastName, permissions, image,
       },
     },
     { userCan },
   ) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to edit users');
 
-    const user = await User.findOneOrFail({
-      where: { username: oldUsername },
-      relations: ['permissions'],
-    });
-    const decodedPermissions = await PermissionData.find({
-      where: { name: In(decode(permissions)) },
-    });
+    try {
+      const user = await User.findOneOrFail({
+        where: { username: oldUsername },
+        relations: ['permissions'],
+      });
+      const decodedPermissions = await PermissionData.find({
+        where: { name: In(decode(permissions)) },
+      });
 
-    user.name = name;
-    user.lastName = lastName ?? user.lastName;
-    user.username = username;
-    user.image = image ?? user.image;
-    user.permissions = decodedPermissions;
+      user.name = name;
+      user.lastName = lastName ?? user.lastName;
+      user.username = username;
+      user.email = email;
+      user.image = image ?? user.image;
+      user.permissions = decodedPermissions;
 
-    await validateOrReject(user);
+      await validateOrReject(user);
 
-    await user.save();
+      await user.save();
 
-    return user;
+      return user;
+    } catch (err) {
+      const translatedError = translateError(err);
+      if (translatedError === DatabaseError.DuplicateUsername) {
+        throw new Error('This username is already taken, please pick another');
+      }
+
+      if (translatedError === DatabaseError.DuplicateEmail) {
+        throw new Error('This email address is already taken, please pick another');
+      }
+
+      if (translatedError === ValidationError.Username4MinLength) {
+        throw new Error('Username needs to be at least 4 characters');
+      }
+
+      throw new Error('Something went wrong, please try again');
+    }
   },
   signup: async (_, {
     username, password, email, name,

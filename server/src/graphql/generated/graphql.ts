@@ -98,6 +98,7 @@ export type User = {
 };
 
 export type UserInput = {
+  email: Scalars['String'];
   image?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];

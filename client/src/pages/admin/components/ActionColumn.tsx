@@ -40,6 +40,7 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
           name: user.name,
           oldUsername: user.username,
           username: user.username,
+          email: user.email,
           permissions,
         },
       },
