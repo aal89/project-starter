@@ -14,6 +14,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** Date custom scalar type */
+  Date: any;
   Void: void;
 };
 
@@ -90,10 +92,12 @@ export type Tokens = {
 
 export type User = {
   __typename?: 'User';
+  createdAt: Scalars['Date'];
   email: Scalars['String'];
   encodedPermissions: Scalars['String'];
   id: Scalars['String'];
   lastName?: Maybe<Scalars['String']>;
+  lastOnlineAt: Scalars['Date'];
   name: Scalars['String'];
   username: Scalars['String'];
 };
@@ -161,7 +165,7 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, email: string, encodedPermissions: string }> } };
+export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any }> } };
 
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -378,6 +382,8 @@ export const GetUsersDocument = gql`
       lastName
       email
       encodedPermissions
+      lastOnlineAt
+      createdAt
     }
   }
 }

@@ -60,6 +60,8 @@ query GetUsers(
       lastName
       email
       encodedPermissions
+      lastOnlineAt
+      createdAt
     }
   }
 }

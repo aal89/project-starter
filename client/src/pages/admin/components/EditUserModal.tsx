@@ -247,6 +247,15 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
           </Space>
         </Form.Item>
       </Form>
+      <small>
+        <Text strong>Last online at:</Text>
+        {' '}
+        <Text italic>{user.lastOnlineAt}</Text>
+        <br />
+        <Text strong>Created at:</Text>
+        {' '}
+        <Text italic>{user.createdAt}</Text>
+      </small>
     </Modal>
   );
 };

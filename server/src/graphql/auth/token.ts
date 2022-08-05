@@ -8,7 +8,7 @@ enum TokenType {
   RefreshToken = 'refreshToken',
 }
 
-export type DataUser = Omit<Omit<User, 'password'>, 'roles'>;
+export type DataUser = Omit<User, 'password' | 'roles'>;
 
 export type DecodedAccessToken = {
   type: TokenType.AccessToken;

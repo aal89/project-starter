@@ -13,6 +13,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** Date custom scalar type */
+  Date: any;
   Void: void;
 };
 
@@ -89,10 +91,12 @@ export type Tokens = {
 
 export type User = {
   __typename?: 'User';
+  createdAt: Scalars['Date'];
   email: Scalars['String'];
   encodedPermissions: Scalars['String'];
   id: Scalars['String'];
   lastName?: Maybe<Scalars['String']>;
+  lastOnlineAt: Scalars['Date'];
   name: Scalars['String'];
   username: Scalars['String'];
 };
@@ -177,6 +181,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginatedUsers: ResolverTypeWrapper<PaginatedUsers>;
@@ -191,6 +196,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  Date: Scalars['Date'];
   Int: Scalars['Int'];
   Mutation: {};
   PaginatedUsers: PaginatedUsers;
@@ -201,6 +207,10 @@ export type ResolversParentTypes = {
   UserInput: UserInput;
   Void: Scalars['Void'];
 };
+
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   deleteAccount?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationDeleteAccountArgs, 'id'>>;
@@ -231,10 +241,12 @@ export type TokensResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   encodedPermissions?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lastOnlineAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -245,6 +257,7 @@ export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type Resolvers<ContextType = any> = {
+  Date?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   PaginatedUsers?: PaginatedUsersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

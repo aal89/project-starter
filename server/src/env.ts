@@ -5,6 +5,7 @@ configureDotEnv();
 export const env = {
   isDevelopment: () => process.env.NODE_ENV === 'development',
   port: () => process.env.PORT ?? 8000,
+  dateLocale: () => process.env.DATE_LOCALE ?? 'en-US',
   signAccessTokenSecret: () => process.env.SIGN_ACCESS_SECRET ?? '',
   signRefreshTokenSecret: () => process.env.SIGN_REFRESH_SECRET ?? '',
   dataSource: {

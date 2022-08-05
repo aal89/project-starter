@@ -43,6 +43,9 @@ export class User extends BaseEntity {
   permissions?: Permission[];
 
   @Column({ default: new Date() })
+  lastOnlineAt: Date
+
+  @Column({ default: new Date() })
   createdAt: Date
 
   get encodedPermissions() {

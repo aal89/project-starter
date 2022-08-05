@@ -28,6 +28,8 @@ export class InitialSeed1655475766558 implements MigrationInterface {
     test.username = 'test';
     test.name = 'test';
     test.email = 'test@localhost.com';
+    test.lastOnlineAt = new Date('2000');
+    test.createdAt = new Date('2000');
     test.permissions = [
       canLogin,
     ];

@@ -3,6 +3,7 @@ import { Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
 import { Like, MoreThan } from 'typeorm';
 import { User } from '../../entities/User';
+import { midnight, firstDayOfMonth } from '../../utils/date';
 import { ContextType } from '../apollo-server';
 import { QueryResolvers } from '../generated/graphql';
 
@@ -14,6 +15,8 @@ const queryTypeDefs = gql`
     lastName: String
     email: String!
     encodedPermissions: String!
+    lastOnlineAt: Date!
+    createdAt: Date!
   }
 
   type PaginatedUsers {
@@ -57,17 +60,18 @@ const queryResolvers: QueryResolvers<ContextType> = {
   activeUsers: async (_, __, { userCan }) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
 
-    // TODO: no business rule yet, how to decide active users
-    return User.count();
+    return User.count({
+      where: {
+        lastOnlineAt: MoreThan(firstDayOfMonth()),
+      },
+    });
   },
   recentlyCreatedUsers: async (_, __, { userCan }) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
 
-    const midnight = new Date(new Date().setHours(0, 0, 0, 0));
-
     return User.count({
       where: {
-        createdAt: MoreThan(midnight),
+        createdAt: MoreThan(midnight()),
       },
     });
   },

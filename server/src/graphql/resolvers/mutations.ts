@@ -13,8 +13,6 @@ import { createTokens, validateRefreshToken } from '../auth/token';
 import { MutationResolvers } from '../generated/graphql';
 
 const mutationTypeDefs = gql`
-  scalar Void
-
   input UserInput {
     oldUsername: String!
     username: String!
@@ -166,6 +164,9 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
     const { accessToken, refreshToken } = await createTokens(user);
 
+    user.lastOnlineAt = new Date();
+    await user.save();
+
     return {
       accessToken,
       refreshToken,
@@ -187,6 +188,9 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       // TODO: invalidate refresh token
 
       const { accessToken, refreshToken } = await createTokens(user);
+
+      user.lastOnlineAt = new Date();
+      await user.save();
 
       return {
         accessToken,
