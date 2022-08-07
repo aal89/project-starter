@@ -29,7 +29,7 @@ export const createTokens = async (user: DataUser) => {
         user,
       } as DecodedAccessToken,
       env.signAccessTokenSecret(),
-      { expiresIn: '15s' },
+      { expiresIn: '1h' },
     ),
     refreshToken: await sign(
       {
