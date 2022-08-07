@@ -12,15 +12,13 @@ import {
   User,
 } from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
-import { useStorageState } from './storage-state';
-
-export const ACCESS_TOKEN_KEY = 'accessToken';
-export const REFRESH_TOKEN_KEY = 'refreshToken';
+import { useTokens } from './tokens';
 
 export const useAuth = () => {
   const navigate = useNavigate();
-  const [accessToken, setAccessToken] = useStorageState(ACCESS_TOKEN_KEY);
-  const [refreshToken, setRefreshToken] = useStorageState(REFRESH_TOKEN_KEY);
+  const {
+    accessToken, refreshToken, setAccessToken, setRefreshToken,
+  } = useTokens();
   const [signupMutation, { loading: signupLoading }] = useSignupMutation();
   const [loginMutation, { loading: loginLoading }] = useLoginMutation();
   const [refreshMutation, { loading: refreshLoading }] = useRefreshMutation();

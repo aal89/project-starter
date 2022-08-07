@@ -1,16 +1,24 @@
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient, createHttpLink, from, InMemoryCache,
+} from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { ACCESS_TOKEN_KEY } from './hooks/auth';
+import { TokenRefreshLink } from 'apollo-link-token-refresh';
+import { RefreshDocument } from './graphql/generated/graphql';
+import { ACCESS_TOKEN_KEY, isExpired, REFRESH_TOKEN_KEY } from './hooks/tokens';
+
+const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY) ?? '';
+const getRefreshToken = () => localStorage.getItem(REFRESH_TOKEN_KEY) ?? '';
+const setAccessToken = (at: string) => localStorage.setItem(ACCESS_TOKEN_KEY, at);
+const setRefreshToken = (rt: string) => localStorage.setItem(REFRESH_TOKEN_KEY, rt);
+const isAccessTokenExpired = () => isExpired(getAccessToken());
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:8000/graphql',
 });
 
-const getToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
-
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
-  const token = getToken();
+  const token = getAccessToken();
 
   // return the headers to the context so httpLink can read them
   return {
@@ -21,43 +29,50 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+const refreshLink: TokenRefreshLink = new TokenRefreshLink<{
+  accessToken: string;
+  refreshToken: string;
+}>({
+  accessTokenField: 'refresh',
+  isTokenValidOrUndefined: () => !isAccessTokenExpired() || getAccessToken() === '' || getRefreshToken() === '',
+  fetchAccessToken: () => refreshClient
+    .mutate({
+      mutation: RefreshDocument,
+      variables: { refreshToken: getRefreshToken() },
+    })
+    .then(
+      ({ data }) => new Response(
+        JSON.stringify({
+          data,
+        }),
+      ),
+    ),
+  handleFetch: ({ accessToken, refreshToken }) => {
+    console.log('debug', 'refreshed tokens!');
+    setAccessToken(accessToken);
+    setRefreshToken(refreshToken);
+  },
+  handleError: (err) => {
+    console.log(err);
+    if (
+      !navigator.onLine
+      || (err instanceof TypeError && err.message === 'Network request failed')
+    ) {
+      console.log('debug', 'Offline -> do nothing 🍵');
+    } else {
+      console.log('debug', 'Online -> log out 👋');
+    }
+  },
+});
+
 export const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: from([refreshLink, authLink, httpLink]),
   cache: new InMemoryCache({
     addTypename: false,
-    // typePolicies: {
-    //   Query: {
-    //     fields: {
-    //       users: {
-    //         keyArgs: ['username', 'offset', 'limit'],
-    //         merge(existing, incoming, { args }) {
-    //           // Slicing is necessary because the existing data is
-    //           // immutable, and frozen in development.
-    //           const mergedUsers = existing?.users ? existing.users.slice(0) : [];
-    //           // eslint-disable-next-line no-plusplus
-    //           for (let i = 0; i < incoming.users.length; ++i) {
-    //             mergedUsers[(args?.offset ?? 0) + i] = incoming.users[i];
-    //           }
-
-    //           return {
-    //             total: incoming.total,
-    //             users: mergedUsers,
-    //           };
-    //         },
-    //         read(existing, options) {
-    //           const offset = options.args?.offset;
-    //           const limit = options.args?.limit;
-
-    //           const selectedUsers = existing?.users.slice(offset, offset + limit) ?? [];
-
-    //           return existing && !!selectedUsers.length && {
-    //             total: (existing.total ?? 0),
-    //             users: selectedUsers,
-    //           };
-    //         },
-    //       },
-    //     },
-    //   },
-    // },
   }),
+});
+
+const refreshClient = new ApolloClient({
+  link: httpLink,
+  cache: new InMemoryCache(),
 });
