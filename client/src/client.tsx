@@ -4,13 +4,16 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import { RefreshDocument } from './graphql/generated/graphql';
-import { ACCESS_TOKEN_KEY, isExpired, REFRESH_TOKEN_KEY } from './hooks/tokens';
+import { Path } from './routing/Path';
+import {
+  getAccessToken,
+  isAccessTokenExpired,
+  getRefreshToken,
+  setAccessToken,
+  setRefreshToken,
+} from './tokens';
 
-const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY) ?? '';
-const getRefreshToken = () => localStorage.getItem(REFRESH_TOKEN_KEY) ?? '';
-const setAccessToken = (at: string) => localStorage.setItem(ACCESS_TOKEN_KEY, at);
-const setRefreshToken = (rt: string) => localStorage.setItem(REFRESH_TOKEN_KEY, rt);
-const isAccessTokenExpired = () => isExpired(getAccessToken());
+const isOffline = (err: Error) => !navigator.onLine || (err instanceof TypeError && err.message === 'Network request failed');
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:8000/graphql',
@@ -29,7 +32,7 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const refreshLink: TokenRefreshLink = new TokenRefreshLink<{
+const refreshLink = new TokenRefreshLink<{
   accessToken: string;
   refreshToken: string;
 }>({
@@ -48,19 +51,14 @@ const refreshLink: TokenRefreshLink = new TokenRefreshLink<{
       ),
     ),
   handleFetch: ({ accessToken, refreshToken }) => {
-    console.log('debug', 'refreshed tokens!');
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
   },
   handleError: (err) => {
-    console.log(err);
-    if (
-      !navigator.onLine
-      || (err instanceof TypeError && err.message === 'Network request failed')
-    ) {
-      console.log('debug', 'Offline -> do nothing 🍵');
-    } else {
-      console.log('debug', 'Online -> log out 👋');
+    // if we're offline, just wait and let the user refresh some time later. if we're
+    // online and it error'ed then logout and lets try again from there
+    if (!isOffline(err)) {
+      window.location.replace(Path.userLogout);
     }
   },
 });
