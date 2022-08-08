@@ -151,26 +151,30 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     }
   },
   login: async (_, { username, password }, { can }) => {
-    const user = await User.findOneOrFail({
-      where: { username },
-      cache: true,
-      relations: ['permissions'],
-    });
-    await compareOrReject(password, user?.password ?? '');
+    try {
+      const user = await User.findOneOrFail({
+        where: { username },
+        cache: true,
+        relations: ['permissions'],
+      });
+      await compareOrReject(password, user?.password ?? '');
 
-    if (!can(Permission.LOGIN, user.encodedPermissions)) {
-      throw new Error('User is not allowed to login');
+      if (!can(Permission.LOGIN, user.encodedPermissions)) {
+        throw new Error('User is not allowed to login');
+      }
+
+      const { accessToken, refreshToken } = await createTokens(user);
+
+      user.lastOnlineAt = new Date();
+      await user.save();
+
+      return {
+        accessToken,
+        refreshToken,
+      };
+    } catch {
+      throw new Error('Incorrect password');
     }
-
-    const { accessToken, refreshToken } = await createTokens(user);
-
-    user.lastOnlineAt = new Date();
-    await user.save();
-
-    return {
-      accessToken,
-      refreshToken,
-    };
   },
   refresh: async (_, { token }, { can }) => {
     try {
