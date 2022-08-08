@@ -1,3 +1,4 @@
+import { Permission } from '@project-starter/shared/build';
 import React, { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { withProtectedRoute } from '../../enhancers/withProtectedRoute';
@@ -21,4 +22,4 @@ const Settings: React.FC = () => {
   );
 };
 
-export default withProtectedRoute(Settings);
+export default withProtectedRoute(Settings, { required: [Permission.ADMINISTRATE] });

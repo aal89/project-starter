@@ -1,5 +1,4 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Permission } from '@project-starter/shared/build';
 import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Layout } from '../pages/components/Layout';
@@ -24,10 +23,7 @@ export const Routing: React.FC = () => (
       <Route path={Path.userSignup} element={Suspended(<LoginCreate tab="signup" />)} />
       <Route path={Path.userLogout} element={Suspended(<Logout />)} />
       <Route path={Path.userSettings} element={Suspended(<Settings />)} />
-      <Route
-        path={Path.adminSettings}
-        element={Suspended(<AdminSettings required={[Permission.ADMINISTRATE]} />)}
-      />
+      <Route path={Path.adminSettings} element={Suspended(<AdminSettings />)} />
       <Route path="*" element={<RouteNoMatch />} />
     </Route>
   </Routes>
