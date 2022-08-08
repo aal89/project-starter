@@ -1,4 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
+import { Permission } from '@project-starter/shared/build';
 import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Layout } from '../pages/components/Layout';
@@ -11,56 +12,21 @@ const Logout = React.lazy(() => import('../pages/user/Logout'));
 const Settings = React.lazy(() => import('../pages/user/Settings'));
 const AdminSettings = React.lazy(() => import('../pages/admin/Settings'));
 
+const Suspended = (element: JSX.Element) => (
+  <Suspense fallback={<LoadingOutlined />}>{element}</Suspense>
+);
+
 export const Routing: React.FC = () => (
   <Routes>
     <Route path={Path.home} element={<Layout />}>
-      <Route
-        index
-        element={(
-          <Suspense fallback={<LoadingOutlined />}>
-            <Home />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={Path.userLogin}
-        element={(
-          <Suspense fallback={<LoadingOutlined />}>
-            <LoginCreate tab="login" />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={Path.userSignup}
-        element={(
-          <Suspense fallback={<LoadingOutlined />}>
-            <LoginCreate tab="signup" />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={Path.userSettings}
-        element={(
-          <Suspense fallback={<LoadingOutlined />}>
-            <Settings />
-          </Suspense>
-        )}
-      />
+      <Route index element={Suspended(<Home />)} />
+      <Route path={Path.userLogin} element={Suspended(<LoginCreate tab="login" />)} />
+      <Route path={Path.userSignup} element={Suspended(<LoginCreate tab="signup" />)} />
+      <Route path={Path.userLogout} element={Suspended(<Logout />)} />
+      <Route path={Path.userSettings} element={Suspended(<Settings />)} />
       <Route
         path={Path.adminSettings}
-        element={(
-          <Suspense fallback={<LoadingOutlined />}>
-            <AdminSettings />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={Path.userLogout}
-        element={(
-          <Suspense fallback={<LoadingOutlined />}>
-            <Logout />
-          </Suspense>
-        )}
+        element={Suspended(<AdminSettings required={[Permission.ADMINISTRATE]} />)}
       />
       <Route path="*" element={<RouteNoMatch />} />
     </Route>
