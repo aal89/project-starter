@@ -73,19 +73,37 @@ const Settings: React.FC = () => {
         </Space>
       </Col>
       <Col flex="auto">
+        Your email
         <Form
-          name="basic"
           wrapperCol={{ span: 8 }}
-          initialValues={{ remember: true }}
-          autoComplete="off"
+          initialValues={{
+            name: user?.name,
+            lastName: user?.lastName,
+            username: user?.username,
+            password: '',
+          }}
           layout="vertical"
         >
           <Form.Item
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: 'Please input your name!' }]}
           >
             <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Last name"
+            name="lastName"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Username"
+            name="username"
+          >
+            <Input disabled />
           </Form.Item>
 
           <Form.Item
@@ -93,7 +111,7 @@ const Settings: React.FC = () => {
             name="password"
             rules={[{ required: true, message: 'Please input your password!' }]}
           >
-            <Input.Password />
+            <Input.Password autoComplete="new-password" />
           </Form.Item>
 
           <Form.Item>
@@ -102,6 +120,8 @@ const Settings: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
+        lastOnlineAt
+        createdAt
       </Col>
     </Row>
   );
