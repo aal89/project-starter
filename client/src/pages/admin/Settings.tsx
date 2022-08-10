@@ -1,17 +1,17 @@
 import { Permission } from '@project-starter/shared/build';
 import React, { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { withProtectedRoute } from '../../enhancers/withProtectedRoute';
 import { SetLayoutContext } from '../components/Layout';
 import { ListUsersTable } from './components/ListUsersTable';
 import { Stats } from './components/Stats';
 
 const Settings: React.FC = () => {
-  const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
+  const { setTitle } = useOutletContext<SetLayoutContext>();
 
   useEffect(() => {
     setTitle('Administrator');
-    setMenuKey('99');
   }, []);
 
   return (
@@ -22,4 +22,6 @@ const Settings: React.FC = () => {
   );
 };
 
-export default withProtectedRoute(Settings, { required: [Permission.ADMINISTRATE] });
+export default withProtectedRoute(withCleanLayoutVars(Settings), {
+  required: [Permission.ADMINISTRATE],
+});

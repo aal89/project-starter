@@ -3,11 +3,10 @@ import {
 } from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
 import { Tabs, Row, Col } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { useAuth } from '../../hooks/auth';
-import { SetLayoutContext } from '../components/Layout';
 
 type LoginType = 'login' | 'signup';
 
@@ -23,15 +22,9 @@ type LoginCreateProps = {
 
 const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
   const [rememberMe, setRememberMe] = useState(true);
-  const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
   const {
     signup, login, loginLoading, signupLoading, goLogin, goSignup,
   } = useAuth();
-
-  useEffect(() => {
-    setTitle('');
-    setMenuKey('99');
-  }, []);
 
   return (
     <Row justify="center">
@@ -188,4 +181,4 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
   );
 };
 
-export default LoginCreate;
+export default withCleanLayoutVars(LoginCreate);

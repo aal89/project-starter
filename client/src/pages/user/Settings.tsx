@@ -1,15 +1,18 @@
 import { UploadOutlined, UserOutlined } from '@ant-design/icons';
 import {
-  Avatar, Button, Col, Form, Input, message, Row, Space, Upload,
+  Avatar, Button, Col, Form, Input, message, Row, Space, Upload, Typography,
 } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
 import React, { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { withProtectedRoute } from '../../enhancers/withProtectedRoute';
 import { useAuth } from '../../hooks/auth';
 import { SetLayoutContext } from '../components/Layout';
+
+const { Text } = Typography;
 
 // const getBase64 = (img: RcFile, callback: (url: string) => void) => {
 //   const reader = new FileReader();
@@ -30,12 +33,20 @@ import { SetLayoutContext } from '../components/Layout';
 // };
 
 const Settings: React.FC = () => {
-  const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
+  const { setTitle, setTitleContent } = useOutletContext<SetLayoutContext>();
   const { user } = useAuth();
 
   useEffect(() => {
     setTitle(`Hello ${user?.name ?? ''}!`);
-    setMenuKey('99');
+    setTitleContent(
+      <>
+        <Text strong>
+          Your email:
+          {user?.email}
+        </Text>
+        lastOnlineAt createdAt
+      </>,
+    );
   }, []);
 
   const onChange = (info: UploadChangeParam<UploadFile<any>>) => {
@@ -73,7 +84,6 @@ const Settings: React.FC = () => {
         </Space>
       </Col>
       <Col flex="auto">
-        Your email
         <Form
           wrapperCol={{ span: 8 }}
           initialValues={{
@@ -92,17 +102,11 @@ const Settings: React.FC = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item
-            label="Last name"
-            name="lastName"
-          >
+          <Form.Item label="Last name" name="lastName">
             <Input />
           </Form.Item>
 
-          <Form.Item
-            label="Username"
-            name="username"
-          >
+          <Form.Item label="Username" name="username">
             <Input disabled />
           </Form.Item>
 
@@ -120,11 +124,9 @@ const Settings: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
-        lastOnlineAt
-        createdAt
       </Col>
     </Row>
   );
 };
 
-export default withProtectedRoute(Settings);
+export default withProtectedRoute(withCleanLayoutVars(Settings));

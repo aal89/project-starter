@@ -1,6 +1,7 @@
 import { Typography } from 'antd';
 import React, { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { withCleanLayoutVars } from '../enhancers/withCleanLayoutVars';
 import { SetLayoutContext } from './components/Layout';
 
 const { Text } = Typography;
@@ -22,4 +23,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default withCleanLayoutVars(Home);
