@@ -191,10 +191,10 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       // TODO: invalidate refresh token
 
-      const { accessToken, refreshToken } = await createTokens(user);
-
       user.lastOnlineAt = new Date();
       await user.save();
+
+      const { accessToken, refreshToken } = await createTokens(user);
 
       return {
         accessToken,
