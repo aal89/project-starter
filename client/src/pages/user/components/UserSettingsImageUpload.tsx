@@ -47,7 +47,7 @@ export const UserSettingsImageUpload: React.FC = () => {
       />
       <ImgCrop rotate modalOk="Upload" modalTitle="Edit upload" modalCancel="Cancel" shape="round">
         <Upload name="file" showUploadList={false} onChange={onChange}>
-          <Button icon={<UploadOutlined />}>Upload</Button>
+          <Button icon={<UploadOutlined />}>Change</Button>
         </Upload>
       </ImgCrop>
     </Space>

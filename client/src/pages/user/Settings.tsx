@@ -8,6 +8,7 @@ import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { withProtectedRoute } from '../../enhancers/withProtectedRoute';
 import { useAuth } from '../../hooks/auth';
 import { SetLayoutContext } from '../components/Layout';
+import { UserSettingsChangePassword } from './components/UserSettingsChangePassword';
 import { UserSettingsEditUser } from './components/UserSettingsEditUser';
 import { UserSettingsImageUpload } from './components/UserSettingsImageUpload';
 import { UserSettingsMeta } from './components/UserSettingsMeta';
@@ -61,7 +62,7 @@ const Settings: React.FC = () => {
         key="2"
       >
         <Row gutter={[24, 0]}>
-          <Col flex="auto">{user && <UserSettingsMeta user={user} />}</Col>
+          <Col span={8}><UserSettingsChangePassword /></Col>
         </Row>
       </TabPane>
     </Tabs>
