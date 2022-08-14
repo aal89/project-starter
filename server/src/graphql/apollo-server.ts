@@ -35,9 +35,17 @@ export default async (app: express.Application) => {
     }
   };
 
-  const server = new ApolloServer({ typeDefs, resolvers, context });
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context,
+    csrfPrevention: true,
+  });
 
   await server.start();
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({
+    app,
+    cors: { origin: ['http://localhost:3000', 'https://localhost:3000'] },
+  });
 };
