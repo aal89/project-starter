@@ -23,6 +23,12 @@ const mutationTypeDefs = gql`
     permissions: String!
   }
 
+  input MeInput {
+    name: String!
+    lastName: String
+    image: String
+  }
+
   type Tokens {
     accessToken: String!
     refreshToken: String!
@@ -33,6 +39,8 @@ const mutationTypeDefs = gql`
     login(username: String!, password: String!): Tokens!
     refresh(token: String!): Tokens!
     editUser(user: UserInput!): User!
+    editMe(user: MeInput!): User!
+    changePassword(oldPassword: String!, newPassword: String!): Void
     resetPassword(id: String!): String!
     deleteAccount(id: String!): Void
   }
@@ -64,6 +72,58 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
     return newPassword;
   },
+  changePassword: async (_, { oldPassword, newPassword }, { user: contextUser, userCan }) => {
+    ok(userCan(Permission.LOGIN), 'User is not allowed to login');
+    ok(oldPassword !== newPassword, 'New password cannot be the same as your old password');
+    ok(contextUser);
+
+    try {
+      const user = await User.findOneOrFail({
+        where: { username: contextUser.username },
+      });
+
+      await compareOrReject(oldPassword, user.password);
+      await user.setPassword(newPassword);
+      await user.save();
+    } catch {
+      throw new Error('Could not change password, please try again');
+    }
+  },
+  editMe: async (_, { user: { name, lastName, image } }, { user: contextUser, userCan }) => {
+    ok(userCan(Permission.LOGIN), 'User is not allowed to login');
+    ok(contextUser);
+
+    try {
+      const user = await User.findOneOrFail({
+        where: { username: contextUser.username },
+      });
+
+      user.name = name;
+      user.lastName = lastName ?? undefined;
+      user.image = image ?? undefined;
+
+      await validateOrReject(user);
+
+      await user.save();
+
+      return user;
+    } catch (err) {
+      const translatedError = translateError(err);
+      if (translatedError === DatabaseError.DuplicateUsername) {
+        throw new Error('This username is already taken, please pick another');
+      }
+
+      if (translatedError === DatabaseError.DuplicateEmail) {
+        throw new Error('This email address is already taken, please pick another');
+      }
+
+      if (translatedError === ValidationError.Username4MinLength) {
+        throw new Error('Username needs to be at least 4 characters');
+      }
+
+      throw new Error('Something went wrong, please try again');
+    }
+  },
   editUser: async (
     _,
     {
@@ -85,10 +145,10 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       });
 
       user.name = name;
-      user.lastName = lastName ?? user.lastName;
+      user.lastName = lastName ?? undefined;
       user.username = username;
       user.email = email;
-      user.image = image ?? user.image;
+      user.image = image ?? undefined;
       user.permissions = decodedPermissions;
 
       await validateOrReject(user);

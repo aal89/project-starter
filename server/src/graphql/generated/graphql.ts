@@ -18,9 +18,17 @@ export type Scalars = {
   Void: void;
 };
 
+export type MeInput = {
+  image?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  changePassword?: Maybe<Scalars['Void']>;
   deleteAccount?: Maybe<Scalars['Void']>;
+  editMe: User;
   editUser: User;
   login: Tokens;
   refresh: Tokens;
@@ -29,8 +37,19 @@ export type Mutation = {
 };
 
 
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
+  oldPassword: Scalars['String'];
+};
+
+
 export type MutationDeleteAccountArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationEditMeArgs = {
+  user: MeInput;
 };
 
 
@@ -95,6 +114,7 @@ export type User = {
   email: Scalars['String'];
   encodedPermissions: Scalars['String'];
   id: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   lastOnlineAt: Scalars['Date'];
   name: Scalars['String'];
@@ -183,6 +203,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  MeInput: MeInput;
   Mutation: ResolverTypeWrapper<{}>;
   PaginatedUsers: ResolverTypeWrapper<PaginatedUsers>;
   Query: ResolverTypeWrapper<{}>;
@@ -198,6 +219,7 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Date: Scalars['Date'];
   Int: Scalars['Int'];
+  MeInput: MeInput;
   Mutation: {};
   PaginatedUsers: PaginatedUsers;
   Query: {};
@@ -213,7 +235,9 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  changePassword?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
   deleteAccount?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationDeleteAccountArgs, 'id'>>;
+  editMe?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationEditMeArgs, 'user'>>;
   editUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationEditUserArgs, 'user'>>;
   login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   refresh?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;
@@ -245,6 +269,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   encodedPermissions?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastOnlineAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

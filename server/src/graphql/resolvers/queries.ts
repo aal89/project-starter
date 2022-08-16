@@ -13,6 +13,7 @@ const queryTypeDefs = gql`
     username: String!
     name: String!
     lastName: String
+    image: String
     email: String!
     encodedPermissions: String!
     lastOnlineAt: Date!

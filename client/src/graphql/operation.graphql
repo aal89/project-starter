@@ -34,6 +34,23 @@ mutation EditUser(
   }
 }
 
+mutation EditMe(
+  $input: MeInput!
+) {
+  editMe(user: $input) {
+    name
+    lastName
+    image
+  }
+}
+
+mutation ChangePassword(
+  $oldPassword: String!
+  $newPassword: String!
+) {
+  changePassword(oldPassword: $oldPassword, newPassword: $newPassword)
+}
+
 mutation ResetPassword(
   $id: String!
 ) {
