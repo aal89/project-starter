@@ -9,10 +9,10 @@ export type ProtectedRouteProps = {
 };
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, required = [] }) => {
-  const { user, userCan } = useAuth();
+  const { isLoggedIn, userCan } = useAuth();
   const context = useOutletContext();
 
-  if (!user) {
+  if (!isLoggedIn()) {
     return <Navigate to={Path.home} replace />;
   }
 

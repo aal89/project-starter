@@ -14,32 +14,26 @@ import { MutationResolvers } from '../generated/graphql';
 
 const mutationTypeDefs = gql`
   input UserInput {
-    oldUsername: String!
-    username: String!
+    oldUsername: String
+    username: String
     name: String!
-    email: String!
+    email: String
     lastName: String
     image: String
-    permissions: String!
+    permissions: String
   }
 
-  input MeInput {
-    name: String!
-    lastName: String
-    image: String
-  }
-
-  type Tokens {
+  type Authenticated {
+    user: User!
     accessToken: String!
     refreshToken: String!
   }
 
   type Mutation {
     signup(username: String!, password: String!, email: String!, name: String!): Void
-    login(username: String!, password: String!): Tokens!
-    refresh(token: String!): Tokens!
+    login(username: String!, password: String!): Authenticated!
+    refresh(token: String!): Authenticated!
     editUser(user: UserInput!): User!
-    editMe(user: MeInput!): User!
     changePassword(oldPassword: String!, newPassword: String!): Void
     resetPassword(id: String!): String!
     deleteAccount(id: String!): Void
@@ -89,41 +83,6 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       throw new Error('Could not change password, please try again');
     }
   },
-  editMe: async (_, { user: { name, lastName, image } }, { user: contextUser, userCan }) => {
-    ok(userCan(Permission.LOGIN), 'User is not allowed to login');
-    ok(contextUser);
-
-    try {
-      const user = await User.findOneOrFail({
-        where: { username: contextUser.username },
-      });
-
-      user.name = name;
-      user.lastName = lastName ?? undefined;
-      user.image = image ?? undefined;
-
-      await validateOrReject(user);
-
-      await user.save();
-
-      return user;
-    } catch (err) {
-      const translatedError = translateError(err);
-      if (translatedError === DatabaseError.DuplicateUsername) {
-        throw new Error('This username is already taken, please pick another');
-      }
-
-      if (translatedError === DatabaseError.DuplicateEmail) {
-        throw new Error('This email address is already taken, please pick another');
-      }
-
-      if (translatedError === ValidationError.Username4MinLength) {
-        throw new Error('Username needs to be at least 4 characters');
-      }
-
-      throw new Error('Something went wrong, please try again');
-    }
-  },
   editUser: async (
     _,
     {
@@ -131,25 +90,37 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         oldUsername, username, name, email, lastName, permissions, image,
       },
     },
-    { userCan },
+    { user: contextUser, userCan },
   ) => {
-    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to edit users');
+    ok(userCan(Permission.LOGIN), 'User is not allowed to login');
+    ok(contextUser);
+
+    const isAdmin = userCan(Permission.ADMINISTRATE);
+
+    const whereUsername = isAdmin && oldUsername ? oldUsername : contextUser.username;
 
     try {
       const user = await User.findOneOrFail({
-        where: { username: oldUsername },
+        where: { username: whereUsername },
         relations: ['permissions'],
       });
-      const decodedPermissions = await PermissionData.find({
-        where: { name: In(decode(permissions)) },
-      });
+
+      if (isAdmin) {
+        user.username = username ?? user.username;
+        user.email = email ?? user.email;
+      }
+
+      if (isAdmin && permissions) {
+        const decodedPermissions = await PermissionData.find({
+          where: { name: In(decode(permissions)) },
+        });
+
+        user.permissions = decodedPermissions;
+      }
 
       user.name = name;
       user.lastName = lastName ?? undefined;
-      user.username = username;
-      user.email = email;
       user.image = image ?? undefined;
-      user.permissions = decodedPermissions;
 
       await validateOrReject(user);
 
@@ -229,6 +200,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       await user.save();
 
       return {
+        user,
         accessToken,
         refreshToken,
       };
@@ -257,6 +229,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       const { accessToken, refreshToken } = await createTokens(user);
 
       return {
+        user,
         accessToken,
         refreshToken,
       };

@@ -3,6 +3,17 @@ mutation Login(
   $password: String!
 ) {
   login(username: $username, password: $password) {
+    user {
+      id
+      username
+      name
+      lastName
+      image
+      email
+      encodedPermissions
+      lastOnlineAt
+      createdAt
+    }
     accessToken
     refreshToken
   }
@@ -21,6 +32,17 @@ mutation Refresh(
   $refreshToken: String!
 ) {
   refresh(token: $refreshToken) {
+    user {
+      id
+      username
+      name
+      lastName
+      image
+      email
+      encodedPermissions
+      lastOnlineAt
+      createdAt
+    }
     accessToken
     refreshToken
   }
@@ -35,9 +57,15 @@ mutation EditUser(
 }
 
 mutation EditMe(
-  $input: MeInput!
+  $name: String!
+  $lastName: String
+  $image: String
 ) {
-  editMe(user: $input) {
+  editUser(user: {
+    name: $name
+    lastName: $lastName
+    image: $image
+  }) {
     name
     lastName
     image

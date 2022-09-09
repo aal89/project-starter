@@ -19,20 +19,20 @@ export type Scalars = {
   Void: void;
 };
 
-export type MeInput = {
-  image?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
+export type Authenticated = {
+  __typename?: 'Authenticated';
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
+  user: User;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword?: Maybe<Scalars['Void']>;
   deleteAccount?: Maybe<Scalars['Void']>;
-  editMe: User;
   editUser: User;
-  login: Tokens;
-  refresh: Tokens;
+  login: Authenticated;
+  refresh: Authenticated;
   resetPassword: Scalars['String'];
   signup?: Maybe<Scalars['Void']>;
 };
@@ -46,11 +46,6 @@ export type MutationChangePasswordArgs = {
 
 export type MutationDeleteAccountArgs = {
   id: Scalars['String'];
-};
-
-
-export type MutationEditMeArgs = {
-  user: MeInput;
 };
 
 
@@ -103,12 +98,6 @@ export type QueryUsersArgs = {
   username?: InputMaybe<Scalars['String']>;
 };
 
-export type Tokens = {
-  __typename?: 'Tokens';
-  accessToken: Scalars['String'];
-  refreshToken: Scalars['String'];
-};
-
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['Date'];
@@ -123,13 +112,13 @@ export type User = {
 };
 
 export type UserInput = {
-  email: Scalars['String'];
+  email?: InputMaybe<Scalars['String']>;
   image?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
-  oldUsername: Scalars['String'];
-  permissions: Scalars['String'];
-  username: Scalars['String'];
+  oldUsername?: InputMaybe<Scalars['String']>;
+  permissions?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type LoginMutationVariables = Exact<{
@@ -138,7 +127,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Tokens', accessToken: string, refreshToken: string } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Authenticated', accessToken: string, refreshToken: string, user: { __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any } } };
 
 export type SignupMutationVariables = Exact<{
   username: Scalars['String'];
@@ -155,7 +144,7 @@ export type RefreshMutationVariables = Exact<{
 }>;
 
 
-export type RefreshMutation = { __typename?: 'Mutation', refresh: { __typename?: 'Tokens', accessToken: string, refreshToken: string } };
+export type RefreshMutation = { __typename?: 'Mutation', refresh: { __typename?: 'Authenticated', accessToken: string, refreshToken: string, user: { __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any } } };
 
 export type EditUserMutationVariables = Exact<{
   input: UserInput;
@@ -165,11 +154,13 @@ export type EditUserMutationVariables = Exact<{
 export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string } };
 
 export type EditMeMutationVariables = Exact<{
-  input: MeInput;
+  name: Scalars['String'];
+  lastName?: InputMaybe<Scalars['String']>;
+  image?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type EditMeMutation = { __typename?: 'Mutation', editMe: { __typename?: 'User', name: string, lastName?: string | null, image?: string | null } };
+export type EditMeMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', name: string, lastName?: string | null, image?: string | null } };
 
 export type ChangePasswordMutationVariables = Exact<{
   oldPassword: Scalars['String'];
@@ -211,6 +202,17 @@ export type StatsQuery = { __typename?: 'Query', totalUsers: number, activeUsers
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
+    user {
+      id
+      username
+      name
+      lastName
+      image
+      email
+      encodedPermissions
+      lastOnlineAt
+      createdAt
+    }
     accessToken
     refreshToken
   }
@@ -280,6 +282,17 @@ export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, S
 export const RefreshDocument = gql`
     mutation Refresh($refreshToken: String!) {
   refresh(token: $refreshToken) {
+    user {
+      id
+      username
+      name
+      lastName
+      image
+      email
+      encodedPermissions
+      lastOnlineAt
+      createdAt
+    }
     accessToken
     refreshToken
   }
@@ -345,8 +358,8 @@ export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = Apollo.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = Apollo.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
 export const EditMeDocument = gql`
-    mutation EditMe($input: MeInput!) {
-  editMe(user: $input) {
+    mutation EditMe($name: String!, $lastName: String, $image: String) {
+  editUser(user: {name: $name, lastName: $lastName, image: $image}) {
     name
     lastName
     image
@@ -368,7 +381,9 @@ export type EditMeMutationFn = Apollo.MutationFunction<EditMeMutation, EditMeMut
  * @example
  * const [editMeMutation, { data, loading, error }] = useEditMeMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      name: // value for 'name'
+ *      lastName: // value for 'lastName'
+ *      image: // value for 'image'
  *   },
  * });
  */

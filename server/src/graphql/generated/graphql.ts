@@ -18,20 +18,20 @@ export type Scalars = {
   Void: void;
 };
 
-export type MeInput = {
-  image?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
+export type Authenticated = {
+  __typename?: 'Authenticated';
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
+  user: User;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword?: Maybe<Scalars['Void']>;
   deleteAccount?: Maybe<Scalars['Void']>;
-  editMe: User;
   editUser: User;
-  login: Tokens;
-  refresh: Tokens;
+  login: Authenticated;
+  refresh: Authenticated;
   resetPassword: Scalars['String'];
   signup?: Maybe<Scalars['Void']>;
 };
@@ -45,11 +45,6 @@ export type MutationChangePasswordArgs = {
 
 export type MutationDeleteAccountArgs = {
   id: Scalars['String'];
-};
-
-
-export type MutationEditMeArgs = {
-  user: MeInput;
 };
 
 
@@ -102,12 +97,6 @@ export type QueryUsersArgs = {
   username?: InputMaybe<Scalars['String']>;
 };
 
-export type Tokens = {
-  __typename?: 'Tokens';
-  accessToken: Scalars['String'];
-  refreshToken: Scalars['String'];
-};
-
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['Date'];
@@ -122,13 +111,13 @@ export type User = {
 };
 
 export type UserInput = {
-  email: Scalars['String'];
+  email?: InputMaybe<Scalars['String']>;
   image?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
-  oldUsername: Scalars['String'];
-  permissions: Scalars['String'];
-  username: Scalars['String'];
+  oldUsername?: InputMaybe<Scalars['String']>;
+  permissions?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -200,15 +189,14 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  Authenticated: ResolverTypeWrapper<Authenticated>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  MeInput: MeInput;
   Mutation: ResolverTypeWrapper<{}>;
   PaginatedUsers: ResolverTypeWrapper<PaginatedUsers>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Tokens: ResolverTypeWrapper<Tokens>;
   User: ResolverTypeWrapper<User>;
   UserInput: UserInput;
   Void: ResolverTypeWrapper<Scalars['Void']>;
@@ -216,18 +204,24 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  Authenticated: Authenticated;
   Boolean: Scalars['Boolean'];
   Date: Scalars['Date'];
   Int: Scalars['Int'];
-  MeInput: MeInput;
   Mutation: {};
   PaginatedUsers: PaginatedUsers;
   Query: {};
   String: Scalars['String'];
-  Tokens: Tokens;
   User: User;
   UserInput: UserInput;
   Void: Scalars['Void'];
+};
+
+export type AuthenticatedResolvers<ContextType = any, ParentType extends ResolversParentTypes['Authenticated'] = ResolversParentTypes['Authenticated']> = {
+  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -237,10 +231,9 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
   deleteAccount?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationDeleteAccountArgs, 'id'>>;
-  editMe?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationEditMeArgs, 'user'>>;
   editUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationEditUserArgs, 'user'>>;
-  login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
-  refresh?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;
+  login?: Resolver<ResolversTypes['Authenticated'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
+  refresh?: Resolver<ResolversTypes['Authenticated'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;
   resetPassword?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'id'>>;
   signup?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'email' | 'name' | 'password' | 'username'>>;
 };
@@ -256,12 +249,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   recentlyCreatedUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   users?: Resolver<ResolversTypes['PaginatedUsers'], ParentType, ContextType, RequireFields<QueryUsersArgs, 'limit' | 'offset'>>;
-};
-
-export type TokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tokens'] = ResolversParentTypes['Tokens']> = {
-  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
@@ -282,11 +269,11 @@ export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type Resolvers<ContextType = any> = {
+  Authenticated?: AuthenticatedResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   PaginatedUsers?: PaginatedUsersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  Tokens?: TokensResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   Void?: GraphQLScalarType;
 };
