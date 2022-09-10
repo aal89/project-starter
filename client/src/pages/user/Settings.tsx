@@ -6,8 +6,9 @@ import React, { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { withProtectedRoute } from '../../enhancers/withProtectedRoute';
-import { useAuth } from '../../hooks/auth';
+import { useMeQuery } from '../../graphql/generated/graphql';
 import { SetLayoutContext } from '../components/Layout';
+import { Spinner } from '../components/Spinner';
 import { UserSettingsChangePassword } from './components/UserSettingsChangePassword';
 import { UserSettingsEditUser } from './components/UserSettingsEditUser';
 import { UserSettingsImageUpload } from './components/UserSettingsImageUpload';
@@ -19,16 +20,24 @@ const { TabPane } = Tabs;
 
 const Settings: React.FC = () => {
   const { setTitle, setTitleContent } = useOutletContext<SetLayoutContext>();
-  const { user } = useAuth();
+  const { data: user, loading } = useMeQuery();
 
   useEffect(() => {
-    setTitle(`Hello ${user?.name ?? ''}!`);
-    setTitleContent(<UserSettingsTitle user={user} />);
-  }, []);
+    if (user) {
+      setTitle(`Hello ${user.me.name}!`);
+      setTitleContent(<UserSettingsTitle user={user.me} />);
+    }
+  }, [user]);
 
   if (!user) {
     return <Text>Failed to load user data</Text>;
   }
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  console.log(user.me.name);
 
   return (
     <Tabs defaultActiveKey="1" size="small" tabPosition="left">
@@ -47,9 +56,9 @@ const Settings: React.FC = () => {
             <UserSettingsImageUpload />
           </Col>
           <Col span={8}>
-            <UserSettingsEditUser user={user} />
+            <UserSettingsEditUser user={user.me} />
           </Col>
-          <Col flex="auto">{user && <UserSettingsMeta user={user} />}</Col>
+          <Col flex="auto">{user && <UserSettingsMeta user={user.me} />}</Col>
         </Row>
       </TabPane>
       <TabPane
@@ -62,7 +71,9 @@ const Settings: React.FC = () => {
         key="2"
       >
         <Row gutter={[24, 0]}>
-          <Col span={8}><UserSettingsChangePassword /></Col>
+          <Col span={8}>
+            <UserSettingsChangePassword />
+          </Col>
         </Row>
       </TabPane>
     </Tabs>

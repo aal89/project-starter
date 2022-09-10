@@ -1,19 +1,20 @@
+fragment UserFields on User {
+  id
+  username
+  name
+  lastName
+  image
+  email
+  encodedPermissions
+  lastOnlineAt
+  createdAt
+}
+
 mutation Login(
   $username: String!
   $password: String!
 ) {
   login(username: $username, password: $password) {
-    user {
-      id
-      username
-      name
-      lastName
-      image
-      email
-      encodedPermissions
-      lastOnlineAt
-      createdAt
-    }
     accessToken
     refreshToken
   }
@@ -32,17 +33,6 @@ mutation Refresh(
   $refreshToken: String!
 ) {
   refresh(token: $refreshToken) {
-    user {
-      id
-      username
-      name
-      lastName
-      image
-      email
-      encodedPermissions
-      lastOnlineAt
-      createdAt
-    }
     accessToken
     refreshToken
   }
@@ -99,14 +89,7 @@ query GetUsers(
   users(username: $username, offset: $offset, limit: $limit) {
     total
     users {
-      id
-      username
-      name
-      lastName
-      email
-      encodedPermissions
-      lastOnlineAt
-      createdAt
+      ...UserFields
     }
   }
 }
@@ -115,4 +98,10 @@ query Stats {
   totalUsers
   activeUsers
   recentlyCreatedUsers
+}
+
+query Me {
+  me {
+    ...UserFields
+  }
 }

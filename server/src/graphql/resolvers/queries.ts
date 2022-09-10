@@ -26,6 +26,7 @@ const queryTypeDefs = gql`
   }
 
   type Query {
+    me: User!
     users(username: String, offset: Int!, limit: Int!): PaginatedUsers!
     totalUsers: Int!
     activeUsers: Int!
@@ -34,6 +35,12 @@ const queryTypeDefs = gql`
 `;
 
 const queryResolvers: QueryResolvers<ContextType> = {
+  me: (_, __, { user, userCan }) => {
+    ok(userCan(Permission.LOGIN), 'User is not allowed to retrieve itself');
+    ok(user);
+
+    return User.findOneOrFail({ where: { id: user.id }, relations: ['permissions'] });
+  },
   users: async (_, { username, offset, limit }, { userCan }) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to list users');
 

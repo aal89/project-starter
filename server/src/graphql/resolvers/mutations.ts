@@ -23,16 +23,15 @@ const mutationTypeDefs = gql`
     permissions: String
   }
 
-  type Authenticated {
-    user: User!
+  type Tokens {
     accessToken: String!
     refreshToken: String!
   }
 
   type Mutation {
     signup(username: String!, password: String!, email: String!, name: String!): Void
-    login(username: String!, password: String!): Authenticated!
-    refresh(token: String!): Authenticated!
+    login(username: String!, password: String!): Tokens!
+    refresh(token: String!): Tokens!
     editUser(user: UserInput!): User!
     changePassword(oldPassword: String!, newPassword: String!): Void
     resetPassword(id: String!): String!
@@ -200,7 +199,6 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       await user.save();
 
       return {
-        user,
         accessToken,
         refreshToken,
       };
@@ -229,7 +227,6 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       const { accessToken, refreshToken } = await createTokens(user);
 
       return {
-        user,
         accessToken,
         refreshToken,
       };

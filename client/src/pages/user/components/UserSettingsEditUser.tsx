@@ -3,7 +3,6 @@ import {
 } from 'antd';
 import React from 'react';
 import { useEditMeMutation, User } from '../../../graphql/generated/graphql';
-import { useAuth } from '../../../hooks/auth';
 
 type UserSettingsEditUserProps = {
   user: User;
@@ -11,7 +10,6 @@ type UserSettingsEditUserProps = {
 
 export const UserSettingsEditUser: React.FC<UserSettingsEditUserProps> = ({ user }) => {
   const [editMeMutation, { loading }] = useEditMeMutation();
-  const { updateUser } = useAuth();
 
   const onSubmit = async (values: Record<string, any>) => {
     try {
@@ -22,10 +20,7 @@ export const UserSettingsEditUser: React.FC<UserSettingsEditUserProps> = ({ user
         },
       });
 
-      updateUser({
-        name: values.name,
-        lastName: values.lastName,
-      });
+      // TODO: refresh getUser queries
     } catch {
       message.error('Could not update your profile, try again later');
     }

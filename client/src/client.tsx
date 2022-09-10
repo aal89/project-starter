@@ -11,7 +11,7 @@ import {
   getRefreshToken,
   setAccessToken,
   setRefreshToken,
-} from './storage';
+} from './tokens';
 
 const isOffline = (err: Error) => !navigator.onLine || (err instanceof TypeError && err.message === 'Network request failed');
 

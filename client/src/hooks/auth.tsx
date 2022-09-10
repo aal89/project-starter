@@ -1,50 +1,30 @@
 import { ApolloError } from '@apollo/client';
 import { can as sharedCan, Permission } from '@project-starter/shared/build';
 import { message } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import jwtDecode from 'jwt-decode';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { client } from '../client';
 import { useSignupMutation, useLoginMutation, User } from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
-import {
-  getAccessToken, getUserFromStorage, setAccessToken, setRefreshToken,
-} from '../storage';
+import { getAccessToken, setAccessToken, setRefreshToken } from '../tokens';
 
 export const useAuth = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
   const [signupMutation, { loading: signupLoading }] = useSignupMutation();
   const [loginMutation, { loading: loginLoading }] = useLoginMutation();
 
-  useEffect(() => {
-    if (user === null) {
-      setUser(userFromStorage);
-    }
-  });
-
-  const userFromStorage = useMemo(() => {
+  const userFromToken = useMemo(() => {
     try {
-      return JSON.parse(getUserFromStorage()) as User;
+      const { user: decodedUser } = jwtDecode<{ user: User }>(getAccessToken());
+
+      return decodedUser;
     } catch {
       return null;
     }
-  }, [getUserFromStorage()]);
+  }, [getAccessToken()]);
 
-  const updateUser = (u: Partial<User>) => {
-    setUser({
-      id: '',
-      name: '',
-      username: '',
-      email: '',
-      encodedPermissions: '',
-      lastOnlineAt: new Date(),
-      createdAt: new Date(),
-      ...user,
-      ...u,
-    });
-  };
-
-  const userCan = (permission: Permission) => sharedCan(permission, userFromStorage?.encodedPermissions ?? '');
+  const userCan = (permission: Permission) => sharedCan(permission, userFromToken?.encodedPermissions ?? '');
 
   const login = async (username: string, password: string, rememberMe: boolean) => {
     try {
@@ -93,7 +73,6 @@ export const useAuth = () => {
 
   const logout = () => {
     client.clearStore();
-    setUser(null);
     setAccessToken('');
     setRefreshToken('');
     message.info('Logged out successfully!');
@@ -121,8 +100,6 @@ export const useAuth = () => {
     signup,
     signupLoading,
     logout,
-    user,
-    updateUser,
     goHome,
     goLogin,
     goSignup,

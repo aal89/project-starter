@@ -19,20 +19,13 @@ export type Scalars = {
   Void: void;
 };
 
-export type Authenticated = {
-  __typename?: 'Authenticated';
-  accessToken: Scalars['String'];
-  refreshToken: Scalars['String'];
-  user: User;
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword?: Maybe<Scalars['Void']>;
   deleteAccount?: Maybe<Scalars['Void']>;
   editUser: User;
-  login: Authenticated;
-  refresh: Authenticated;
+  login: Tokens;
+  refresh: Tokens;
   resetPassword: Scalars['String'];
   signup?: Maybe<Scalars['Void']>;
 };
@@ -86,6 +79,7 @@ export type PaginatedUsers = {
 export type Query = {
   __typename?: 'Query';
   activeUsers: Scalars['Int'];
+  me: User;
   recentlyCreatedUsers: Scalars['Int'];
   totalUsers: Scalars['Int'];
   users: PaginatedUsers;
@@ -96,6 +90,12 @@ export type QueryUsersArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   username?: InputMaybe<Scalars['String']>;
+};
+
+export type Tokens = {
+  __typename?: 'Tokens';
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
 };
 
 export type User = {
@@ -121,13 +121,15 @@ export type UserInput = {
   username?: InputMaybe<Scalars['String']>;
 };
 
+export type UserFieldsFragment = { __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any };
+
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Authenticated', accessToken: string, refreshToken: string, user: { __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Tokens', accessToken: string, refreshToken: string } };
 
 export type SignupMutationVariables = Exact<{
   username: Scalars['String'];
@@ -144,7 +146,7 @@ export type RefreshMutationVariables = Exact<{
 }>;
 
 
-export type RefreshMutation = { __typename?: 'Mutation', refresh: { __typename?: 'Authenticated', accessToken: string, refreshToken: string, user: { __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any } } };
+export type RefreshMutation = { __typename?: 'Mutation', refresh: { __typename?: 'Tokens', accessToken: string, refreshToken: string } };
 
 export type EditUserMutationVariables = Exact<{
   input: UserInput;
@@ -191,28 +193,34 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any }> } };
+export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any }> } };
 
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type StatsQuery = { __typename?: 'Query', totalUsers: number, activeUsers: number, recentlyCreatedUsers: number };
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
+
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any } };
+
+export const UserFieldsFragmentDoc = gql`
+    fragment UserFields on User {
+  id
+  username
+  name
+  lastName
+  image
+  email
+  encodedPermissions
+  lastOnlineAt
+  createdAt
+}
+    `;
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
-    user {
-      id
-      username
-      name
-      lastName
-      image
-      email
-      encodedPermissions
-      lastOnlineAt
-      createdAt
-    }
     accessToken
     refreshToken
   }
@@ -282,17 +290,6 @@ export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, S
 export const RefreshDocument = gql`
     mutation Refresh($refreshToken: String!) {
   refresh(token: $refreshToken) {
-    user {
-      id
-      username
-      name
-      lastName
-      image
-      email
-      encodedPermissions
-      lastOnlineAt
-      createdAt
-    }
     accessToken
     refreshToken
   }
@@ -493,18 +490,11 @@ export const GetUsersDocument = gql`
   users(username: $username, offset: $offset, limit: $limit) {
     total
     users {
-      id
-      username
-      name
-      lastName
-      email
-      encodedPermissions
-      lastOnlineAt
-      createdAt
+      ...UserFields
     }
   }
 }
-    `;
+    ${UserFieldsFragmentDoc}`;
 
 /**
  * __useGetUsersQuery__
@@ -569,3 +559,37 @@ export function useStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Stat
 export type StatsQueryHookResult = ReturnType<typeof useStatsQuery>;
 export type StatsLazyQueryHookResult = ReturnType<typeof useStatsLazyQuery>;
 export type StatsQueryResult = Apollo.QueryResult<StatsQuery, StatsQueryVariables>;
+export const MeDocument = gql`
+    query Me {
+  me {
+    ...UserFields
+  }
+}
+    ${UserFieldsFragmentDoc}`;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+      }
+export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+        }
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
