@@ -37,8 +37,6 @@ const Settings: React.FC = () => {
     return <Spinner />;
   }
 
-  console.log(user.me.name);
-
   return (
     <Tabs defaultActiveKey="1" size="small" tabPosition="left">
       <TabPane

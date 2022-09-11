@@ -2,7 +2,7 @@ import {
   Form, Input, Button, message,
 } from 'antd';
 import React from 'react';
-import { useEditMeMutation, User } from '../../../graphql/generated/graphql';
+import { MeDocument, useEditMeMutation, User } from '../../../graphql/generated/graphql';
 
 type UserSettingsEditUserProps = {
   user: User;
@@ -18,9 +18,10 @@ export const UserSettingsEditUser: React.FC<UserSettingsEditUserProps> = ({ user
           name: values.name,
           lastName: values.lastName,
         },
+        refetchQueries: [MeDocument],
       });
 
-      // TODO: refresh getUser queries
+      message.success('Successfully updated your profile');
     } catch {
       message.error('Could not update your profile, try again later');
     }

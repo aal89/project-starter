@@ -65,9 +65,7 @@ const refreshLink = new TokenRefreshLink<{
 
 export const client = new ApolloClient({
   link: from([refreshLink, authLink, httpLink]),
-  cache: new InMemoryCache({
-    addTypename: false,
-  }),
+  cache: new InMemoryCache(),
 });
 
 const refreshClient = new ApolloClient({
