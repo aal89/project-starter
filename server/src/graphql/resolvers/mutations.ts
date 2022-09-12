@@ -68,19 +68,15 @@ const mutationResolvers: MutationResolvers<ContextType> = {
   changePassword: async (_, { oldPassword, newPassword }, { user: contextUser, userCan }) => {
     ok(userCan(Permission.LOGIN), 'User is not allowed to login');
     ok(oldPassword !== newPassword, 'New password cannot be the same as your old password');
-    ok(contextUser);
+    ok(contextUser, 'Missing context');
 
-    try {
-      const user = await User.findOneOrFail({
-        where: { username: contextUser.username },
-      });
+    const user = await User.findOneOrFail({
+      where: { username: contextUser.username },
+    });
 
-      await compareOrReject(oldPassword, user.password);
-      await user.setPassword(newPassword);
-      await user.save();
-    } catch {
-      throw new Error('Could not change password, please try again');
-    }
+    await compareOrReject(oldPassword, user.password);
+    await user.setPassword(newPassword);
+    await user.save();
   },
   editUser: async (
     _,

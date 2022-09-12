@@ -43,11 +43,11 @@ export const UserSettingsEditUser: React.FC<UserSettingsEditUserProps> = ({ user
         name="name"
         rules={[{ required: true, message: 'Please input your name!' }]}
       >
-        <Input />
+        <Input placeholder="Name…" />
       </Form.Item>
 
       <Form.Item label="Last name" name="lastName">
-        <Input />
+        <Input placeholder="Last name…" />
       </Form.Item>
 
       <Form.Item label="Username" name="username">
