@@ -30,4 +30,11 @@ export const env = {
     },
     cacheIgnoreErrors: () => process.env.TYPEORM_CACHE_IGNORE_ERRORS === 'true',
   },
+  aws: {
+    keyId: () => process.env.AWS_ACCESS_KEY_ID ?? '',
+    secret: () => process.env.AWS_SECRET_ACCESS_KEY ?? '',
+    region: () => process.env.AWS_REGION ?? '',
+    bucket: () => process.env.AWS_BUCKET ?? '',
+    signExpiry: () => Number(process.env.AWS_BUCKEY_SIGN_EXPIRY ?? 0),
+  },
 };

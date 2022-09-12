@@ -11,3 +11,7 @@ Very opinionated Node.js v16 monorepo project starter using npm workspaces and T
 `npm run migration:create -name=MigrationName`
 `npm run migration:run`
 `npm run migration:revert` (reverts last ran migration)
+
+Install an npm package
+
+`npm i aws-sdk -w server`
