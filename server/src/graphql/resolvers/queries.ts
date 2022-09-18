@@ -2,8 +2,10 @@ import { ok } from 'assert';
 import { Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
 import { Like, MoreThan } from 'typeorm';
+import { getS3UploadUrl } from '../../aws';
 import { User } from '../../entities/User';
 import { midnight, firstDayOfMonth } from '../../utils/date';
+import { randomFilename } from '../../utils/string';
 import { ContextType } from '../apollo-server';
 import { QueryResolvers } from '../generated/graphql';
 
@@ -25,9 +27,15 @@ const queryTypeDefs = gql`
     users: [User!]!
   }
 
+  type ImageUploadParameters {
+    url: String!
+    filename: String!
+  }
+
   type Query {
     me: User!
     users(username: String, offset: Int!, limit: Int!): PaginatedUsers!
+    getImageUploadUrl(contentType: String!): ImageUploadParameters!
     totalUsers: Int!
     activeUsers: Int!
     recentlyCreatedUsers: Int!
@@ -82,6 +90,21 @@ const queryResolvers: QueryResolvers<ContextType> = {
         createdAt: MoreThan(midnight()),
       },
     });
+  },
+  getImageUploadUrl: async (_, { contentType }, { userCan }) => {
+    ok(userCan(Permission.LOGIN));
+    ok(
+      ['image/jpeg', 'image/bmp', 'image/png'].includes(contentType),
+      'Unsupported image type, try another',
+    );
+
+    const filename = randomFilename('jpg');
+    const url = await getS3UploadUrl(filename, contentType);
+
+    return {
+      url,
+      filename,
+    };
   },
 };
 

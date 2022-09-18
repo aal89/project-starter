@@ -105,3 +105,10 @@ query Me {
     ...UserFields
   }
 }
+
+query ImageUpload($contentType: String!) {
+  getImageUploadUrl(contentType: $contentType) {
+    filename
+    url
+  }
+}

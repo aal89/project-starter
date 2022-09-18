@@ -12,6 +12,7 @@ const getS3UploadUrl = (filename: string, contentType: string) => {
     Key: filename,
     Expires: env.aws.signExpiry(),
     ContentType: contentType,
+    ACL: 'public-read',
   });
 };
 

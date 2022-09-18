@@ -18,6 +18,12 @@ export type Scalars = {
   Void: void;
 };
 
+export type ImageUploadParameters = {
+  __typename?: 'ImageUploadParameters';
+  filename: Scalars['String'];
+  url: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword?: Maybe<Scalars['Void']>;
@@ -78,10 +84,16 @@ export type PaginatedUsers = {
 export type Query = {
   __typename?: 'Query';
   activeUsers: Scalars['Int'];
+  getImageUploadUrl: ImageUploadParameters;
   me: User;
   recentlyCreatedUsers: Scalars['Int'];
   totalUsers: Scalars['Int'];
   users: PaginatedUsers;
+};
+
+
+export type QueryGetImageUploadUrlArgs = {
+  contentType: Scalars['String'];
 };
 
 
@@ -191,6 +203,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
+  ImageUploadParameters: ResolverTypeWrapper<ImageUploadParameters>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   PaginatedUsers: ResolverTypeWrapper<PaginatedUsers>;
@@ -206,6 +219,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Date: Scalars['Date'];
+  ImageUploadParameters: ImageUploadParameters;
   Int: Scalars['Int'];
   Mutation: {};
   PaginatedUsers: PaginatedUsers;
@@ -220,6 +234,12 @@ export type ResolversParentTypes = {
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
+
+export type ImageUploadParametersResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImageUploadParameters'] = ResolversParentTypes['ImageUploadParameters']> = {
+  filename?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
@@ -239,6 +259,7 @@ export type PaginatedUsersResolvers<ContextType = any, ParentType extends Resolv
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   activeUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  getImageUploadUrl?: Resolver<ResolversTypes['ImageUploadParameters'], ParentType, ContextType, RequireFields<QueryGetImageUploadUrlArgs, 'contentType'>>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   recentlyCreatedUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -270,6 +291,7 @@ export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type Resolvers<ContextType = any> = {
   Date?: GraphQLScalarType;
+  ImageUploadParameters?: ImageUploadParametersResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   PaginatedUsers?: PaginatedUsersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

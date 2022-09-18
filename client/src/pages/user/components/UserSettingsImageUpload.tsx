@@ -4,8 +4,9 @@ import {
 } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { UploadChangeParam } from 'antd/lib/upload';
-import { UploadFile } from 'antd/lib/upload/interface';
-import React from 'react';
+import { RcFile, UploadFile } from 'antd/lib/upload/interface';
+import React, { useState } from 'react';
+import { ImageUploadQuery, useImageUploadLazyQuery } from '../../../graphql/generated/graphql';
 
 // const getBase64 = (img: RcFile, callback: (url: string) => void) => {
 //   const reader = new FileReader();
@@ -13,27 +14,34 @@ import React from 'react';
 //   reader.readAsDataURL(img);
 // };
 
-// const beforeUpload = (file: RcFile) => {
-//   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-//   if (!isJpgOrPng) {
-//     message.error('You can only upload JPG/PNG file!');
-//   }
-//   const isLt2M = file.size / 1024 / 1024 < 20;
-//   if (!isLt2M) {
-//     message.error('Image must smaller than 20MB!');
-//   }
-//   return isJpgOrPng && isLt2M;
-// };
-
 export const UserSettingsImageUpload: React.FC = () => {
+  const [uploadParameters, setUploadParameters] = useState<ImageUploadQuery | null>();
+  const [imageUploadQuery, { loading: uploadLinkLoading }] = useImageUploadLazyQuery({
+    fetchPolicy: 'no-cache',
+  });
+
   const onChange = (info: UploadChangeParam<UploadFile<any>>) => {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
     if (info.file.status === 'done') {
       message.success(`${info.file.name} file uploaded successfully`);
     } else if (info.file.status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
+  const beforeUpload = async (file: RcFile) => {
+    const contentType = file.type;
+    try {
+      const { data: imageUploadResult } = await imageUploadQuery({
+        variables: {
+          contentType,
+        },
+      });
+
+      setUploadParameters(imageUploadResult);
+
+      return true;
+    } catch {
+      return false;
     }
   };
 
@@ -46,8 +54,24 @@ export const UserSettingsImageUpload: React.FC = () => {
         icon={<UserOutlined />}
       />
       <ImgCrop rotate modalOk="Upload" modalTitle="Edit upload" modalCancel="Cancel" shape="round">
-        <Upload name="file" showUploadList={false} onChange={onChange}>
-          <Button icon={<UploadOutlined />}>Change</Button>
+        <Upload
+          name="file"
+          showUploadList={false}
+          beforeUpload={beforeUpload}
+          onChange={onChange}
+          customRequest={async (options) => {
+            if (!uploadParameters) {
+              return;
+            }
+            await fetch(uploadParameters.getImageUploadUrl.url, {
+              method: 'PUT',
+              body: options.file,
+            });
+          }}
+        >
+          <Button icon={<UploadOutlined />} disabled={uploadLinkLoading}>
+            Change
+          </Button>
         </Upload>
       </ImgCrop>
     </Space>
