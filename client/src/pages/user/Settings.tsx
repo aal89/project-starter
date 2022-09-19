@@ -51,7 +51,7 @@ const Settings: React.FC = () => {
       >
         <Row gutter={[24, 0]}>
           <Col flex="none">
-            <UserSettingsImageUpload />
+            <UserSettingsImageUpload user={user.me} />
           </Col>
           <Col span={8}>
             <UserSettingsEditUser user={user.me} />

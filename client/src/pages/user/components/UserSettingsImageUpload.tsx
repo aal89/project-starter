@@ -3,52 +3,66 @@ import {
   Space, Avatar, Upload, Button, message,
 } from 'antd';
 import ImgCrop from 'antd-img-crop';
-import { UploadChangeParam } from 'antd/lib/upload';
-import { RcFile, UploadFile } from 'antd/lib/upload/interface';
+import { RcFile } from 'antd/lib/upload/interface';
 import React, { useState } from 'react';
-import { ImageUploadQuery, useImageUploadLazyQuery } from '../../../graphql/generated/graphql';
+import { useEditMeMutation, useImageUploadLazyQuery, User } from '../../../graphql/generated/graphql';
+import { getImageUrl } from '../../../user';
 
-// const getBase64 = (img: RcFile, callback: (url: string) => void) => {
-//   const reader = new FileReader();
-//   reader.addEventListener('load', () => callback(reader.result as string));
-//   reader.readAsDataURL(img);
-// };
+type UserSettingsImageUploadProps = {
+  user: User;
+};
 
-export const UserSettingsImageUpload: React.FC = () => {
-  const [uploadParameters, setUploadParameters] = useState<ImageUploadQuery | null>();
+export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = ({ user }) => {
+  const [contentType, setContentType] = useState('');
   const [imageUploadQuery, { loading: uploadLinkLoading }] = useImageUploadLazyQuery({
     fetchPolicy: 'no-cache',
   });
-
-  const onChange = (info: UploadChangeParam<UploadFile<any>>) => {
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  };
+  const [editMeMutation] = useEditMeMutation();
 
   const beforeUpload = async (file: RcFile) => {
-    const contentType = file.type;
+    setContentType(file.type);
+    return true;
+  };
+
+  const uploadPicture = async (data: Blob | RcFile) => {
     try {
-      const { data: imageUploadResult } = await imageUploadQuery({
+      if (!user || !contentType) {
+        message.error('Please refresh the page');
+        return;
+      }
+
+      const { data: uploadParameters } = await imageUploadQuery({
         variables: {
           contentType,
         },
       });
 
-      setUploadParameters(imageUploadResult);
+      if (!uploadParameters) {
+        message.error('Can\'t create upload, try again');
+        return;
+      }
 
-      return true;
+      await fetch(uploadParameters.getImageUploadUrl.url, {
+        method: 'PUT',
+        body: data,
+      });
+
+      await editMeMutation({
+        variables: {
+          name: user.name,
+          image: uploadParameters.getImageUploadUrl.filename,
+        },
+      });
+      message.success('Changed profile picture!');
     } catch {
-      return false;
+      message.error('Failed to change profile picture, try again');
     }
   };
 
   return (
     <Space direction="vertical" align="center">
       <Avatar
-        src="https://joeschmoe.io/api/v1/random"
+        src={getImageUrl(user)}
         shape="circle"
         size={128}
         icon={<UserOutlined />}
@@ -58,15 +72,11 @@ export const UserSettingsImageUpload: React.FC = () => {
           name="file"
           showUploadList={false}
           beforeUpload={beforeUpload}
-          onChange={onChange}
-          customRequest={async (options) => {
-            if (!uploadParameters) {
+          customRequest={(options) => {
+            if (typeof options.file === 'string') {
               return;
             }
-            await fetch(uploadParameters.getImageUploadUrl.url, {
-              method: 'PUT',
-              body: options.file,
-            });
+            uploadPicture(options.file);
           }}
         >
           <Button icon={<UploadOutlined />} disabled={uploadLinkLoading}>

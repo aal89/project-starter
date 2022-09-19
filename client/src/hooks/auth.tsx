@@ -14,7 +14,7 @@ export const useAuth = () => {
   const [signupMutation, { loading: signupLoading }] = useSignupMutation();
   const [loginMutation, { loading: loginLoading }] = useLoginMutation();
 
-  const userFromToken = useMemo(() => {
+  const userFromToken: Readonly<User> | null = useMemo(() => {
     try {
       const { user: decodedUser } = jwtDecode<{ user: User }>(getAccessToken());
 
@@ -94,6 +94,7 @@ export const useAuth = () => {
   const isLoggedIn = () => !!getAccessToken();
 
   return {
+    user: userFromToken,
     userCan,
     login,
     loginLoading,
