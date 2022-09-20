@@ -1,10 +1,16 @@
 import { PermissionCodec } from '@project-starter/shared';
 import { hash } from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
-import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
+import { s3DeleteObject } from '../aws';
 import { Permission } from './Permission';
 
 @Entity()
@@ -34,7 +40,7 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   lastName?: string
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   image?: string
 
   @Exclude()
@@ -57,14 +63,23 @@ export class User extends BaseEntity {
     return '';
   }
 
+  async setPassword(plain: string) {
+    this.password = await hash(plain, 12);
+  }
+
+  async setImage(image?: string | null) {
+    const oldImage = this.image;
+    this.image = image ?? undefined;
+
+    if (oldImage) {
+      await s3DeleteObject(oldImage);
+    }
+  }
+
   toJSON() {
     return {
       ...instanceToPlain(this),
       encodedPermissions: this.encodedPermissions,
     };
-  }
-
-  async setPassword(plain: string) {
-    this.password = await hash(plain, 12);
   }
 }

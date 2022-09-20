@@ -5,7 +5,12 @@ import {
 import ImgCrop from 'antd-img-crop';
 import { RcFile } from 'antd/lib/upload/interface';
 import React, { useState } from 'react';
-import { useEditMeMutation, useImageUploadLazyQuery, User } from '../../../graphql/generated/graphql';
+import {
+  MeDocument,
+  useEditMeMutation,
+  useImageUploadLazyQuery,
+  User,
+} from '../../../graphql/generated/graphql';
 import { getImageUrl } from '../../../user';
 
 type UserSettingsImageUploadProps = {
@@ -38,7 +43,7 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
       });
 
       if (!uploadParameters) {
-        message.error('Can\'t create upload, try again');
+        message.error("Can't create upload, try again");
         return;
       }
 
@@ -52,6 +57,7 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
           name: user.name,
           image: uploadParameters.getImageUploadUrl.filename,
         },
+        refetchQueries: [MeDocument],
       });
       message.success('Changed profile picture!');
     } catch {
@@ -61,12 +67,7 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
 
   return (
     <Space direction="vertical" align="center">
-      <Avatar
-        src={getImageUrl(user)}
-        shape="circle"
-        size={128}
-        icon={<UserOutlined />}
-      />
+      <Avatar src={getImageUrl(user)} shape="circle" size={128} icon={<UserOutlined />} />
       <ImgCrop rotate modalOk="Upload" modalTitle="Edit upload" modalCancel="Cancel" shape="round">
         <Upload
           name="file"

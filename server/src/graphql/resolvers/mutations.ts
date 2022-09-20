@@ -115,7 +115,8 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       user.name = name;
       user.lastName = lastName ?? undefined;
-      user.image = image ?? undefined;
+
+      await user.setImage(image);
 
       await validateOrReject(user);
 

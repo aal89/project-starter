@@ -16,4 +16,8 @@ const getS3UploadUrl = (filename: string, contentType: string) => {
   });
 };
 
-export { getS3UploadUrl };
+const s3DeleteObject = (filename: string) => {
+  return s3.deleteObject({ Bucket: env.aws.bucket(), Key: filename }).promise();
+};
+
+export { getS3UploadUrl, s3DeleteObject };
