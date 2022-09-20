@@ -95,9 +95,11 @@ query GetUsers(
 }
 
 query Stats {
-  totalUsers
-  activeUsers
-  recentlyCreatedUsers
+  stats {
+    totalUsers
+    activeUsers
+    recentlyCreatedUsers
+  }
 }
 
 query Me {

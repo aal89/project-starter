@@ -1,10 +1,9 @@
 import { ok } from 'assert';
 import { Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
-import { Like, MoreThan } from 'typeorm';
+import { Like } from 'typeorm';
 import { getS3UploadUrl } from '../../aws';
 import { User } from '../../entities/User';
-import { midnight, firstDayOfMonth } from '../../utils/date';
 import { randomFilename } from '../../utils/string';
 import { ContextType } from '../apollo-server';
 import { QueryResolvers } from '../generated/graphql';
@@ -36,9 +35,6 @@ const queryTypeDefs = gql`
     me: User!
     users(username: String, offset: Int!, limit: Int!): PaginatedUsers!
     getImageUploadUrl(contentType: String!): ImageUploadParameters!
-    totalUsers: Int!
-    activeUsers: Int!
-    recentlyCreatedUsers: Int!
   }
 `;
 
@@ -67,29 +63,6 @@ const queryResolvers: QueryResolvers<ContextType> = {
       total,
       users,
     };
-  },
-  totalUsers: async (_, __, { userCan }) => {
-    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
-
-    return User.count();
-  },
-  activeUsers: async (_, __, { userCan }) => {
-    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
-
-    return User.count({
-      where: {
-        lastOnlineAt: MoreThan(firstDayOfMonth()),
-      },
-    });
-  },
-  recentlyCreatedUsers: async (_, __, { userCan }) => {
-    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
-
-    return User.count({
-      where: {
-        createdAt: MoreThan(midnight()),
-      },
-    });
   },
   getImageUploadUrl: async (_, { contentType }, { userCan }) => {
     ok(userCan(Permission.LOGIN));

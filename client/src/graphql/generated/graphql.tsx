@@ -84,11 +84,9 @@ export type PaginatedUsers = {
 
 export type Query = {
   __typename?: 'Query';
-  activeUsers: Scalars['Int'];
   getImageUploadUrl: ImageUploadParameters;
   me: User;
-  recentlyCreatedUsers: Scalars['Int'];
-  totalUsers: Scalars['Int'];
+  stats: Stats;
   users: PaginatedUsers;
 };
 
@@ -102,6 +100,13 @@ export type QueryUsersArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   username?: InputMaybe<Scalars['String']>;
+};
+
+export type Stats = {
+  __typename?: 'Stats';
+  activeUsers: Scalars['Int'];
+  recentlyCreatedUsers: Scalars['Int'];
+  totalUsers: Scalars['Int'];
 };
 
 export type Tokens = {
@@ -210,7 +215,7 @@ export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'Pagin
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StatsQuery = { __typename?: 'Query', totalUsers: number, activeUsers: number, recentlyCreatedUsers: number };
+export type StatsQuery = { __typename?: 'Query', stats: { __typename?: 'Stats', totalUsers: number, activeUsers: number, recentlyCreatedUsers: number } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -546,9 +551,11 @@ export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery
 export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
 export const StatsDocument = gql`
     query Stats {
-  totalUsers
-  activeUsers
-  recentlyCreatedUsers
+  stats {
+    totalUsers
+    activeUsers
+    recentlyCreatedUsers
+  }
 }
     `;
 

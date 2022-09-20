@@ -83,11 +83,9 @@ export type PaginatedUsers = {
 
 export type Query = {
   __typename?: 'Query';
-  activeUsers: Scalars['Int'];
   getImageUploadUrl: ImageUploadParameters;
   me: User;
-  recentlyCreatedUsers: Scalars['Int'];
-  totalUsers: Scalars['Int'];
+  stats: Stats;
   users: PaginatedUsers;
 };
 
@@ -101,6 +99,13 @@ export type QueryUsersArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
   username?: InputMaybe<Scalars['String']>;
+};
+
+export type Stats = {
+  __typename?: 'Stats';
+  activeUsers: Scalars['Int'];
+  recentlyCreatedUsers: Scalars['Int'];
+  totalUsers: Scalars['Int'];
 };
 
 export type Tokens = {
@@ -208,6 +213,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   PaginatedUsers: ResolverTypeWrapper<PaginatedUsers>;
   Query: ResolverTypeWrapper<{}>;
+  Stats: ResolverTypeWrapper<Stats>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Tokens: ResolverTypeWrapper<Tokens>;
   User: ResolverTypeWrapper<User>;
@@ -224,6 +230,7 @@ export type ResolversParentTypes = {
   Mutation: {};
   PaginatedUsers: PaginatedUsers;
   Query: {};
+  Stats: Stats;
   String: Scalars['String'];
   Tokens: Tokens;
   User: User;
@@ -258,12 +265,17 @@ export type PaginatedUsersResolvers<ContextType = any, ParentType extends Resolv
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  activeUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   getImageUploadUrl?: Resolver<ResolversTypes['ImageUploadParameters'], ParentType, ContextType, RequireFields<QueryGetImageUploadUrlArgs, 'contentType'>>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  stats?: Resolver<ResolversTypes['Stats'], ParentType, ContextType>;
+  users?: Resolver<ResolversTypes['PaginatedUsers'], ParentType, ContextType, RequireFields<QueryUsersArgs, 'limit' | 'offset'>>;
+};
+
+export type StatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Stats'] = ResolversParentTypes['Stats']> = {
+  activeUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   recentlyCreatedUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  users?: Resolver<ResolversTypes['PaginatedUsers'], ParentType, ContextType, RequireFields<QueryUsersArgs, 'limit' | 'offset'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tokens'] = ResolversParentTypes['Tokens']> = {
@@ -295,6 +307,7 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   PaginatedUsers?: PaginatedUsersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Stats?: StatsResolvers<ContextType>;
   Tokens?: TokensResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   Void?: GraphQLScalarType;
