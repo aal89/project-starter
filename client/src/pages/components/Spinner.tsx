@@ -6,11 +6,14 @@ const antIcon = (size: number) => <LoadingOutlined style={{ fontSize: size }} />
 
 type SpinnerProps = {
   tip?: string;
-  size?: number
+  size?: number;
+  enabled?: boolean;
 };
 
-export const Spinner: React.FC<SpinnerProps> = ({ tip, size = 24, children }) => (
-  <Spin tip={tip} indicator={antIcon(size)}>
+export const Spinner: React.FC<SpinnerProps> = ({
+  tip, size = 24, enabled = true, children,
+}) => (
+  <Spin tip={tip} indicator={antIcon(size)} spinning={enabled}>
     {children}
   </Spin>
 );

@@ -12,12 +12,14 @@ import {
   User,
 } from '../../../graphql/generated/graphql';
 import { getImageUrl } from '../../../user';
+import { Spinner } from '../../components/Spinner';
 
 type UserSettingsImageUploadProps = {
   user: User;
 };
 
 export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = ({ user }) => {
+  const [uploading, setUploading] = useState(false);
   const [contentType, setContentType] = useState('');
   const [imageUploadQuery, { loading: uploadLinkLoading }] = useImageUploadLazyQuery({
     fetchPolicy: 'no-cache',
@@ -31,6 +33,8 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
 
   const uploadPicture = async (data: Blob | RcFile) => {
     try {
+      setUploading(true);
+
       if (!user || !contentType) {
         message.error('Please refresh the page');
         return;
@@ -59,15 +63,20 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
         },
         refetchQueries: [MeDocument],
       });
+
+      setUploading(false);
       message.success('Changed profile picture!');
     } catch {
+      setUploading(false);
       message.error('Failed to change profile picture, try again');
     }
   };
 
   return (
     <Space direction="vertical" align="center">
-      <Avatar src={getImageUrl(user)} shape="circle" size={128} icon={<UserOutlined />} />
+      <Spinner enabled={uploading}>
+        <Avatar src={getImageUrl(user)} shape="circle" size={128} icon={<UserOutlined />} />
+      </Spinner>
       <ImgCrop rotate modalOk="Upload" modalTitle="Edit upload" modalCancel="Cancel" shape="round">
         <Upload
           name="file"
