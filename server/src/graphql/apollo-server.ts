@@ -2,11 +2,11 @@ import { can as sharedCan, Permission } from '@project-starter/shared';
 import { ApolloServer } from 'apollo-server-express';
 import express, { Request } from 'express';
 import { validateAccessToken } from './auth/token';
-import { User } from './generated/graphql';
+import { UserModel } from './generated/graphql';
 import { typeDefs, resolvers } from './schema';
 
 export type ContextType = {
-  user?: User;
+  user?: UserModel;
   userCan: (...permissions: Permission[]) => boolean;
   can: typeof sharedCan;
 };

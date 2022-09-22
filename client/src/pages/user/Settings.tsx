@@ -20,16 +20,16 @@ const { TabPane } = Tabs;
 
 const Settings: React.FC = () => {
   const { setTitle, setTitleContent } = useOutletContext<SetLayoutContext>();
-  const { data: user, loading } = useMeQuery();
+  const { data, loading } = useMeQuery();
 
   useEffect(() => {
-    if (user) {
-      setTitle(`Hello ${user.me.name}!`);
-      setTitleContent(<UserSettingsTitle user={user.me} />);
+    if (data) {
+      setTitle(`Hello ${data.me.name}!`);
+      setTitleContent(<UserSettingsTitle user={data.me} />);
     }
-  }, [user]);
+  }, [data]);
 
-  if (!user) {
+  if (!data) {
     return <Text>Failed to load user data</Text>;
   }
 
@@ -51,12 +51,14 @@ const Settings: React.FC = () => {
       >
         <Row gutter={[24, 0]}>
           <Col flex="none">
-            <UserSettingsImageUpload user={user.me} />
+            <UserSettingsImageUpload user={data.me} />
           </Col>
           <Col span={8}>
-            <UserSettingsEditUser user={user.me} />
+            <UserSettingsEditUser user={data.me} />
           </Col>
-          <Col flex="auto">{user && <UserSettingsMeta user={user.me} />}</Col>
+          <Col flex="auto">
+            <UserSettingsMeta user={data.me} />
+          </Col>
         </Row>
       </TabPane>
       <TabPane

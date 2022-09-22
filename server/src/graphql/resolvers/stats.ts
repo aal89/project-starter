@@ -5,21 +5,17 @@ import { MoreThan } from 'typeorm';
 import { User } from '../../entities/User';
 import { firstDayOfMonth, midnight } from '../../utils/date';
 import { ContextType } from '../apollo-server';
-import { StatsResolvers } from '../generated/graphql';
+import { QueryResolvers } from '../generated/graphql';
 
 const statsTypeDefs = gql`
-  type Stats {
+  extend type Query {
     totalUsers: Int!
     activeUsers: Int!
     recentlyCreatedUsers: Int!
   }
-
-  extend type Query {
-    stats: Stats!
-  }
 `;
 
-const statsResolvers: StatsResolvers<ContextType> = {
+const queryResolvers: QueryResolvers<ContextType> = {
   totalUsers: async (_, __, { userCan }) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to retrieve stats');
 
@@ -45,4 +41,4 @@ const statsResolvers: StatsResolvers<ContextType> = {
   },
 };
 
-export { statsTypeDefs, statsResolvers };
+export { statsTypeDefs, queryResolvers };

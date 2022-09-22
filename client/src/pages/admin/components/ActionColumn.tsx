@@ -9,13 +9,13 @@ import React, { useState } from 'react';
 import {
   useDeleteAccountMutation,
   useEditUserMutation,
-  User,
+  UserModel,
   useResetPasswordMutation,
 } from '../../../graphql/generated/graphql';
 import { EditUserModal } from './EditUserModal';
 
 type ActionColumnProps = {
-  user: User;
+  user: UserModel;
   dataChanged?: () => void;
 };
 

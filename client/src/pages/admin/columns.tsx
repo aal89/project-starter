@@ -2,7 +2,7 @@ import { decode } from '@project-starter/shared/build';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
-import { User } from '../../graphql/generated/graphql';
+import { UserModel } from '../../graphql/generated/graphql';
 import { ActionColumn } from './components/ActionColumn';
 import { IdColumn } from './components/IdColumn';
 import { NameColumn } from './components/NameColumn';
@@ -11,7 +11,7 @@ type ColumnsProps = {
   dataChanged?: () => void;
 };
 
-export const columns: (props: ColumnsProps) => ColumnsType<User & { key: string }> = ({
+export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: string }> = ({
   dataChanged,
 }) => [
   {
@@ -52,6 +52,6 @@ export const columns: (props: ColumnsProps) => ColumnsType<User & { key: string 
     title: 'Action',
     key: 'action',
     width: 50,
-    render: (_: any, record: User) => <ActionColumn user={record} dataChanged={dataChanged} />,
+    render: (_: any, record: UserModel) => <ActionColumn user={record} dataChanged={dataChanged} />,
   },
 ];

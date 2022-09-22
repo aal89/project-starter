@@ -7,9 +7,9 @@ import { useStatsQuery } from '../../../graphql/generated/graphql';
 export const Stats: React.FC = () => {
   const { data, loading } = useStatsQuery();
 
-  const totalUsers = data?.stats.totalUsers ?? 0;
-  const activeUsers = data?.stats.activeUsers ?? 0;
-  const recentlyCreatedUsers = data?.stats.recentlyCreatedUsers ?? 0;
+  const totalUsers = data?.totalUsers ?? 0;
+  const activeUsers = data?.activeUsers ?? 0;
+  const recentlyCreatedUsers = data?.recentlyCreatedUsers ?? 0;
 
   const conversionRate = () => {
     const conversion = (activeUsers / totalUsers) * 100;

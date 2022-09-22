@@ -5,7 +5,7 @@ import jwtDecode from 'jwt-decode';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { client } from '../client';
-import { useSignupMutation, useLoginMutation, User } from '../graphql/generated/graphql';
+import { useSignupMutation, useLoginMutation, UserModel } from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
 import { getAccessToken, setAccessToken, setRefreshToken } from '../tokens';
 
@@ -14,9 +14,9 @@ export const useAuth = () => {
   const [signupMutation, { loading: signupLoading }] = useSignupMutation();
   const [loginMutation, { loading: loginLoading }] = useLoginMutation();
 
-  const userFromToken: Readonly<User> | null = useMemo(() => {
+  const userFromToken: Readonly<UserModel> | null = useMemo(() => {
     try {
-      const { user: decodedUser } = jwtDecode<{ user: User }>(getAccessToken());
+      const { user: decodedUser } = jwtDecode<{ user: UserModel }>(getAccessToken());
 
       return decodedUser;
     } catch {

@@ -1,11 +1,11 @@
 import { Space, Typography } from 'antd';
 import React from 'react';
-import { User } from '../../../graphql/generated/graphql';
+import { UserModel } from '../../../graphql/generated/graphql';
 
 const { Text } = Typography;
 
 type UserSettingsTitleProps = {
-  user: User | null;
+  user: UserModel | null;
 };
 
 export const UserSettingsTitle: React.FC<UserSettingsTitleProps> = ({ user }) => (

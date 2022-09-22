@@ -29,7 +29,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   changePassword?: Maybe<Scalars['Void']>;
   deleteAccount?: Maybe<Scalars['Void']>;
-  editUser: User;
+  edit: UserModel;
   login: Tokens;
   refresh: Tokens;
   resetPassword: Scalars['String'];
@@ -48,8 +48,8 @@ export type MutationDeleteAccountArgs = {
 };
 
 
-export type MutationEditUserArgs = {
-  user: UserInput;
+export type MutationEditArgs = {
+  user: UserModelInput;
 };
 
 
@@ -79,14 +79,16 @@ export type MutationSignupArgs = {
 export type PaginatedUsers = {
   __typename?: 'PaginatedUsers';
   total: Scalars['Int'];
-  users: Array<User>;
+  users: Array<UserModel>;
 };
 
 export type Query = {
   __typename?: 'Query';
+  activeUsers: Scalars['Int'];
   getImageUploadUrl: ImageUploadParameters;
-  me: User;
-  stats: Stats;
+  me: UserModel;
+  recentlyCreatedUsers: Scalars['Int'];
+  totalUsers: Scalars['Int'];
   users: PaginatedUsers;
 };
 
@@ -102,21 +104,14 @@ export type QueryUsersArgs = {
   username?: InputMaybe<Scalars['String']>;
 };
 
-export type Stats = {
-  __typename?: 'Stats';
-  activeUsers: Scalars['Int'];
-  recentlyCreatedUsers: Scalars['Int'];
-  totalUsers: Scalars['Int'];
-};
-
 export type Tokens = {
   __typename?: 'Tokens';
   accessToken: Scalars['String'];
   refreshToken: Scalars['String'];
 };
 
-export type User = {
-  __typename?: 'User';
+export type UserModel = {
+  __typename?: 'UserModel';
   createdAt: Scalars['Date'];
   email: Scalars['String'];
   encodedPermissions: Scalars['String'];
@@ -128,7 +123,7 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type UserInput = {
+export type UserModelInput = {
   email?: InputMaybe<Scalars['String']>;
   image?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
@@ -138,7 +133,7 @@ export type UserInput = {
   username?: InputMaybe<Scalars['String']>;
 };
 
-export type UserFieldsFragment = { __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any };
+export type UserModelFieldsFragment = { __typename?: 'UserModel', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -166,11 +161,11 @@ export type RefreshMutationVariables = Exact<{
 export type RefreshMutation = { __typename?: 'Mutation', refresh: { __typename?: 'Tokens', accessToken: string, refreshToken: string } };
 
 export type EditUserMutationVariables = Exact<{
-  input: UserInput;
+  input: UserModelInput;
 }>;
 
 
-export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string } };
+export type EditUserMutation = { __typename?: 'Mutation', edit: { __typename?: 'UserModel', id: string } };
 
 export type EditMeMutationVariables = Exact<{
   name: Scalars['String'];
@@ -179,7 +174,7 @@ export type EditMeMutationVariables = Exact<{
 }>;
 
 
-export type EditMeMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', name: string, lastName?: string | null, image?: string | null } };
+export type EditMeMutation = { __typename?: 'Mutation', edit: { __typename?: 'UserModel', name: string, lastName?: string | null, image?: string | null } };
 
 export type ChangePasswordMutationVariables = Exact<{
   oldPassword: Scalars['String'];
@@ -210,17 +205,17 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any }> } };
+export type GetUsersQuery = { __typename?: 'Query', users: { __typename?: 'PaginatedUsers', total: number, users: Array<{ __typename?: 'UserModel', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any }> } };
 
 export type StatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StatsQuery = { __typename?: 'Query', stats: { __typename?: 'Stats', totalUsers: number, activeUsers: number, recentlyCreatedUsers: number } };
+export type StatsQuery = { __typename?: 'Query', totalUsers: number, activeUsers: number, recentlyCreatedUsers: number };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'UserModel', id: string, username: string, name: string, lastName?: string | null, image?: string | null, email: string, encodedPermissions: string, lastOnlineAt: any, createdAt: any } };
 
 export type ImageUploadQueryVariables = Exact<{
   contentType: Scalars['String'];
@@ -229,8 +224,8 @@ export type ImageUploadQueryVariables = Exact<{
 
 export type ImageUploadQuery = { __typename?: 'Query', getImageUploadUrl: { __typename?: 'ImageUploadParameters', filename: string, url: string } };
 
-export const UserFieldsFragmentDoc = gql`
-    fragment UserFields on User {
+export const UserModelFieldsFragmentDoc = gql`
+    fragment UserModelFields on UserModel {
   id
   username
   name
@@ -346,8 +341,8 @@ export type RefreshMutationHookResult = ReturnType<typeof useRefreshMutation>;
 export type RefreshMutationResult = Apollo.MutationResult<RefreshMutation>;
 export type RefreshMutationOptions = Apollo.BaseMutationOptions<RefreshMutation, RefreshMutationVariables>;
 export const EditUserDocument = gql`
-    mutation EditUser($input: UserInput!) {
-  editUser(user: $input) {
+    mutation EditUser($input: UserModelInput!) {
+  edit(user: $input) {
     id
   }
 }
@@ -380,7 +375,7 @@ export type EditUserMutationResult = Apollo.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = Apollo.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
 export const EditMeDocument = gql`
     mutation EditMe($name: String!, $lastName: String, $image: String) {
-  editUser(user: {name: $name, lastName: $lastName, image: $image}) {
+  edit(user: {name: $name, lastName: $lastName, image: $image}) {
     name
     lastName
     image
@@ -514,11 +509,11 @@ export const GetUsersDocument = gql`
   users(username: $username, offset: $offset, limit: $limit) {
     total
     users {
-      ...UserFields
+      ...UserModelFields
     }
   }
 }
-    ${UserFieldsFragmentDoc}`;
+    ${UserModelFieldsFragmentDoc}`;
 
 /**
  * __useGetUsersQuery__
@@ -551,11 +546,9 @@ export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery
 export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
 export const StatsDocument = gql`
     query Stats {
-  stats {
-    totalUsers
-    activeUsers
-    recentlyCreatedUsers
-  }
+  totalUsers
+  activeUsers
+  recentlyCreatedUsers
 }
     `;
 
@@ -588,10 +581,10 @@ export type StatsQueryResult = Apollo.QueryResult<StatsQuery, StatsQueryVariable
 export const MeDocument = gql`
     query Me {
   me {
-    ...UserFields
+    ...UserModelFields
   }
 }
-    ${UserFieldsFragmentDoc}`;
+    ${UserModelFieldsFragmentDoc}`;
 
 /**
  * __useMeQuery__

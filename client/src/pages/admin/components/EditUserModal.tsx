@@ -16,12 +16,12 @@ import { useForm } from 'antd/lib/form/Form';
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
-import { useEditUserMutation, User } from '../../../graphql/generated/graphql';
+import { useEditUserMutation, UserModel } from '../../../graphql/generated/graphql';
 
 const { Text } = Typography;
 
 type EditUserModalProps = {
-  user: User;
+  user: UserModel;
   onClose?: (changes: boolean) => void;
 };
 

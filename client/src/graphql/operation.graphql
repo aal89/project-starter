@@ -1,4 +1,4 @@
-fragment UserFields on User {
+fragment UserModelFields on UserModel {
   id
   username
   name
@@ -39,9 +39,9 @@ mutation Refresh(
 }
 
 mutation EditUser(
-  $input: UserInput!
+  $input: UserModelInput!
 ) {
-  editUser(user: $input) {
+  edit(user: $input) {
     id
   }
 }
@@ -51,7 +51,7 @@ mutation EditMe(
   $lastName: String
   $image: String
 ) {
-  editUser(user: {
+  edit(user: {
     name: $name
     lastName: $lastName
     image: $image
@@ -89,22 +89,20 @@ query GetUsers(
   users(username: $username, offset: $offset, limit: $limit) {
     total
     users {
-      ...UserFields
+      ...UserModelFields
     }
   }
 }
 
 query Stats {
-  stats {
-    totalUsers
-    activeUsers
-    recentlyCreatedUsers
-  }
+  totalUsers
+  activeUsers
+  recentlyCreatedUsers
 }
 
 query Me {
   me {
-    ...UserFields
+    ...UserModelFields
   }
 }
 

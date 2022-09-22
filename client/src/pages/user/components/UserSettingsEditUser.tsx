@@ -2,10 +2,10 @@ import {
   Form, Input, Button, message,
 } from 'antd';
 import React from 'react';
-import { MeDocument, useEditMeMutation, User } from '../../../graphql/generated/graphql';
+import { MeDocument, useEditMeMutation, UserModel } from '../../../graphql/generated/graphql';
 
 type UserSettingsEditUserProps = {
-  user: User;
+  user: UserModel;
 };
 
 export const UserSettingsEditUser: React.FC<UserSettingsEditUserProps> = ({ user }) => {

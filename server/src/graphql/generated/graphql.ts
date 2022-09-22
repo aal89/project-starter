@@ -28,7 +28,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   changePassword?: Maybe<Scalars['Void']>;
   deleteAccount?: Maybe<Scalars['Void']>;
-  editUser: User;
+  edit: UserModel;
   login: Tokens;
   refresh: Tokens;
   resetPassword: Scalars['String'];
@@ -47,8 +47,8 @@ export type MutationDeleteAccountArgs = {
 };
 
 
-export type MutationEditUserArgs = {
-  user: UserInput;
+export type MutationEditArgs = {
+  user: UserModelInput;
 };
 
 
@@ -78,14 +78,16 @@ export type MutationSignupArgs = {
 export type PaginatedUsers = {
   __typename?: 'PaginatedUsers';
   total: Scalars['Int'];
-  users: Array<User>;
+  users: Array<UserModel>;
 };
 
 export type Query = {
   __typename?: 'Query';
+  activeUsers: Scalars['Int'];
   getImageUploadUrl: ImageUploadParameters;
-  me: User;
-  stats: Stats;
+  me: UserModel;
+  recentlyCreatedUsers: Scalars['Int'];
+  totalUsers: Scalars['Int'];
   users: PaginatedUsers;
 };
 
@@ -101,21 +103,14 @@ export type QueryUsersArgs = {
   username?: InputMaybe<Scalars['String']>;
 };
 
-export type Stats = {
-  __typename?: 'Stats';
-  activeUsers: Scalars['Int'];
-  recentlyCreatedUsers: Scalars['Int'];
-  totalUsers: Scalars['Int'];
-};
-
 export type Tokens = {
   __typename?: 'Tokens';
   accessToken: Scalars['String'];
   refreshToken: Scalars['String'];
 };
 
-export type User = {
-  __typename?: 'User';
+export type UserModel = {
+  __typename?: 'UserModel';
   createdAt: Scalars['Date'];
   email: Scalars['String'];
   encodedPermissions: Scalars['String'];
@@ -127,7 +122,7 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type UserInput = {
+export type UserModelInput = {
   email?: InputMaybe<Scalars['String']>;
   image?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
@@ -213,11 +208,10 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   PaginatedUsers: ResolverTypeWrapper<PaginatedUsers>;
   Query: ResolverTypeWrapper<{}>;
-  Stats: ResolverTypeWrapper<Stats>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Tokens: ResolverTypeWrapper<Tokens>;
-  User: ResolverTypeWrapper<User>;
-  UserInput: UserInput;
+  UserModel: ResolverTypeWrapper<UserModel>;
+  UserModelInput: UserModelInput;
   Void: ResolverTypeWrapper<Scalars['Void']>;
 };
 
@@ -230,11 +224,10 @@ export type ResolversParentTypes = {
   Mutation: {};
   PaginatedUsers: PaginatedUsers;
   Query: {};
-  Stats: Stats;
   String: Scalars['String'];
   Tokens: Tokens;
-  User: User;
-  UserInput: UserInput;
+  UserModel: UserModel;
+  UserModelInput: UserModelInput;
   Void: Scalars['Void'];
 };
 
@@ -251,7 +244,7 @@ export type ImageUploadParametersResolvers<ContextType = any, ParentType extends
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
   deleteAccount?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationDeleteAccountArgs, 'id'>>;
-  editUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationEditUserArgs, 'user'>>;
+  edit?: Resolver<ResolversTypes['UserModel'], ParentType, ContextType, RequireFields<MutationEditArgs, 'user'>>;
   login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   refresh?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;
   resetPassword?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'id'>>;
@@ -260,22 +253,17 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type PaginatedUsersResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginatedUsers'] = ResolversParentTypes['PaginatedUsers']> = {
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  users?: Resolver<Array<ResolversTypes['UserModel']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getImageUploadUrl?: Resolver<ResolversTypes['ImageUploadParameters'], ParentType, ContextType, RequireFields<QueryGetImageUploadUrlArgs, 'contentType'>>;
-  me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  stats?: Resolver<ResolversTypes['Stats'], ParentType, ContextType>;
-  users?: Resolver<ResolversTypes['PaginatedUsers'], ParentType, ContextType, RequireFields<QueryUsersArgs, 'limit' | 'offset'>>;
-};
-
-export type StatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Stats'] = ResolversParentTypes['Stats']> = {
   activeUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  getImageUploadUrl?: Resolver<ResolversTypes['ImageUploadParameters'], ParentType, ContextType, RequireFields<QueryGetImageUploadUrlArgs, 'contentType'>>;
+  me?: Resolver<ResolversTypes['UserModel'], ParentType, ContextType>;
   recentlyCreatedUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  users?: Resolver<ResolversTypes['PaginatedUsers'], ParentType, ContextType, RequireFields<QueryUsersArgs, 'limit' | 'offset'>>;
 };
 
 export type TokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tokens'] = ResolversParentTypes['Tokens']> = {
@@ -284,7 +272,7 @@ export type TokensResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type UserModelResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserModel'] = ResolversParentTypes['UserModel']> = {
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   encodedPermissions?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -307,9 +295,8 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   PaginatedUsers?: PaginatedUsersResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  Stats?: StatsResolvers<ContextType>;
   Tokens?: TokensResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
+  UserModel?: UserModelResolvers<ContextType>;
   Void?: GraphQLScalarType;
 };
 

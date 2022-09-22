@@ -9,13 +9,13 @@ import {
   MeDocument,
   useEditMeMutation,
   useImageUploadLazyQuery,
-  User,
+  UserModel,
 } from '../../../graphql/generated/graphql';
 import { getImageUrl } from '../../../user';
 import { Spinner } from '../../components/Spinner';
 
 type UserSettingsImageUploadProps = {
-  user: User;
+  user: UserModel;
 };
 
 export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = ({ user }) => {

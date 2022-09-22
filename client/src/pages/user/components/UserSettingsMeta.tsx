@@ -1,12 +1,12 @@
 import { Space, Typography } from 'antd';
 import moment from 'moment';
 import React from 'react';
-import { User } from '../../../graphql/generated/graphql';
+import { UserModel } from '../../../graphql/generated/graphql';
 
 const { Text } = Typography;
 
 type UserSettingsMetaProps = {
-  user: User;
+  user: UserModel;
 };
 
 export const UserSettingsMeta: React.FC<UserSettingsMetaProps> = ({ user }) => (

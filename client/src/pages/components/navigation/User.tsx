@@ -12,7 +12,7 @@ const { Text } = Typography;
 
 export const User: React.FC = () => {
   const { isLoggedIn } = useAuth();
-  const { data: user, loading } = useMeQuery();
+  const { data, loading } = useMeQuery();
 
   if (loading) {
     return <Spinner />;
@@ -21,7 +21,7 @@ export const User: React.FC = () => {
   return (
     <Dropdown overlay={<Menu items={userMenu(isLoggedIn())} />} placement="bottomRight">
       <Space>
-        <Text>{user?.me.name ?? 'Account'}</Text>
+        <Text>{data?.me.name ?? 'Account'}</Text>
         <Avatar
           src={isLoggedIn() ? 'https://joeschmoe.io/api/v1/random' : ''}
           icon={<UserOutlined />}
