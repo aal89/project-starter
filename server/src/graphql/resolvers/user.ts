@@ -3,9 +3,11 @@ import { decode, Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { In, Like } from 'typeorm';
+import { getS3UploadUrl } from '../../aws';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
+import { randomFilename } from '../../utils/string';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
 import { MutationResolvers, QueryResolvers } from '../generated/graphql';
@@ -33,6 +35,11 @@ const userTypeDefs = gql`
     createdAt: Date!
   }
 
+  type ImageUploadParameters {
+    url: String!
+    filename: String!
+  }
+
   type PaginatedUsers {
     total: Int!
     users: [UserModel!]!
@@ -41,6 +48,7 @@ const userTypeDefs = gql`
   extend type Query {
     me: UserModel!
     users(username: String, offset: Int!, limit: Int!): PaginatedUsers!
+    getImageUploadUrl(contentType: String!): ImageUploadParameters!
   }
 
   extend type Mutation {
@@ -74,6 +82,21 @@ const queryResolvers: QueryResolvers<ContextType> = {
     return {
       total,
       users,
+    };
+  },
+  getImageUploadUrl: async (_, { contentType }, { userCan }) => {
+    ok(userCan(Permission.LOGIN));
+    ok(
+      ['image/jpeg', 'image/bmp', 'image/png'].includes(contentType),
+      'Unsupported image type, try another',
+    );
+
+    const filename = randomFilename('jpg');
+    const url = await getS3UploadUrl(filename, contentType);
+
+    return {
+      url,
+      filename,
     };
   },
 };

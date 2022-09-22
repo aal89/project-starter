@@ -1,16 +1,19 @@
 import { mergeTypeDefs } from '@graphql-tools/merge';
+import { gql } from 'apollo-server-express';
 import { ContextType } from './apollo-server';
 import { Resolvers } from './generated/graphql';
-import { mutationTypeDefs, mutationResolvers } from './resolvers/mutations';
-import { queryTypeDefs, queryResolvers } from './resolvers/queries';
+import { authTypeDefs, mutationResolvers as authMutations } from './resolvers/auth';
 import { statsTypeDefs, queryResolvers as statsQueries } from './resolvers/stats';
 import { userTypeDefs, queryResolvers as userQueries, mutationResolvers as userMutations } from './resolvers/user';
 import { scalarResolvers, scalarTypeDefs } from './scalars';
 
 const typeDefs = mergeTypeDefs([
+  gql`
+    type Query
+    type Mutation
+  `,
   scalarTypeDefs,
-  queryTypeDefs,
-  mutationTypeDefs,
+  authTypeDefs,
   userTypeDefs,
   statsTypeDefs,
 ]);
@@ -18,12 +21,11 @@ const typeDefs = mergeTypeDefs([
 const resolvers: Resolvers<ContextType> = {
   ...scalarResolvers,
   Query: {
-    ...queryResolvers,
     ...statsQueries,
     ...userQueries,
   },
   Mutation: {
-    ...mutationResolvers,
+    ...authMutations,
     ...userMutations,
   },
 };

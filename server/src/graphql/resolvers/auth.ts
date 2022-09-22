@@ -4,20 +4,20 @@ import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
-import { DatabaseError, translateError, ValidationError } from '../../errors/translateError';
+import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
 import { randomString } from '../../utils/string';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
 import { createTokens, validateRefreshToken } from '../auth/token';
 import { MutationResolvers } from '../generated/graphql';
 
-const mutationTypeDefs = gql`
+const authTypeDefs = gql`
   type Tokens {
     accessToken: String!
     refreshToken: String!
   }
 
-  type Mutation {
+  extend type Mutation {
     signup(username: String!, password: String!, email: String!, name: String!): Void
     login(username: String!, password: String!): Tokens!
     refresh(token: String!): Tokens!
@@ -132,4 +132,4 @@ const mutationResolvers: MutationResolvers<ContextType> = {
   },
 };
 
-export { mutationTypeDefs, mutationResolvers };
+export { authTypeDefs, mutationResolvers };
