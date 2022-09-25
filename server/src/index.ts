@@ -11,6 +11,7 @@ import graphql from './graphql/apollo-server';
   await AppDataSource.initialize();
 
   app.listen(env.port(), () => {
+    // eslint-disable-next-line no-console
     console.log(`🚀[server] live on ${env.port()}`);
   });
 })();

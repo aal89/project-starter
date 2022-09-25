@@ -14,7 +14,9 @@ export enum ValidationError {
   Username4MinLength,
 }
 
-const hasCode = (o: any): o is { code: string, detail: string } => o && o.code && typeof o.code === 'string' && o.detail && typeof o.detail === 'string';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const hasCode = (o: any): o is { code: string; detail: string } => o && o.code && typeof o.code === 'string' && o.detail && typeof o.detail === 'string';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isValidationError = (o: any): o is VE => o && o.property && typeof o.property === 'string';
 
 export const translateError = (err: unknown) => {
