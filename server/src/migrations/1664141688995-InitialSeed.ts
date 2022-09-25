@@ -3,7 +3,7 @@ import { MigrationInterface } from 'typeorm';
 import { Permission } from '../entities/Permission';
 import { User } from '../entities/User';
 
-export class InitialSeed1655475766558 implements MigrationInterface {
+export class InitialSeed1664141688995 implements MigrationInterface {
   public async up(): Promise<void> {
     const canLogin = new Permission();
     canLogin.name = PermissionShared.LOGIN;
