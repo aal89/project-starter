@@ -4,6 +4,7 @@
     "target": "es5",
     "module": "commonjs",
     "rootDir": "./src",
+    "baseUrl": "./src",
     "outDir": "./build",
     "esModuleInterop": true,
     "strict": true,
