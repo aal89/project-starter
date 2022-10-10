@@ -24,7 +24,6 @@ jobs:
     - run: npm ci
     - run: npm run test -w client
     - run: npm run test -w server
-    - run: npm run build -w shared
     - run: npm run build -w client
     - run: npm run build -w server
     
