@@ -5,7 +5,6 @@
     "module": "commonjs",
     "rootDir": "./src",
     "outDir": "./build",
-    "esModuleInterop": true,
+    "isolatedModules": true
   },
-  "include": ["src/**/*.ts"],
 }
