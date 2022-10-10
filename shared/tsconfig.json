@@ -5,9 +5,7 @@
     "module": "commonjs",
     "rootDir": "./src",
     "outDir": "./build",
-    "declaration": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts"],
 }
