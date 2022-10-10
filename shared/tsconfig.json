@@ -5,6 +5,6 @@
     "module": "commonjs",
     "rootDir": "./src",
     "outDir": "./build",
-    "isolatedModules": true
+    "isolatedModules": false
   },
 }
