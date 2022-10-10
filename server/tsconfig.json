@@ -1,13 +1,10 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",
     "rootDir": "./src",
-    "outDir": "./build",
-    "esModuleInterop": true,
-    "strict": true,
-    "experimentalDecorators": true,
-    "strictPropertyInitialization": false,
-    "emitDecoratorMetadata": true
-  }
+    "outDir": "./build"
+  },
+  "references": [{ "path": "../shared" }]
 }

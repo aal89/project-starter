@@ -1,14 +1,11 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "experimentalDecorators": true,
     "target": "es5",
     "module": "commonjs",
     "rootDir": "./src",
     "outDir": "./build",
-    "esModuleInterop": true,
-    "strict": true,
     "declaration": true,
-    "strictPropertyInitialization": false,
     "moduleResolution": "node"
   },
 }
