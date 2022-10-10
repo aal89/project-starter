@@ -1,7 +1,7 @@
 import {
   EditOutlined, UnlockOutlined, StopOutlined, DeleteOutlined,
 } from '@ant-design/icons';
-import { Permission, removePermission } from '@project-starter/shared/build';
+import { Permission, removePermission } from '@project-starter/shared/build/permissions';
 import {
   Space, Tooltip, Button, Popconfirm, message,
 } from 'antd';

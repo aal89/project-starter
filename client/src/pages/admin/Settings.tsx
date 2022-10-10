@@ -1,4 +1,4 @@
-import { Permission } from '@project-starter/shared/build';
+import { Permission } from '@project-starter/shared/build/permissions';
 import React, { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';

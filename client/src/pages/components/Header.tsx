@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { ControlTwoTone, HomeTwoTone } from '@ant-design/icons';
-import { Permission } from '@project-starter/shared/build';
+import { Permission } from '@project-starter/shared/build/permissions';
 import {
   Typography, Space, Row, Col, Menu, Button,
 } from 'antd';
