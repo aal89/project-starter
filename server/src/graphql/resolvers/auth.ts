@@ -1,5 +1,5 @@
 import { ok } from 'assert';
-import { Permission } from '@project-starter/shared/build';
+import { Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { Permission as PermissionData } from '../../entities/Permission';

@@ -1,5 +1,5 @@
 import { ok } from 'assert';
-import { decode, Permission } from '@project-starter/shared/build';
+import { decode, Permission } from '@project-starter/shared';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { In, Like } from 'typeorm';

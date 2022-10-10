@@ -1,4 +1,4 @@
-import { Permission as PermissionShared } from '@project-starter/shared/build';
+import { Permission as PermissionShared } from '@project-starter/shared';
 import { MigrationInterface } from 'typeorm';
 import { Permission } from '../entities/Permission';
 import { User } from '../entities/User';

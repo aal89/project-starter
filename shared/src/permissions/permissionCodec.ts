@@ -2,7 +2,7 @@ import JSBI from 'jsbi';
 import { Permission, permissionMap, reversedPermissionMap } from "./permissions";
 import { MemoizeExpiring } from 'typescript-memoize';
 
-export class PermissionCodec {  
+export class PermissionCodec {
   // it takes about x mins for changed permissions to take effect
   @MemoizeExpiring(10 * 60 * 1000, (permissions: Array<string>) => {
     return PermissionCodec.hashCode(permissions.reduce((accu, curr) => accu + curr, ''));
