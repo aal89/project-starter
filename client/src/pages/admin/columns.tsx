@@ -1,4 +1,4 @@
-import { decode } from '@project-starter/shared/build/permissions';
+import { decode } from '@project-starter/shared/build';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';

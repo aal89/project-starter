@@ -1,4 +1,4 @@
-import { Permission } from '@project-starter/shared/build/permissions';
+import { Permission } from '@project-starter/shared/build';
 import React from 'react';
 import { Navigate, Outlet, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../hooks/auth';

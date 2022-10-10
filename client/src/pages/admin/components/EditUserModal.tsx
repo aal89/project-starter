@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { decode, encode, Permission } from '@project-starter/shared/build/permissions';
+import { decode, encode, Permission } from '@project-starter/shared/build';
 import {
   AutoComplete,
   Button,
