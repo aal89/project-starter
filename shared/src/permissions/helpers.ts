@@ -1,4 +1,4 @@
-import { PermissionCodec } from './PermissionCodec';
+import { PermissionCodec } from './permissionCodec';
 import { Permission } from './permissions';
 
 export const can = (assertedPermission: Permission, encodedPermissions: string) => {
