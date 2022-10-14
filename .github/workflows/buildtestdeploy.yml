@@ -31,12 +31,10 @@ jobs:
 
     steps:
     - name: deploy
-      uses: cross-the-world/ssh-pipeline@master
+      uses: cD3rHase/ssh-command-action@main
       with:
-        host: ${{ secrets.HOST }}
-        user: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
-        port: ${{ secrets.PORT }}
-        connect_timeout: 10s
-        script: |
-          ls -la
+        HOST: ${{ secrets.HOST }}
+        USER: ${{ secrets.USERNAME }}
+        PRIVATE_SSH_KEY: ${{ secrets.KEY }}
+        PORT: ${{ secrets.PORT }}
+        COMMAND: ls -la
