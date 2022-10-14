@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  buildtest:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,6 +25,7 @@ jobs:
     - run: npm run test
     - run: npm run build
 
+  deploy:
     - name: deploy
       uses: appleboy/ssh-action@master
       with:
