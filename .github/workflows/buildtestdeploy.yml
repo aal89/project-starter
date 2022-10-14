@@ -26,6 +26,9 @@ jobs:
     - run: npm run build
 
   deploy:
+    runs-on: ubuntu-latest
+
+    steps:
     - name: deploy
       uses: appleboy/ssh-action@master
       with:
