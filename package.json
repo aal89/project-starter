@@ -10,7 +10,9 @@
     "redis:start": "docker run --name redis -p 127.0.0.1:6379:6379 -d redis",
     "redis:stop": "docker rm -f redis",
     "server": "npm run --prefix server start",
-    "client": "npm run --prefix client start"
+    "client": "npm run --prefix client start",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present"
   },
   "devDependencies": {
     "@graphql-codegen/add": "^3.1.1",
@@ -23,9 +25,9 @@
     "@trivago/prettier-plugin-sort-imports": "^3.2.0"
   },
   "workspaces": [
+    "shared",
     "client",
-    "server",
-    "shared"
+    "server"
   ],
   "author": "",
   "license": "MIT"
