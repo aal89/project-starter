@@ -30,5 +30,12 @@ jobs:
     # needs: buildtest
 
     steps:
-    - run: echo ${{ secrets.KEY }} >> pkey
-    - run: ssh -6 -i pkey acalex@2a01:7c8:bb0c:30a:5054:ff:febd:8c5b "ls -la"
+    - name: deploy
+      uses: nerd4ever/ssh-action@master
+      with:
+        command: |
+          ls -la
+        host: ${{ secrets.HOST }}
+        user: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY}}
+        args: -6
