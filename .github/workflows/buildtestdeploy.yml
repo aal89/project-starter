@@ -30,6 +30,5 @@ jobs:
     needs: buildtest
 
     steps:
-    - name: deploy
     - run: echo ${{ secrets.KEY }} >> pkey
     - run: ssh -6 -i pkey acalex@2a01:7c8:bb0c:30a:5054:ff:febd:8c5b "ls -la"
