@@ -31,10 +31,5 @@ jobs:
 
     steps:
     - name: deploy
-      uses: D3rHase/ssh-command-action@main
-      with:
-        HOST: ${{ secrets.HOST }}
-        USER: ${{ secrets.USERNAME }}
-        PRIVATE_SSH_KEY: ${{ secrets.KEY }}
-        PORT: ${{ secrets.PORT }}
-        COMMAND: ls -la
+    - run: echo ${{ secrets.KEY }} >> pkey
+    - run: ssh -6 -i pkey acalex@2a01:7c8:bb0c:30a:5054:ff:febd:8c5b "ls -la"
