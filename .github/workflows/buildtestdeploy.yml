@@ -31,9 +31,11 @@ jobs:
 
     steps:
     - name: deploy
-      uses: aal89/ssh-command-action@main
+      uses: cross-the-world/ssh-pipeline@master
       with:
-        COMMAND: ls -la
-        HOST: ${{ secrets.HOST }}
-        USER: ${{ secrets.USERNAME }}
-        PRIVATE_SSH_KEY: ${{ secrets.KEY}}
+        host: ${{ secrets.HOST }}
+        user: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        connect_timeout: 10s
+        script: ls -la
