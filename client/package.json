@@ -31,7 +31,7 @@
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
     "start": "GENERATE_SOURCEMAP=false react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "build": "NODE_OPTIONS=--max-old-space-size=4096 GENERATE_SOURCEMAP=false react-scripts build",
     "eject": "react-scripts eject"
   },
   "browserslist": {

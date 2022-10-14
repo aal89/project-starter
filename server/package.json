@@ -7,7 +7,7 @@
     "test": "echo \"No test specified\" && exit 0",
     "start": "nodemon src/index.ts --exec \"npm run lint && ts-node\"",
     "typeorm": "typeorm-ts-node-commonjs",
-    "build": "tsc --build --force",
+    "build": "NODE_OPTIONS=--max-old-space-size=4096 tsc --build --force",
     "lint": "eslint ./src --ext .ts",
     "migration:generate": "TYPEORM_CACHE=false ts-node --transpile-only ./node_modules/typeorm/cli.js migration:generate -d src/data-source.ts src/migrations/$npm_config_name",
     "migration:create": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:create src/migrations/$npm_config_name",

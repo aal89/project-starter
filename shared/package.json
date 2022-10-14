@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "build": "tsc --build --force"
+    "build": "NODE_OPTIONS=--max-old-space-size=4096 tsc --build --force"
   },
   "author": "",
   "license": "ISC",
