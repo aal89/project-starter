@@ -38,4 +38,4 @@ jobs:
         host: ${{ secrets.HOST }}
         user: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY}}
-        args: -6
+        args: "-6"
