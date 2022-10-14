@@ -81,7 +81,6 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       console.log(username, password);
       const user = await User.findOneOrFail({
         where: { username },
-        cache: true,
         relations: ['permissions'],
       });
       console.log(user);
