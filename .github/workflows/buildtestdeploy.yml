@@ -31,11 +31,9 @@ jobs:
 
     steps:
     - name: deploy
-      uses: nerd4ever/ssh-action@master
+      uses: aal89/ssh-command-action@main
       with:
-        command: |
-          ls -la
-        host: ${{ secrets.HOST }}
-        user: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY}}
-        args: "-6"
+        COMMAND: ls -la
+        HOST: ${{ secrets.HOST }}
+        USER: ${{ secrets.USERNAME }}
+        PRIVATE_SSH_KEY: ${{ secrets.KEY}}
