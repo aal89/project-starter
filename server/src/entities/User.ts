@@ -1,4 +1,4 @@
-import { PermissionCodec } from '@project-starter/shared';
+import { PermissionCodec } from '@project-starter/shared/build';
 import { hash } from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
 import {

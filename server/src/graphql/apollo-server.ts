@@ -1,4 +1,4 @@
-import { can as sharedCan, Permission } from '@project-starter/shared';
+import { can as sharedCan, Permission } from '@project-starter/shared/build';
 import { ApolloServer } from 'apollo-server-express';
 import express, { Request } from 'express';
 import { validateAccessToken } from './auth/token';

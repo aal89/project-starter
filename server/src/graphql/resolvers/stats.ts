@@ -1,5 +1,5 @@
 import { ok } from 'assert';
-import { Permission } from '@project-starter/shared';
+import { Permission } from '@project-starter/shared/build';
 import { gql } from 'apollo-server-express';
 import { MoreThan } from 'typeorm';
 import { User } from '../../entities/User';
