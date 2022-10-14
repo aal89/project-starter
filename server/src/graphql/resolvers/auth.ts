@@ -78,11 +78,13 @@ const mutationResolvers: MutationResolvers<ContextType> = {
   },
   login: async (_, { username, password }, { can }) => {
     try {
+      console.log(username, password);
       const user = await User.findOneOrFail({
         where: { username },
         cache: true,
         relations: ['permissions'],
       });
+      console.log(user);
       await compareOrReject(password, user?.password ?? '');
 
       if (!can(Permission.LOGIN, user.encodedPermissions)) {

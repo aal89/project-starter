@@ -17,7 +17,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Text>
-        Hello world
+        Hello world (online)
       </Text>
     </>
   );
