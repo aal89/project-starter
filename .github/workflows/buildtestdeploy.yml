@@ -16,15 +16,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: build and test
       uses: actions/setup-node@v3
       with:
         node-version: '16.13'
         cache: 'npm'
-    - name: install
     - run: npm ci
-    - name: test
     - run: npm run test
-    - name: build
     - run: npm run build
 
   deploy:
