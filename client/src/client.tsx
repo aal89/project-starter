@@ -15,8 +15,10 @@ import {
 
 const isOffline = (err: Error) => !navigator.onLine || (err instanceof TypeError && err.message === 'Network request failed');
 
+const httpLinkUri = process.env.NODE_ENV === 'production' ? '/graphql' : 'http://localhost:8000/graphql';
+
 const httpLink = createHttpLink({
-  uri: 'http://localhost:8000/graphql',
+  uri: httpLinkUri,
 });
 
 const authLink = setContext((_, { headers }) => {
