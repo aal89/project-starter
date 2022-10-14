@@ -27,7 +27,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: buildtest
+    # needs: buildtest
 
     steps:
     - run: echo ${{ secrets.KEY }} >> pkey
