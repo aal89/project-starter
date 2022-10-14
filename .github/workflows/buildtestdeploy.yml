@@ -16,13 +16,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: build and test
       uses: actions/setup-node@v3
       with:
         node-version: '16.13'
         cache: 'npm'
+    - name: install
     - run: npm ci
+    - name: test
     - run: npm run test
+    - name: build
     - run: npm run build
 
   deploy:
@@ -31,11 +33,12 @@ jobs:
 
     steps:
     - name: deploy
-      uses: appleboy/ssh-action@master
+      uses: cross-the-world/ssh-pipeline@master
       with:
         host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
+        user: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: ls -la
-
+        connect_timeout: 10s
+        script: |
+          ls -la
