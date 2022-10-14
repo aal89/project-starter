@@ -31,7 +31,7 @@ jobs:
 
     steps:
     - name: deploy
-      uses: cD3rHase/ssh-command-action@main
+      uses: D3rHase/ssh-command-action@main
       with:
         HOST: ${{ secrets.HOST }}
         USER: ${{ secrets.USERNAME }}
