@@ -11,31 +11,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  # buildtest:
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: build and test
-  #     uses: actions/setup-node@v3
-  #     with:
-  #       node-version: '16.13'
-  #       cache: 'npm'
-  #   - run: npm ci
-  #   - run: npm run test
-  #   - run: npm run build
-
-  deploy:
+  buildtest:
     runs-on: ubuntu-latest
-    # needs: buildtest
 
     steps:
-    - name: deploy
-      uses: cross-the-world/ssh-pipeline@master
+    - uses: actions/checkout@v3
+    - name: build and test
+      uses: actions/setup-node@v3
       with:
-        host: ${{ secrets.HOST }}
-        user: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
-        port: ${{ secrets.PORT }}
-        connect_timeout: 10s
-        script: ls -la
+        node-version: '16.13'
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run test
+    - run: npm run build
