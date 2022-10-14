@@ -40,6 +40,7 @@ export default async (app: express.Application) => {
     resolvers,
     context,
     csrfPrevention: true,
+    cache: 'bounded',
   });
 
   await server.start();
