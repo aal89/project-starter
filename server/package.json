@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
     "start": "nodemon --watch 'src/**' --ext 'ts,json' --exec 'npm run lint && ts-node src/index.ts | bunyan'",
-    "start:production": "pm2 start index --watch --restart-delay 10000",
+    "start:production": "cd build && authbind --deep pm2 start ./index.js --watch --restart-delay 10000 --name server",
     "typeorm": "typeorm-ts-node-commonjs",
     "build": "NODE_OPTIONS=--max-old-space-size=4096 tsc --build --force",
     "lint": "eslint ./src --ext .ts",
