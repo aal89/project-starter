@@ -1,8 +1,10 @@
 import path from 'path';
+import compression from 'compression';
 import express from 'express';
 import { AppDataSource } from './data-source';
 import { env } from './env';
 import graphql from './graphql/apollo-server';
+import { log } from './logger/log';
 
 const client = (file = '') => path.join(__dirname, '../../client/build', file);
 
@@ -13,6 +15,7 @@ const client = (file = '') => path.join(__dirname, '../../client/build', file);
 
   await AppDataSource.initialize();
 
+  app.use(compression());
   app.use(express.static(client()));
 
   app.use((req, res) => {
@@ -20,7 +23,6 @@ const client = (file = '') => path.join(__dirname, '../../client/build', file);
   });
 
   app.listen(env.port(), () => {
-    // eslint-disable-next-line no-console
-    console.log(`🚀[server] live on ${env.port()}`);
+    log.info(`live on ${env.port()}`);
   });
 })();
