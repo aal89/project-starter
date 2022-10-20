@@ -1,7 +1,6 @@
 import ProLayout, { PageContainer } from '@ant-design/pro-layout';
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import config from '../../config';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -19,14 +18,12 @@ export const Layout: React.FC = () => {
   return (
     <ProLayout
       disableMobile
-      headerContentRender={() => <Header title={config.projectName} selectedKey={menuKey} />}
+      headerContentRender={() => (
+        <Header title={process.env.REACT_APP_PROJECT_NAME ?? ''} selectedKey={menuKey} />
+      )}
       menuRender={false}
     >
-      <PageContainer
-        title={title}
-        content={titleContent}
-        footer={[<Footer key={0} />]}
-      >
+      <PageContainer title={title} content={titleContent} footer={[<Footer key={0} />]}>
         <Outlet context={{ setTitle, setMenuKey, setTitleContent }} />
       </PageContainer>
     </ProLayout>

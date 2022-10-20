@@ -8,6 +8,8 @@ import { client } from './client';
 import './index.css';
 import { Routing } from './routing/Routing';
 
+document.title = process.env.REACT_APP_PROJECT_NAME ?? '';
+
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>

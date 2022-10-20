@@ -2,7 +2,7 @@
 import { ControlTwoTone, HomeTwoTone } from '@ant-design/icons';
 import { Permission } from '@project-starter/shared/build';
 import {
-  Typography, Space, Row, Col, Menu, Button,
+  Typography, Row, Col, Menu, Button,
 } from 'antd';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -29,16 +29,16 @@ export const Header: React.FC<HeaderProps> = ({ title, selectedKey }) => {
 
   return (
     <Row>
-      <Col span={2}>
-        <Space>
-          <HomeTwoTone />
-          <Text strong>{title}</Text>
-        </Space>
+      <Col span={1}>
+        <HomeTwoTone />
       </Col>
-      <Col span={16}>
+      <Col xs={0} md={2}>
+        <Text ellipsis strong>{title}</Text>
+      </Col>
+      <Col xs={17} md={15}>
         <Menu mode="horizontal" selectedKeys={[selectedKey]} items={navigation} />
       </Col>
-      <RightAlignCol span={6}>
+      <RightAlignCol xs={6} md={6}>
         {userCan(Permission.ADMINISTRATE) && (
           <Button type="link" icon={<ControlTwoTone />} onClick={() => navigate(Path.adminSettings)}>
             Admin
