@@ -1,8 +1,5 @@
 import {
-  UserAddOutlined,
-  LoginOutlined,
-  LogoutOutlined,
-  SettingFilled,
+  UserAddOutlined, LoginOutlined, LogoutOutlined, SettingFilled, ControlOutlined,
 } from '@ant-design/icons';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React from 'react';
@@ -41,4 +38,19 @@ const loggedOutMenu: ItemType[] = [
   },
 ];
 
-export const userMenu = (isLoggedIn: boolean) => (isLoggedIn ? loggedInMenu : loggedOutMenu);
+export const userMenu = (isLoggedIn: boolean, isAdmin: boolean = false) => {
+  let menu = (isLoggedIn ? loggedInMenu : loggedOutMenu);
+
+  if (isAdmin) {
+    menu = [
+      {
+        label: <Link to={Path.adminSettings}>Admin</Link>,
+        icon: <ControlOutlined />,
+        key: '99',
+      },
+      ...menu,
+    ];
+  }
+
+  return menu;
+};
