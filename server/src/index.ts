@@ -16,7 +16,10 @@ const client = (file = '') => path.join(__dirname, '../../client/build', file);
   await AppDataSource.initialize();
 
   app.use(compression());
-  app.use(express.static(client()));
+  app.use(express.static(client(), {
+    cacheControl: true,
+    maxAge: 604800000,
+  }));
 
   app.use((req, res) => {
     res.sendFile(client('index.html'));

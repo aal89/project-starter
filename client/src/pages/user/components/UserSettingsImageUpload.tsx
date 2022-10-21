@@ -54,6 +54,9 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
       await fetch(uploadParameters.getImageUploadUrl.url, {
         method: 'PUT',
         body: data,
+        headers: {
+          'Cache-Control': 'public, max-age=15552000',
+        },
       });
 
       await editMeMutation({
