@@ -28,7 +28,7 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
 
   return (
     <Row justify="center">
-      <Col span={6}>
+      <Col>
         <LoginForm
           onFinish={async (values) => {
             if (tab === 'login') {

@@ -13,19 +13,17 @@ import { UserSettingsChangePassword } from './components/UserSettingsChangePassw
 import { UserSettingsEditUser } from './components/UserSettingsEditUser';
 import { UserSettingsImageUpload } from './components/UserSettingsImageUpload';
 import { UserSettingsMeta } from './components/UserSettingsMeta';
-import { UserSettingsTitle } from './components/UserSettingsTitle';
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
 
 const Settings: React.FC = () => {
-  const { setTitle, setTitleContent } = useOutletContext<SetLayoutContext>();
+  const { setTitle } = useOutletContext<SetLayoutContext>();
   const { data, loading } = useMeQuery();
 
   useEffect(() => {
     if (data) {
       setTitle(`Hello ${data.me.name}!`);
-      setTitleContent(<UserSettingsTitle user={data.me} />);
     }
   }, [data]);
 
@@ -38,25 +36,27 @@ const Settings: React.FC = () => {
   }
 
   return (
-    <Tabs defaultActiveKey="1" size="small" tabPosition="left">
+    <Tabs defaultActiveKey="1">
       <TabPane
         tab={(
           <>
             <UserOutlined />
             {' '}
-            Edit user
+            Profile
           </>
         )}
         key="1"
       >
-        <Row gutter={[24, 0]}>
-          <Col flex="none">
-            <UserSettingsImageUpload user={data.me} />
+        <Row gutter={[24, 24]}>
+          <Col xs={24} md={6} lg={4}>
+            <Row justify="center">
+              <UserSettingsImageUpload user={data.me} />
+            </Row>
           </Col>
-          <Col span={8}>
+          <Col xs={24} md={10} lg={10}>
             <UserSettingsEditUser user={data.me} />
           </Col>
-          <Col flex="auto">
+          <Col xs={0} md={8} lg={10}>
             <UserSettingsMeta user={data.me} />
           </Col>
         </Row>
@@ -65,13 +65,14 @@ const Settings: React.FC = () => {
         tab={(
           <>
             <LockOutlined />
-            Change password
+            {' '}
+            Password
           </>
         )}
         key="2"
       >
         <Row gutter={[24, 0]}>
-          <Col span={8}>
+          <Col xs={24} md={8} lg={8}>
             <UserSettingsChangePassword />
           </Col>
         </Row>

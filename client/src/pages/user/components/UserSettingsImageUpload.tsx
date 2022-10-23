@@ -1,6 +1,6 @@
 import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 import {
-  Space, Avatar, Upload, Button, message,
+  Space, Avatar, Upload, Button, message, Typography,
 } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { RcFile } from 'antd/lib/upload/interface';
@@ -13,6 +13,8 @@ import {
 } from '../../../graphql/generated/graphql';
 import { getImageUrl } from '../../../user';
 import { Spinner } from '../../components/Spinner';
+
+const { Title } = Typography;
 
 type UserSettingsImageUploadProps = {
   user: UserModel;
@@ -77,6 +79,7 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
 
   return (
     <Space direction="vertical" align="center">
+      <Title level={5}>Profile picture</Title>
       <Spinner enabled={uploading}>
         <Avatar src={getImageUrl(user)} shape="circle" size={128} icon={<UserOutlined />} />
       </Spinner>

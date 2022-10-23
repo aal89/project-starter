@@ -11,7 +11,7 @@ export type SetLayoutContext = {
 };
 
 export const Layout: React.FC = () => {
-  const [title, setTitle] = useState<string>('Title');
+  const [title, setTitle] = useState<string>('');
   const [menuKey, setMenuKey] = useState<string>('99');
   const [titleContent, setTitleContent] = useState<React.ReactNode>(<></>);
 
@@ -24,7 +24,9 @@ export const Layout: React.FC = () => {
       menuRender={false}
     >
       <PageContainer title={title} content={titleContent} footer={[<Footer key={0} />]}>
-        <Outlet context={{ setTitle, setMenuKey, setTitleContent }} />
+        <div style={{ marginTop: '-25px' }}>
+          <Outlet context={{ setTitle, setMenuKey, setTitleContent }} />
+        </div>
       </PageContainer>
     </ProLayout>
   );
