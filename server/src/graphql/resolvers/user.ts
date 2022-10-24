@@ -134,7 +134,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         oldUsername, username, name, email, lastName, permissions, image,
       },
     },
-    { user: contextUser, userCan },
+    { user: contextUser, userCan, logger },
   ) => {
     ok(userCan(Permission.LOGIN), 'User is not allowed to login');
     ok(contextUser);
@@ -173,6 +173,8 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       return user;
     } catch (err) {
+      logger.error(err);
+
       const translatedError = translateError(err);
       if (translatedError === DatabaseError.DuplicateUsername) {
         throw new Error('This username is already taken, please pick another');
