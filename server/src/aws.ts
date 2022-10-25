@@ -6,10 +6,11 @@ AWS.config.update({
   accessKeyId: env.aws.keyId(),
   secretAccessKey: env.aws.secret(),
   region: env.aws.region(),
-  s3ForcePathStyle: true,
 });
 
-const s3 = new AWS.S3();
+const s3 = new AWS.S3({
+  s3BucketEndpoint: true
+});
 
 const getS3UploadUrl = (filename: string, contentType: string) => {
   return s3.getSignedUrlPromise('putObject', {
@@ -23,7 +24,7 @@ const getS3UploadUrl = (filename: string, contentType: string) => {
 };
 
 const s3DeleteObject = (filename: string) => {
-  log.info(`Deleting S3 object ${filename}`);
+  log.info(`Deleting S3 object ${env.aws.bucket()}/${filename}`);
   return s3.deleteObject({ Bucket: env.aws.bucket(), Key: filename }).promise();
 };
 
