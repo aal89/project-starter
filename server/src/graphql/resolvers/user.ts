@@ -170,6 +170,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       if (changedImage && oldImage) {
         await s3DeleteObject(oldImage);
       }
+
       await validateOrReject(user);
 
       await user.save();

@@ -1,12 +1,13 @@
 import AWS from 'aws-sdk';
 import { env } from './env';
+import { log } from './logger/log';
 
 AWS.config.update({
   accessKeyId: env.aws.keyId(),
   secretAccessKey: env.aws.secret(),
+  region: env.aws.region(),
   s3ForcePathStyle: true,
 });
-AWS.config.region = env.aws.region();
 
 const s3 = new AWS.S3();
 
@@ -22,6 +23,7 @@ const getS3UploadUrl = (filename: string, contentType: string) => {
 };
 
 const s3DeleteObject = (filename: string) => {
+  log.info(`Deleting S3 object ${filename}`);
   return s3.deleteObject({ Bucket: env.aws.bucket(), Key: filename }).promise();
 };
 
