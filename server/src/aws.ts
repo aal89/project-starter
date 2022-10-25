@@ -1,7 +1,11 @@
 import AWS from 'aws-sdk';
 import { env } from './env';
 
-AWS.config.update({ accessKeyId: env.aws.keyId(), secretAccessKey: env.aws.secret() });
+AWS.config.update({
+  accessKeyId: env.aws.keyId(),
+  secretAccessKey: env.aws.secret(),
+  s3ForcePathStyle: true,
+});
 AWS.config.region = env.aws.region();
 
 const s3 = new AWS.S3();

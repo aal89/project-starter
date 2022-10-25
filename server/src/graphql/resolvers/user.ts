@@ -3,7 +3,7 @@ import { decode, Permission } from '@project-starter/shared/build';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { In, Like } from 'typeorm';
-import { getS3UploadUrl } from '../../aws';
+import { getS3UploadUrl, s3DeleteObject } from '../../aws';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
@@ -165,8 +165,11 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       user.name = name;
       user.lastName = lastName ?? undefined;
 
-      await user.setImage(image);
+      const { oldImage, changedImage } = user.setImage(image);
 
+      if (changedImage && oldImage) {
+        await s3DeleteObject(oldImage);
+      }
       await validateOrReject(user);
 
       await user.save();

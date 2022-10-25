@@ -10,7 +10,6 @@ import {
 import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
-import { s3DeleteObject } from '../aws';
 import { Permission } from './Permission';
 
 @Entity()
@@ -67,13 +66,15 @@ export class User extends BaseEntity {
     this.password = await hash(plain, 12);
   }
 
-  async setImage(image?: string | null) {
+  setImage(image?: string | null) {
     const oldImage = this.image;
     this.image = image ?? undefined;
 
-    if (oldImage) {
-      await s3DeleteObject(oldImage);
-    }
+    return {
+      oldImage,
+      newImage: this.image,
+      changedImage: oldImage !== this.image,
+    };
   }
 
   toJSON() {
