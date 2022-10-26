@@ -9,7 +9,7 @@ AWS.config.update({
 });
 
 const s3 = new AWS.S3({
-  useDualstackEndpoint: true
+  useDualstackEndpoint: true,
 });
 
 const getS3UploadUrl = (filename: string, contentType: string) => {

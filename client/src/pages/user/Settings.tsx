@@ -1,12 +1,10 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import {
-  Col, Row, Tabs, Typography,
-} from 'antd';
+import { Col, Row, Tabs } from 'antd';
 import React, { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { withProtectedRoute } from '../../enhancers/withProtectedRoute';
-import { useMeQuery } from '../../graphql/generated/graphql';
+import { useAuth } from '../../hooks/auth';
 import { SetLayoutContext } from '../components/Layout';
 import { Spinner } from '../components/Spinner';
 import { UserSettingsChangePassword } from './components/UserSettingsChangePassword';
@@ -14,24 +12,19 @@ import { UserSettingsEditUser } from './components/UserSettingsEditUser';
 import { UserSettingsImageUpload } from './components/UserSettingsImageUpload';
 import { UserSettingsMeta } from './components/UserSettingsMeta';
 
-const { Text } = Typography;
 const { TabPane } = Tabs;
 
 const Settings: React.FC = () => {
   const { setTitle } = useOutletContext<SetLayoutContext>();
-  const { data, loading } = useMeQuery();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (data) {
-      setTitle(`Hello ${data.me.name}!`);
+    if (user()) {
+      setTitle(`Hello ${user()?.name}!`);
     }
-  }, [data]);
+  }, [user()]);
 
-  if (!data) {
-    return <Text>Failed to load user data</Text>;
-  }
-
-  if (loading) {
+  if (!user()) {
     return <Spinner />;
   }
 
@@ -50,14 +43,14 @@ const Settings: React.FC = () => {
         <Row gutter={[24, 24]}>
           <Col xs={24} md={6} lg={4}>
             <Row justify="center">
-              <UserSettingsImageUpload user={data.me} />
+              <UserSettingsImageUpload user={user()!} />
             </Row>
           </Col>
           <Col xs={24} md={10} lg={10}>
-            <UserSettingsEditUser user={data.me} />
+            <UserSettingsEditUser user={user()!} />
           </Col>
           <Col xs={0} md={8} lg={10}>
-            <UserSettingsMeta user={data.me} />
+            <UserSettingsMeta user={user()!} />
           </Col>
         </Row>
       </TabPane>

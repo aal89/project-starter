@@ -20,6 +20,7 @@ export const UserSettingsEditUser: React.FC<UserSettingsEditUserProps> = ({ user
         variables: {
           name: values.name,
           lastName: values.lastName,
+          image: user.image,
         },
         refetchQueries: [MeDocument],
       });
