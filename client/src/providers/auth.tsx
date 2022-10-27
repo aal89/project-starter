@@ -14,7 +14,7 @@ import {
 } from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
 import {
-  getAccessToken, isExpired, setAccessToken, setRefreshToken,
+  getAccessToken, getUserFromToken, isExpired, setAccessToken, setRefreshToken,
 } from '../tokens';
 
 type Auth = {
@@ -52,6 +52,8 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [meQuery, { data: meData, refetch: refetchMe }] = useMeLazyQuery();
   const [user, setUser] = useState<UserModel | null>(null);
 
+  const tokenUser = getUserFromToken(getAccessToken());
+
   const isLoggedIn = useMemo(() => {
     const at = getAccessToken();
     if (at && !isExpired(at)) {
@@ -73,7 +75,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   }, [meData]);
 
-  const userCan = (permission: Permission) => sharedCan(permission, user?.encodedPermissions ?? '');
+  const userCan = (permission: Permission) => sharedCan(permission, (user ?? tokenUser)?.encodedPermissions ?? '');
 
   const login = async (username: string, password: string, rememberMe: boolean) => {
     try {

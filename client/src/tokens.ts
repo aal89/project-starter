@@ -1,4 +1,5 @@
 import jwtDecode from 'jwt-decode';
+import { UserModel } from './graphql/generated/graphql';
 
 export const ACCESS_TOKEN_KEY = 'accessToken';
 export const REFRESH_TOKEN_KEY = 'refreshToken';
@@ -17,6 +18,16 @@ export const getExpClaim = (token: string) => {
     return exp;
   } catch {
     return 0;
+  }
+};
+
+export const getUserFromToken = (token: string) => {
+  try {
+    const { user } = jwtDecode<{ user: UserModel }>(token);
+
+    return user;
+  } catch {
+    return null;
   }
 };
 
