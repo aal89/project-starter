@@ -19,12 +19,12 @@ const Settings: React.FC = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user()) {
-      setTitle(`Hello ${user()?.name}!`);
+    if (user) {
+      setTitle(`Hello ${user?.name}!`);
     }
-  }, [user()]);
+  }, [user]);
 
-  if (!user()) {
+  if (!user) {
     return <Spinner />;
   }
 
@@ -43,14 +43,14 @@ const Settings: React.FC = () => {
         <Row gutter={[24, 24]}>
           <Col xs={24} md={6} lg={4}>
             <Row justify="center">
-              <UserSettingsImageUpload user={user()!} />
+              <UserSettingsImageUpload user={user} />
             </Row>
           </Col>
           <Col xs={24} md={10} lg={10}>
-            <UserSettingsEditUser user={user()!} />
+            <UserSettingsEditUser user={user} />
           </Col>
           <Col xs={0} md={8} lg={10}>
-            <UserSettingsMeta user={user()!} />
+            <UserSettingsMeta user={user} />
           </Col>
         </Row>
       </TabPane>

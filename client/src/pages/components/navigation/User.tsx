@@ -11,8 +11,8 @@ export const User: React.FC = () => {
     isLoggedIn, user, userCan,
   } = useAuth();
 
-  const menu = userMenu(isLoggedIn(), userCan(Permission.ADMINISTRATE));
-  const avatarUrl = isLoggedIn() ? getImageUrl(user()!) : '';
+  const menu = userMenu(isLoggedIn, userCan(Permission.ADMINISTRATE));
+  const avatarUrl = isLoggedIn && user ? getImageUrl(user) : '';
 
   return (
     <Dropdown overlay={<Menu items={menu} />} placement="bottomRight">

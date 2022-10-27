@@ -12,7 +12,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
   const { isLoggedIn, userCan } = useAuth();
   const context = useOutletContext();
 
-  if (!isLoggedIn()) {
+  if (!isLoggedIn) {
     return <Navigate to={Path.home} replace />;
   }
 

@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { client } from './client';
 import './index.css';
+import { AuthProvider } from './providers/auth';
 import { Routing } from './routing/Routing';
 
 document.title = process.env.REACT_APP_PROJECT_NAME ?? '';
@@ -14,7 +15,9 @@ ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <BrowserRouter>
-        <Routing />
+        <AuthProvider>
+          <Routing />
+        </AuthProvider>
       </BrowserRouter>
     </ApolloProvider>
   </React.StrictMode>,
