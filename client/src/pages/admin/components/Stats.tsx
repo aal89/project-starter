@@ -1,5 +1,5 @@
 import {
-  Row, Col, Card, Statistic,
+  Row, Col, Statistic,
 } from 'antd';
 import React from 'react';
 import { useStatsQuery } from '../../../graphql/generated/graphql';
@@ -22,29 +22,21 @@ export const Stats: React.FC = () => {
   };
 
   return (
-    <Row justify="center" gutter={18}>
+    <Row justify="center" gutter={[18, 18]}>
       <Col>
-        <Card>
-          <Statistic title="Total Users" value={totalUsers} loading={loading} />
-        </Card>
+        <Statistic title="Total Users" value={totalUsers} loading={loading} />
       </Col>
       <Col>
-        <Card>
-          <Statistic title="Active Users" value={activeUsers} loading={loading} />
-        </Card>
+        <Statistic title="Active Users" value={activeUsers} loading={loading} />
       </Col>
       <Col>
-        <Card>
-          <Statistic title="Created today" value={recentlyCreatedUsers} loading={loading} />
-        </Card>
+        <Statistic title="Created today" value={recentlyCreatedUsers} loading={loading} />
       </Col>
       <Col>
-        <Card>
-          <Statistic
-            title="Conversion rate (Active user)"
-            value={`${conversionRate().toFixed(2)}%`}
-          />
-        </Card>
+        <Statistic
+          title="Conversion rate (Active user)"
+          value={`${conversionRate().toFixed(2)}%`}
+        />
       </Col>
     </Row>
   );

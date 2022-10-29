@@ -51,7 +51,7 @@ export const ListUsersTable: React.FC = () => {
       <Divider orientation="left">User management</Divider>
       <Skeleton loading={loading} active round title={false} paragraph={{ rows: 10 }}>
         <Row style={{ marginBottom: 10 }}>
-          <Col span={6}>
+          <Col xs={24} md={12} lg={8}>
             <Input
               size="large"
               placeholder="Search by username..."

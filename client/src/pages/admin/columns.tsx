@@ -20,6 +20,7 @@ export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: st
     key: 'id',
     width: 200,
     render: (text: string) => <IdColumn text={text} />,
+    responsive: ['lg'],
   },
   {
     title: 'Name',
@@ -27,6 +28,7 @@ export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: st
     key: 'name',
     width: 300,
     render: (text: string) => <NameColumn text={text} />,
+    responsive: ['sm'],
   },
   {
     title: 'Email',
@@ -34,6 +36,7 @@ export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: st
     key: 'email',
     width: 300,
     render: (text: any) => text,
+    responsive: ['md'],
   },
   {
     title: 'Username',
@@ -47,6 +50,7 @@ export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: st
     key: 'permissions',
     width: 500,
     render: (text: string) => decode(text).map((e) => <Tag key={e}>{e}</Tag>),
+    responsive: ['lg'],
   },
   {
     title: 'Action',
