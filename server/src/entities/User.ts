@@ -36,11 +36,11 @@ export class User extends BaseEntity {
   @Column()
   name: string
 
-  @Column({ nullable: true })
-  lastName?: string
+  @Column({ type: 'text', nullable: true })
+  lastName: string | null
 
-  @Column({ nullable: true, unique: true })
-  image?: string
+  @Column({ type: 'text', nullable: true, unique: true })
+  image: string | null
 
   @Exclude()
   @ManyToMany(() => Permission, (permission) => permission.users)
@@ -66,9 +66,9 @@ export class User extends BaseEntity {
     this.password = await hash(plain, 12);
   }
 
-  setImage(image?: string | null) {
+  setImage(image: string | null) {
     const oldImage = this.image;
-    this.image = image ?? undefined;
+    this.image = image;
 
     return {
       oldImage,

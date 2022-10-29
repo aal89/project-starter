@@ -163,9 +163,9 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       }
 
       user.name = name;
-      user.lastName = lastName ?? undefined;
+      user.lastName = lastName ?? null;
 
-      const { oldImage, changedImage } = user.setImage(image);
+      const { oldImage, changedImage } = user.setImage(image ?? null);
 
       if (changedImage && oldImage) {
         await s3DeleteObject(oldImage);

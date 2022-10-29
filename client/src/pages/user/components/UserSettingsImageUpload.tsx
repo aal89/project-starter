@@ -1,6 +1,6 @@
-import { UserOutlined, UploadOutlined } from '@ant-design/icons';
+import { UserOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
-  Space, Avatar, Upload, Button, message, Typography,
+  Space, Avatar, Upload, Button, message, Typography, Popconfirm,
 } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { RcFile } from 'antd/lib/upload/interface';
@@ -31,6 +31,26 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
   const beforeUpload = async (file: RcFile) => {
     setContentType(file.type);
     return true;
+  };
+
+  const deletePicture = async () => {
+    try {
+      setUploading(true);
+
+      await editMeMutation({
+        variables: {
+          name: user.name,
+          image: null,
+        },
+        refetchQueries: [MeDocument],
+      });
+
+      setUploading(false);
+      message.success('Removed profile picture!');
+    } catch {
+      setUploading(false);
+      message.error('Failed to delete profile picture, try again');
+    }
   };
 
   const uploadPicture = async (data: Blob | RcFile) => {
@@ -100,6 +120,15 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
           </Button>
         </Upload>
       </ImgCrop>
+      <Popconfirm
+        title="Are you sure you wish to delete your profile picture?"
+        okText="Yes"
+        cancelText="No"
+        placement="right"
+        onConfirm={deletePicture}
+      >
+        <Button type="text" shape="circle" icon={<DeleteOutlined />} danger />
+      </Popconfirm>
     </Space>
   );
 };
