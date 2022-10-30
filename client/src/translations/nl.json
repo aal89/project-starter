@@ -1,0 +1,10 @@
+{
+  "Generic.UnknownError": "Er tradt een onbekende fout op",
+  "Generic.NotFound": "Niet gevonden",
+  "Auth.Login.MissingData": "Geen login informatie gevonden in het antwoord van de server",
+  "Auth.Login.Success": "Succesvol ingelogd!",
+  "Auth.Signup.Success": "Account succesvol gecreëerd!",
+  "Auth.Logout.Success": "Succesvol uitgelogd!",
+  "Home.Title": "Home",
+  "Home.Text": "Hallo wereld (online)"
+}

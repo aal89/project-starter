@@ -4,6 +4,7 @@ import { message } from 'antd';
 import React, {
   createContext, useEffect, useMemo, useState,
 } from 'react';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { client } from '../client';
 import {
@@ -46,6 +47,7 @@ export const AuthContext = createContext<Auth>({
 });
 
 export const AuthProvider: React.FC = ({ children }) => {
+  const intl = useIntl();
   const navigate = useNavigate();
   const [signupMutation, { loading: signupLoading }] = useSignupMutation();
   const [loginMutation, { loading: loginLoading }] = useLoginMutation();
@@ -88,7 +90,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
       // This shouldn't ever happen when login is succesful, so assert for it
       if (!data?.login) {
-        throw new Error('No login information found in response');
+        throw new Error(intl.formatMessage({ id: 'Auth.Login.MissingData' }));
       }
 
       setAccessToken(data.login.accessToken);
@@ -99,10 +101,10 @@ export const AuthProvider: React.FC = ({ children }) => {
 
       refetchMe();
 
-      message.success('Logged in successfully!');
+      message.success(intl.formatMessage({ id: 'Auth.Login.Success' }));
       goHome();
     } catch (err) {
-      message.error((err as ApolloError).message ?? 'Unknown error');
+      message.error((err as ApolloError).message ?? intl.formatMessage({ id: 'Generic.UnknownError' }));
     }
   };
 
@@ -117,10 +119,10 @@ export const AuthProvider: React.FC = ({ children }) => {
         },
       });
 
-      message.success('Account created successfully!');
+      message.success(intl.formatMessage({ id: 'Auth.Signup.Success' }));
       goLogin();
     } catch (err) {
-      message.error((err as ApolloError).message ?? 'Unknown error');
+      message.error((err as ApolloError).message ?? intl.formatMessage({ id: 'Generic.UnknownError' }));
     }
   };
 
@@ -129,7 +131,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     setUser(null);
     setAccessToken('');
     setRefreshToken('');
-    message.info('Logged out successfully!');
+    message.info(intl.formatMessage({ id: 'Auth.Logout.Success' }));
     goHome();
   };
 

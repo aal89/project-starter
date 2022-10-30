@@ -7,19 +7,22 @@ import { BrowserRouter } from 'react-router-dom';
 import { client } from './client';
 import './index.css';
 import { AuthProvider } from './providers/auth';
+import { LocalizationProvider } from './providers/localization';
 import { Routing } from './routing/Routing';
 
 document.title = process.env.REACT_APP_PROJECT_NAME ?? '';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <BrowserRouter>
-        <AuthProvider>
-          <Routing />
-        </AuthProvider>
-      </BrowserRouter>
-    </ApolloProvider>
+    <LocalizationProvider>
+      <ApolloProvider client={client}>
+        <BrowserRouter>
+          <AuthProvider>
+            <Routing />
+          </AuthProvider>
+        </BrowserRouter>
+      </ApolloProvider>
+    </LocalizationProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
