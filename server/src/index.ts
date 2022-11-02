@@ -43,11 +43,11 @@ const client = (file = '') => path.join(__dirname, '../../client/build', file);
     cert: readFileSync(path.join(__dirname, './self_signed_certificate.pem')),
   };
 
-  http.createServer(app).listen(env.port(), () => {
-    log.info(`http live on ${env.port()}`);
+  http.createServer(app).listen(env.httpPort(), () => {
+    log.info(`http live on ${env.httpPort()}`);
   });
 
-  https.createServer(options, app).listen(443, () => {
-    log.info('https live on 443');
+  https.createServer(options, app).listen(env.httpsPort(), () => {
+    log.info(`https live on ${env.httpsPort()}`);
   });
 })();

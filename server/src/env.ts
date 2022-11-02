@@ -4,7 +4,8 @@ configureDotEnv();
 
 export const env = {
   isDevelopment: () => process.env.NODE_ENV === 'development',
-  port: () => process.env.PORT ?? 8000,
+  httpPort: () => Number(process.env.HTTP_PORT ?? 8000),
+  httpsPort: () => Number(process.env.HTTPS_PORT ?? 8433),
   dateLocale: () => process.env.DATE_LOCALE ?? 'en-US',
   signAccessTokenSecret: () => process.env.SIGN_ACCESS_SECRET ?? '',
   signRefreshTokenSecret: () => process.env.SIGN_REFRESH_SECRET ?? '',
