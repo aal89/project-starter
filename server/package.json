@@ -14,7 +14,8 @@
     "migration:create": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:create src/migrations/$npm_config_name",
     "migration:revert": "TYPEORM_CACHE=false ts-node --transpile-only ./node_modules/typeorm/cli.js migration:revert -d src/data-source.ts",
     "migration:run": "TYPEORM_CACHE=false ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run -d src/data-source.ts -t each",
-    "certificate:generate": "cd scripts && ./generate_certificate.sh"
+    "certificate:generate": "cd scripts && ./generate_certificate.sh",
+    "certificate:copybuild": "cp src/self_signed_certificate.pem src/self_signed_key.pem build/"
   },
   "author": "Alex",
   "license": "UNLICENSED",
