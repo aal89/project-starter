@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [[ -f ../src/self_signed_certificate.pem ]] && [[ -f ../src/self_signed_key.pem ]]
+then
+  echo 'Cert and key already exist... Exiting...'
+  exit
+fi
+
 openssl req -newkey rsa:4096 \
             -x509 \
             -sha256 \
