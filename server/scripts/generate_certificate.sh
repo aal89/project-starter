@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [[ -f ../src/self_signed_certificate.pem && -f ../src/self_signed_key.pem ]]
 then
