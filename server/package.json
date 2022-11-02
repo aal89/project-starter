@@ -13,7 +13,8 @@
     "migration:generate": "TYPEORM_CACHE=false ts-node --transpile-only ./node_modules/typeorm/cli.js migration:generate -d src/data-source.ts src/migrations/$npm_config_name",
     "migration:create": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:create src/migrations/$npm_config_name",
     "migration:revert": "TYPEORM_CACHE=false ts-node --transpile-only ./node_modules/typeorm/cli.js migration:revert -d src/data-source.ts",
-    "migration:run": "TYPEORM_CACHE=false ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run -d src/data-source.ts -t each"
+    "migration:run": "TYPEORM_CACHE=false ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run -d src/data-source.ts -t each",
+    "certificate:generate": "cd scripts && ./generate_certificate.sh"
   },
   "author": "Alex",
   "license": "UNLICENSED",

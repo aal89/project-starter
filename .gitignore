@@ -5,3 +5,4 @@ dist
 build
 *.tsbuildinfo
 !client/.env
+*.pem

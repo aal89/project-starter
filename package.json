@@ -10,6 +10,7 @@
     "redis:start": "docker run --name redis -p 127.0.0.1:6379:6379 -d redis",
     "redis:stop": "docker rm -f redis",
     "server": "npm run --prefix server start",
+    "server:certificate": "npm run --prefix server certificate:generate",
     "client": "npm run --prefix client start",
     "test": "npm run test --workspaces --if-present",
     "build": "npm i && npm run build --workspaces --if-present"

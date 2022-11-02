@@ -1,6 +1,9 @@
+import { readFileSync } from 'fs';
+import http from 'http';
+import https from 'https';
 import path from 'path';
 import compression from 'compression';
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { AppDataSource } from './data-source';
 import { env } from './env';
 import graphql from './graphql/apollo-server';
@@ -15,17 +18,36 @@ const client = (file = '') => path.join(__dirname, '../../client/build', file);
 
   await AppDataSource.initialize();
 
-  app.use(compression());
-  app.use(express.static(client(), {
-    cacheControl: true,
-    maxAge: 604800000,
-  }));
+  app.use('/', (req: Request, res: Response, next: NextFunction) => {
+    if (req.secure || req.hostname === 'localhost') {
+      return next();
+    }
 
-  app.use((req, res) => {
+    return res.redirect(`https://${req.hostname}${req.originalUrl}`);
+  });
+
+  app.use(compression());
+  app.use(
+    express.static(client(), {
+      cacheControl: true,
+      maxAge: 604800000,
+    }),
+  );
+
+  app.use((_: Request, res: Response) => {
     res.sendFile(client('index.html'));
   });
 
-  app.listen(env.port(), () => {
-    log.info(`live on ${env.port()}`);
+  const options = {
+    key: readFileSync(path.join(__dirname, './self_signed_key.pem')),
+    cert: readFileSync(path.join(__dirname, './self_signed_certificate.pem')),
+  };
+
+  http.createServer(app).listen(env.port(), () => {
+    log.info(`http live on ${env.port()}`);
+  });
+
+  https.createServer(options, app).listen(443, () => {
+    log.info('https live on 443');
   });
 })();
