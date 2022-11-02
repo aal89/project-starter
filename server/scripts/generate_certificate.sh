@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [[ -f ../src/self_signed_certificate.pem ]] && [[ -f ../src/self_signed_key.pem ]]
+if [[ -f ../src/self_signed_certificate.pem && -f ../src/self_signed_key.pem ]]
 then
   echo 'Cert and key already exist... Exiting...'
   exit
