@@ -6,5 +6,19 @@
   "Auth.Signup.Success": "Account succesvol gecreëerd!",
   "Auth.Logout.Success": "Succesvol uitgelogd!",
   "Home.Title": "Home",
-  "Home.Text": "Hallo wereld (online)"
+  "Home.Text": "Hallo wereld (online)",
+  "Rules.Username.Required": "Gebruikersnaam is verplicht",
+  "Rules.Password.Required": "Wachtwoord is verplicht",
+  "Rules.Name.Required": "Naam is verplicht",
+  "Rules.Email.Required": "E-mail is verplicht",
+  "Rules.Password.MinLength": "Wachtwoord moet uit minimaal 8 karakters bestaan",
+  "Rules.Email.Type": "Geen geldig e-mail adres",
+  "LoginCreate.Username": "Gebruikersnaam",
+  "LoginCreate.Password": "Wachtwoord",
+  "LoginCreate.Email": "E-mail",
+  "LoginCreate.Name": "Naam",
+  "LoginCreate.Login": "Login",
+  "LoginCreate.Login.Remember": "Onthoud mij",
+  "LoginCreate.Signup": "Aanmelden",
+  "LoginCreate.Signup.SubText": "Account aanmaken"
 }

@@ -6,5 +6,19 @@
   "Auth.Signup.Success": "Account created successfully!",
   "Auth.Logout.Success": "Logged out successfully!",
   "Home.Title": "Home",
-  "Home.Text": "Hello world (online)"
+  "Home.Text": "Hello world (online)",
+  "Rules.Username.Required": "Username is required",
+  "Rules.Password.Required": "Password is required",
+  "Rules.Name.Required": "Name is required",
+  "Rules.Email.Required": "E-mail is required",
+  "Rules.Password.MinLength": "Minimal password length is 8 characters",
+  "Rules.Email.Type": "Not a valid e-mail address",
+  "LoginCreate.Username": "Username",
+  "LoginCreate.Password": "Password",
+  "LoginCreate.Email": "E-mail",
+  "LoginCreate.Name": "Name",
+  "LoginCreate.Login": "Login",
+  "LoginCreate.Login.Remember": "Remember me",
+  "LoginCreate.Signup": "Signup",
+  "LoginCreate.Signup.SubText": "Create account"
 }

@@ -4,6 +4,7 @@ import {
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
 import { Tabs, Row, Col } from 'antd';
 import React, { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import styled from 'styled-components';
 import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { useAuth } from '../../hooks/auth';
@@ -21,6 +22,7 @@ type LoginCreateProps = {
 };
 
 const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
+  const intl = useIntl();
   const [rememberMe, setRememberMe] = useState(true);
   const {
     signup, login, loginLoading, signupLoading, goLogin, goSignup,
@@ -40,7 +42,7 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
           }}
           submitter={{
             searchConfig: {
-              submitText: <>{upperCase(tab)}</>,
+              submitText: intl.formatMessage({ id: `LoginCreate.${upperCase(tab)}` }),
             },
             submitButtonProps: {
               loading: loginLoading || signupLoading,
@@ -62,8 +64,8 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
               }
             }}
           >
-            <Tabs.TabPane key="login" tab="Login" />
-            <Tabs.TabPane key="signup" tab="Create account" />
+            <Tabs.TabPane key="login" tab={intl.formatMessage({ id: 'LoginCreate.Login' })} />
+            <Tabs.TabPane key="signup" tab={intl.formatMessage({ id: 'LoginCreate.Signup.SubText' })} />
           </Tabs>
           {tab === 'login' && (
             <>
@@ -73,11 +75,11 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                   size: 'large',
                   prefix: <UserOutlined className="prefixIcon" />,
                 }}
-                placeholder="Username"
+                placeholder={intl.formatMessage({ id: 'LoginCreate.Username' })}
                 rules={[
                   {
                     required: true,
-                    message: 'Username cannot be empty',
+                    message: intl.formatMessage({ id: 'Rules.Username.Required' }),
                   },
                 ]}
               />
@@ -87,11 +89,11 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                   size: 'large',
                   prefix: <LockOutlined className="prefixIcon" />,
                 }}
-                placeholder="Password"
+                placeholder={intl.formatMessage({ id: 'LoginCreate.Password' })}
                 rules={[
                   {
                     required: true,
-                    message: 'Password cannot be empty',
+                    message: intl.formatMessage({ id: 'Rules.Password.Required' }),
                   },
                 ]}
               />
@@ -105,7 +107,7 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                     },
                   }}
                 >
-                  Remember me
+                  <FormattedMessage id="LoginCreate.Login.Remember" />
                 </ProFormCheckbox>
               </DivBottomSpacing>
             </>
@@ -118,11 +120,11 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                   size: 'large',
                   prefix: <EditOutlined className="prefixIcon" />,
                 }}
-                placeholder="Name"
+                placeholder={intl.formatMessage({ id: 'LoginCreate.Name' })}
                 rules={[
                   {
                     required: true,
-                    message: 'Name cannot be empty',
+                    message: intl.formatMessage({ id: 'Rules.Name.Required' }),
                   },
                 ]}
               />
@@ -132,13 +134,13 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                   size: 'large',
                   prefix: <MailOutlined className="prefixIcon" />,
                 }}
-                placeholder="E-mail"
+                placeholder={intl.formatMessage({ id: 'LoginCreate.Email' })}
                 rules={[
                   {
                     required: true,
-                    message: 'E-mail cannot be empty',
+                    message: intl.formatMessage({ id: 'Rules.Email.Required' }),
                   },
-                  { type: 'email', message: 'Not a valid e-mail address' },
+                  { type: 'email', message: intl.formatMessage({ id: 'Rules.Email.Type' }) },
                 ]}
               />
               <ProFormText
@@ -147,11 +149,11 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                   size: 'large',
                   prefix: <UserOutlined className="prefixIcon" />,
                 }}
-                placeholder="Username"
+                placeholder={intl.formatMessage({ id: 'LoginCreate.Username' })}
                 rules={[
                   {
                     required: true,
-                    message: 'Username cannot be empty',
+                    message: intl.formatMessage({ id: 'Rules.Username.Required' }),
                   },
                 ]}
               />
@@ -161,15 +163,15 @@ const LoginCreate: React.FC<LoginCreateProps> = ({ tab }) => {
                   size: 'large',
                   prefix: <LockOutlined className="prefixIcon" />,
                 }}
-                placeholder="Password"
+                placeholder={intl.formatMessage({ id: 'LoginCreate.Password' })}
                 rules={[
                   {
                     required: true,
-                    message: 'Password cannot be empty',
+                    message: intl.formatMessage({ id: 'Rules.Password.Required' }),
                   },
                   {
                     min: 8,
-                    message: 'Minimal password length is 8 characters',
+                    message: intl.formatMessage({ id: 'Rules.Password.MinLength' }),
                   },
                 ]}
               />
