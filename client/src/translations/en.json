@@ -7,6 +7,10 @@
   "Auth.Logout.Success": "Logged out successfully!",
   "Home.Title": "Home",
   "Home.Text": "Hello world (online)",
+  "Menu.Settings": "Settings",
+  "Menu.Login": "Login",
+  "Menu.Logout": "Logout",
+  "Menu.CreateAccount": "Create an account",
   "Rules.Username.Required": "Username is required",
   "Rules.Password.Required": "Password is required",
   "Rules.Name.Required": "Name is required",
@@ -20,5 +24,6 @@
   "LoginCreate.Login": "Login",
   "LoginCreate.Login.Remember": "Remember me",
   "LoginCreate.Signup": "Signup",
-  "LoginCreate.Signup.SubText": "Create account"
+  "LoginCreate.Signup.SubText": "Create account",
+  "Logout.Logout": "Logging out…"
 }
