@@ -1,11 +1,13 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Col, Row, Tabs } from 'antd';
+import {
+  Col, Row, Tabs,
+} from 'antd';
 import React, { useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { withProtectedRoute } from '../../enhancers/withProtectedRoute';
 import { useAuth } from '../../hooks/auth';
-import { SetLayoutContext } from '../components/Layout';
+import { useLayoutVars } from '../../hooks/layout-vars';
 import { Spinner } from '../components/Spinner';
 import { UserSettingsChangePassword } from './components/UserSettingsChangePassword';
 import { UserSettingsEditUser } from './components/UserSettingsEditUser';
@@ -15,12 +17,13 @@ import { UserSettingsMeta } from './components/UserSettingsMeta';
 const { TabPane } = Tabs;
 
 const Settings: React.FC = () => {
-  const { setTitle } = useOutletContext<SetLayoutContext>();
+  const { setTitle } = useLayoutVars();
   const { user } = useAuth();
+  const intl = useIntl();
 
   useEffect(() => {
     if (user) {
-      setTitle(`Hello ${user?.name}!`);
+      setTitle(intl.formatMessage({ id: 'Settings.Title' }, { username: user?.name }));
     }
   }, [user]);
 
@@ -34,8 +37,7 @@ const Settings: React.FC = () => {
         tab={(
           <>
             <UserOutlined />
-            {' '}
-            Profile
+            <FormattedMessage id="Settings.Profile.Tab" />
           </>
         )}
         key="1"
@@ -58,8 +60,7 @@ const Settings: React.FC = () => {
         tab={(
           <>
             <LockOutlined />
-            {' '}
-            Password
+            <FormattedMessage id="Settings.Password.Tab" />
           </>
         )}
         key="2"

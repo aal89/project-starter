@@ -65,7 +65,11 @@ export const userMenu = (isLoggedIn: boolean, isAdmin: boolean = false) => {
   if (isAdmin) {
     menu = [
       {
-        label: <Link to={Path.adminSettings}>Admin</Link>,
+        label: (
+          <Link to={Path.adminSettings}>
+            <FormattedMessage id="Menu.Admin" />
+          </Link>
+        ),
         icon: <ControlOutlined />,
         key: '99',
       },

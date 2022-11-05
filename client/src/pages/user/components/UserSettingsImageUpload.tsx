@@ -5,6 +5,7 @@ import {
 import ImgCrop from 'antd-img-crop';
 import { RcFile } from 'antd/lib/upload/interface';
 import React, { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   MeDocument,
   useEditMeMutation,
@@ -27,6 +28,7 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
     fetchPolicy: 'no-cache',
   });
   const [editMeMutation] = useEditMeMutation();
+  const intl = useIntl();
 
   const beforeUpload = async (file: RcFile) => {
     setContentType(file.type);
@@ -46,10 +48,10 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
       });
 
       setUploading(false);
-      message.success('Removed profile picture!');
+      message.success(intl.formatMessage({ id: 'Settings.User.Picture.Delete.Success' }));
     } catch {
       setUploading(false);
-      message.error('Failed to delete profile picture, try again');
+      message.error(intl.formatMessage({ id: 'Settings.User.Picture.Delete.Error' }));
     }
   };
 
@@ -58,7 +60,7 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
       setUploading(true);
 
       if (!user || !contentType) {
-        message.error('Please refresh the page');
+        message.error(intl.formatMessage({ id: 'Settings.User.Picture.Upload.Error.1' }));
         return;
       }
 
@@ -69,7 +71,7 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
       });
 
       if (!uploadParameters) {
-        message.error("Can't create upload, try again");
+        message.error(intl.formatMessage({ id: 'Settings.User.Picture.Upload.Error.2' }));
         return;
       }
 
@@ -90,20 +92,28 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
       });
 
       setUploading(false);
-      message.success('Changed profile picture!');
+      message.success(intl.formatMessage({ id: 'Settings.User.Picture.Upload.Success' }));
     } catch {
       setUploading(false);
-      message.error('Failed to change profile picture, try again');
+      message.error(intl.formatMessage({ id: 'Settings.User.Picture.Upload.Error.3' }));
     }
   };
 
   return (
     <Space direction="vertical" align="center">
-      <Title level={5}>Profile picture</Title>
+      <Title level={5}>
+        <FormattedMessage id="Settings.User.Picture.Title" />
+      </Title>
       <Spinner enabled={uploading}>
         <Avatar src={getImageUrl(user)} shape="circle" size={128} icon={<UserOutlined />} />
       </Spinner>
-      <ImgCrop rotate modalOk="Upload" modalTitle="Edit upload" modalCancel="Cancel" shape="round">
+      <ImgCrop
+        rotate
+        modalOk={intl.formatMessage({ id: 'Settings.User.Picture.Crop.Ok' })}
+        modalTitle={intl.formatMessage({ id: 'Settings.User.Picture.Crop.Title' })}
+        modalCancel={intl.formatMessage({ id: 'Settings.User.Picture.Crop.Cancel' })}
+        shape="round"
+      >
         <Upload
           name="file"
           showUploadList={false}
@@ -116,14 +126,14 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
           }}
         >
           <Button icon={<UploadOutlined />} disabled={uploadLinkLoading}>
-            Change
+            <FormattedMessage id="Settings.User.Picture.Submit" />
           </Button>
         </Upload>
       </ImgCrop>
       <Popconfirm
-        title="Are you sure you wish to delete your profile picture?"
-        okText="Yes"
-        cancelText="No"
+        title={intl.formatMessage({ id: 'Settings.User.Picture.Delete.Confirm.Title' })}
+        okText={intl.formatMessage({ id: 'Settings.User.Picture.Delete.Confirm.Ok' })}
+        cancelText={intl.formatMessage({ id: 'Settings.User.Picture.Delete.Confirm.Cancel' })}
         placement="right"
         onConfirm={deletePicture}
       >
