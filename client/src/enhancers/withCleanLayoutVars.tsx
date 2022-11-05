@@ -1,11 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { SetLayoutContext } from '../pages/components/Layout';
+import { useLayoutVars } from '../hooks/layout-vars';
 
 // eslint-disable-next-line max-len
 export const withCleanLayoutVars = <P extends object>(Component: React.ComponentType<P>) => (props: P) => {
-  const { setTitle, setMenuKey, setTitleContent } = useOutletContext<SetLayoutContext>();
+  const { setTitle, setMenuKey, setTitleContent } = useLayoutVars();
 
   useEffect(() => () => {
     setTitle('');

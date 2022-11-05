@@ -1,15 +1,14 @@
 import { Typography } from 'antd';
 import React, { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useOutletContext } from 'react-router-dom';
 import { withCleanLayoutVars } from '../enhancers/withCleanLayoutVars';
-import { SetLayoutContext } from './components/Layout';
+import { useLayoutVars } from '../hooks/layout-vars';
 
 const { Text } = Typography;
 
 const Home: React.FC = () => {
   const intl = useIntl();
-  const { setTitle, setMenuKey } = useOutletContext<SetLayoutContext>();
+  const { setTitle, setMenuKey } = useLayoutVars();
 
   useEffect(() => {
     setTitle(intl.formatMessage({ id: 'Home.Title' }));

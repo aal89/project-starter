@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useOutletContext } from 'react-router-dom';
 import { withCleanLayoutVars } from '../enhancers/withCleanLayoutVars';
-import { SetLayoutContext } from '../pages/components/Layout';
+import { useLayoutVars } from '../hooks/layout-vars';
 
 export const RouteNoMatch: React.FC = withCleanLayoutVars(() => {
   const intl = useIntl();
-  const { setTitle } = useOutletContext<SetLayoutContext>();
+  const { setTitle } = useLayoutVars();
 
   useEffect(() => {
     setTitle(intl.formatMessage({ id: 'Generic.NotFound' }));
