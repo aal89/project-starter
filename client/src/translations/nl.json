@@ -62,5 +62,20 @@
   "Settings.User.Picture.Crop.Title": "Aanpassen profielfoto",
   "Settings.User.Picture.Crop.Ok": "Opslaan",
   "Settings.User.Picture.Crop.Cancel": "Annuleren",
-  "Settings.User.Picture.Submit": "Verander"
+  "Settings.User.Picture.Submit": "Verander",
+  "Admin.Title": "Administrator",
+  "Admin.PasswordReset.Success": "Nieuw wachtwoord: {password}",
+  "Admin.PasswordReset.Error": "Er ging iets mis tijdens het resetten van het wachtwoord",
+  "Admin.PasswordReset.Tooltip.Title": "Wachtwoord resetten",
+  "Admin.PasswordReset.Pop.Title": "Weet je zeker dat je een nieuw wachtwoord wilt genereren?",
+  "Admin.PasswordReset.Pop.Ok": "Ja",
+  "Admin.PasswordReset.Pop.Cancel": "Nee",
+  "Admin.DeleteAccount.Success": "Account is verwijderd",
+  "Admin.DeleteAccount.Error": "Er ging iets mis tijdens het verwijderen van het account",
+  "Admin.DeleteAccount.Tooltip.Title": "Account verwijderen",
+  "Admin.DeleteAccount.Pop.Title": "Weet je zeker dat je dit account wilt verwijderen?",
+  "Admin.DeleteAccount.Pop.Ok": "Ja",
+  "Admin.DeleteAccount.Pop.Cancel": "Nee",
+  "Admin.EditAccount.Tooltip.Title": "Gebruiker aanpassen",
+  "Admin.EditAccount.RestrictAccess.Tooltip.Title": "Beperk toegang"
 }

@@ -6,6 +6,7 @@ import {
   Space, Tooltip, Button, Popconfirm, message,
 } from 'antd';
 import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
 import {
   useDeleteAccountMutation,
   useEditUserMutation,
@@ -24,6 +25,7 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
   const [resetPasswordMutation, { loading: passwordLoading }] = useResetPasswordMutation();
   const [deleteAccountMutation, { loading: deleteLoading }] = useDeleteAccountMutation();
   const [editUserModalVisible, setEditUserModalVisible] = useState(false);
+  const intl = useIntl();
 
   const modalOnClose = (changes: boolean) => {
     setEditUserModalVisible(false);
@@ -57,9 +59,14 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
           id: user.id,
         },
       });
-      message.success(`Password succesfully reset to: ${result.data?.resetPassword}`);
+      message.success(
+        intl.formatMessage(
+          { id: 'Admin.PasswordReset.Success' },
+          { password: result.data?.resetPassword },
+        ),
+      );
     } catch {
-      message.error('Resetting password failed, try again later.');
+      message.error(intl.formatMessage({ id: 'Admin.PasswordReset.Error' }));
     }
   };
 
@@ -70,20 +77,20 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
           id: user.id,
         },
       });
-      message.success('Account succesfully deleted');
+      message.success(intl.formatMessage({ id: 'Admin.DeleteAccount.Success' }));
 
       if (dataChanged) {
         dataChanged();
       }
     } catch (err) {
-      message.error((err as Error).message);
+      message.error(intl.formatMessage({ id: 'Admin.DeleteAccount.Error' }));
     }
   };
 
   return (
     <Space>
       {editUserModalVisible && <EditUserModal user={user} onClose={modalOnClose} />}
-      <Tooltip title="Edit user">
+      <Tooltip title={intl.formatMessage({ id: 'Admin.EditAccount.Tooltip.Title' })}>
         <Button
           type="dashed"
           shape="circle"
@@ -92,11 +99,11 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
           onClick={() => setEditUserModalVisible(true)}
         />
       </Tooltip>
-      <Tooltip title="Reset password">
+      <Tooltip title={intl.formatMessage({ id: 'Admin.PasswordReset.Tooltip.Title' })}>
         <Popconfirm
-          title="Are you sure you wish to reset the password?"
-          okText="Yes"
-          cancelText="No"
+          title={intl.formatMessage({ id: 'Admin.PasswordReset.Pop.Title' })}
+          okText={intl.formatMessage({ id: 'Admin.PasswordReset.Pop.Ok' })}
+          cancelText={intl.formatMessage({ id: 'Admin.PasswordReset.Pop.Cancel' })}
           placement="left"
           onConfirm={resetPassword}
         >
@@ -109,7 +116,7 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
           />
         </Popconfirm>
       </Tooltip>
-      <Tooltip title="Restrict access">
+      <Tooltip title={intl.formatMessage({ id: 'Admin.EditAccount.RestrictAccess.Tooltip.Title' })}>
         <Button
           type="dashed"
           loading={resetLoading}
@@ -119,15 +126,22 @@ export const ActionColumn: React.FC<ActionColumnProps> = ({ user, dataChanged })
           onClick={restrictAccess}
         />
       </Tooltip>
-      <Tooltip title="Delete account">
+      <Tooltip title={intl.formatMessage({ id: 'Admin.DeleteAccount.Tooltip.Title' })}>
         <Popconfirm
-          title="Are you sure you wish to delete this account?"
-          okText="Yes"
-          cancelText="No"
+          title={intl.formatMessage({ id: 'Admin.DeleteAccount.Pop.Title' })}
+          okText={intl.formatMessage({ id: 'Admin.DeleteAccount.Pop.Ok' })}
+          cancelText={intl.formatMessage({ id: 'Admin.DeleteAccount.Pop.Cancel' })}
           placement="left"
           onConfirm={deleteAccount}
         >
-          <Button type="text" shape="circle" icon={<DeleteOutlined />} size="small" loading={deleteLoading} danger />
+          <Button
+            type="text"
+            shape="circle"
+            icon={<DeleteOutlined />}
+            size="small"
+            loading={deleteLoading}
+            danger
+          />
         </Popconfirm>
       </Tooltip>
     </Space>

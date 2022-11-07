@@ -62,5 +62,20 @@
   "Settings.User.Picture.Crop.Title": "Edit upload",
   "Settings.User.Picture.Crop.Ok": "Upload",
   "Settings.User.Picture.Crop.Cancel": "Cancel",
-  "Settings.User.Picture.Submit": "Change"
+  "Settings.User.Picture.Submit": "Change",
+  "Admin.Title": "Administrator",
+  "Admin.PasswordReset.Success": "Password succesfully reset to: {password}",
+  "Admin.PasswordReset.Error": "Resetting password failed, try again later.",
+  "Admin.PasswordReset.Tooltip.Title": "Reset password",
+  "Admin.PasswordReset.Pop.Title": "Are you sure you wish to reset the password?",
+  "Admin.PasswordReset.Pop.Ok": "Yes",
+  "Admin.PasswordReset.Pop.Cancel": "No",
+  "Admin.DeleteAccount.Success": "Account succesfully deleted",
+  "Admin.DeleteAccount.Error": "Deleting account failed, try again later.",
+  "Admin.DeleteAccount.Tooltip.Title": "Delete account",
+  "Admin.DeleteAccount.Pop.Title": "Are you sure you wish to delete this account?",
+  "Admin.DeleteAccount.Pop.Ok": "Yes",
+  "Admin.DeleteAccount.Pop.Cancel": "No",
+  "Admin.EditAccount.Tooltip.Title": "Edit user",
+  "Admin.EditAccount.RestrictAccess.Tooltip.Title": "Beperk toegang"
 }
