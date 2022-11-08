@@ -89,5 +89,17 @@
   "Admin.EditAccount.Modal.Permission.Text": "It can take up to 10 minutes for permission changes to take effect",
   "Admin.EditAccount.Modal.Permission.Add": "Add permission",
   "Admin.EditAccount.Modal.Lastonline": "Last online:",
-  "Admin.EditAccount.Modal.Createdat": "Created at:"
+  "Admin.EditAccount.Modal.Createdat": "Created at:",
+  "Admin.UsersTable.Divider": "User management",
+  "Admin.UsersTable.Search": "Search by username...",
+  "Admin.UsersTable.Nodata": "No data",
+  "Admin.UsersTable.Name": "Name",
+  "Admin.UsersTable.Email": "E-mail",
+  "Admin.UsersTable.Username": "Username",
+  "Admin.UsersTable.Permissions": "Permissions",
+  "Admin.UsersTable.Actions": "Actions",
+  "Admin.Stats.Users.Total": "Total Users",
+  "Admin.Stats.Users.Active": "Active Users",
+  "Admin.Stats.Users.Created": "Created today",
+  "Admin.Stats.Users.Converted": "Conversion rate (Active user)"
 }

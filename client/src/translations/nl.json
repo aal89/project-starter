@@ -89,5 +89,17 @@
   "Admin.EditAccount.Modal.Permission.Text": "Het kan tot 10 minuten duren voordat wijzigingen in rechten van kracht worden",
   "Admin.EditAccount.Modal.Permission.Add": "Voeg recht toe",
   "Admin.EditAccount.Modal.Lastonline": "Laatst online:",
-  "Admin.EditAccount.Modal.Createdat": "Aangemaakt op:"
+  "Admin.EditAccount.Modal.Createdat": "Aangemaakt op:",
+  "Admin.UsersTable.Divider": "Gebruikers beheer",
+  "Admin.UsersTable.Search": "Zoek op gebruikersnaam...",
+  "Admin.UsersTable.Nodata": "Geen data",
+  "Admin.UsersTable.Name": "Naam",
+  "Admin.UsersTable.Email": "E-mail",
+  "Admin.UsersTable.Username": "Gebruikersnaam",
+  "Admin.UsersTable.Permissions": "Rechten",
+  "Admin.UsersTable.Actions": "Acties",
+  "Admin.Stats.Users.Total": "Aantal gebruikers",
+  "Admin.Stats.Users.Active": "Actieve gebruikers",
+  "Admin.Stats.Users.Created": "Vandaag aangemaakt",
+  "Admin.Stats.Users.Converted": "Conversie (Actieve gebruiker)"
 }

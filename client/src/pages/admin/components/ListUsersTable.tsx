@@ -3,6 +3,7 @@ import {
   Divider, Row, Col, Input, Table, Empty, Pagination, message, Skeleton,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useGetUsersQuery } from '../../../graphql/generated/graphql';
 import { columns } from '../columns';
 
@@ -21,6 +22,7 @@ export const ListUsersTable: React.FC = () => {
       limit: PAGE_SIZE,
     },
   });
+  const intl = useIntl();
 
   useEffect(() => {
     if (error) {
@@ -48,13 +50,15 @@ export const ListUsersTable: React.FC = () => {
 
   return (
     <>
-      <Divider orientation="left">User management</Divider>
+      <Divider orientation="left">
+        <FormattedMessage id="Admin.UsersTable.Divider" />
+      </Divider>
       <Skeleton loading={loading} active round title={false} paragraph={{ rows: 10 }}>
         <Row style={{ marginBottom: 10 }}>
           <Col xs={24} md={12} lg={8}>
             <Input
               size="large"
-              placeholder="Search by username..."
+              placeholder={intl.formatMessage({ id: 'Admin.UsersTable.Search' })}
               allowClear
               onChange={(event) => searchHandler(event.target.value)}
               prefix={<UserOutlined />}
@@ -68,11 +72,17 @@ export const ListUsersTable: React.FC = () => {
                 dataChanged() {
                   refetch();
                 },
+                intl,
               })}
               dataSource={data?.users.users.map((u) => ({ key: u.id, ...u }))}
               pagination={false}
               locale={{
-                emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No data" />,
+                emptyText: (
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={intl.formatMessage({ id: 'Admin.UsersTable.Nodata' })}
+                  />
+                ),
               }}
             />
           </Col>

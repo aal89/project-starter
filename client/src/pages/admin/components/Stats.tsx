@@ -2,10 +2,12 @@ import {
   Row, Col, Statistic,
 } from 'antd';
 import React from 'react';
+import { useIntl } from 'react-intl';
 import { useStatsQuery } from '../../../graphql/generated/graphql';
 
 export const Stats: React.FC = () => {
   const { data, loading } = useStatsQuery();
+  const intl = useIntl();
 
   const totalUsers = data?.totalUsers ?? 0;
   const activeUsers = data?.activeUsers ?? 0;
@@ -24,17 +26,17 @@ export const Stats: React.FC = () => {
   return (
     <Row justify="center" gutter={[18, 18]}>
       <Col>
-        <Statistic title="Total Users" value={totalUsers} loading={loading} />
+        <Statistic title={intl.formatMessage({ id: 'Admin.Stats.Users.Total' })} value={totalUsers} loading={loading} />
       </Col>
       <Col>
-        <Statistic title="Active Users" value={activeUsers} loading={loading} />
+        <Statistic title={intl.formatMessage({ id: 'Admin.Stats.Users.Active' })} value={activeUsers} loading={loading} />
       </Col>
       <Col>
-        <Statistic title="Created today" value={recentlyCreatedUsers} loading={loading} />
+        <Statistic title={intl.formatMessage({ id: 'Admin.Stats.Users.Created' })} value={recentlyCreatedUsers} loading={loading} />
       </Col>
       <Col>
         <Statistic
-          title="Conversion rate (Active user)"
+          title={intl.formatMessage({ id: 'Admin.Stats.Users.Converted' })}
           value={`${conversionRate().toFixed(2)}%`}
         />
       </Col>

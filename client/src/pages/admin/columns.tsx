@@ -2,6 +2,7 @@ import { decode } from '@project-starter/shared/build';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
+import { IntlShape } from 'react-intl';
 import { UserModel } from '../../graphql/generated/graphql';
 import { ActionColumn } from './components/ActionColumn';
 import { IdColumn } from './components/IdColumn';
@@ -9,10 +10,12 @@ import { NameColumn } from './components/NameColumn';
 
 type ColumnsProps = {
   dataChanged?: () => void;
+  intl: IntlShape;
 };
 
 export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: string }> = ({
   dataChanged,
+  intl,
 }) => [
   {
     title: 'Id',
@@ -23,7 +26,7 @@ export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: st
     responsive: ['lg'],
   },
   {
-    title: 'Name',
+    title: intl.formatMessage({ id: 'Admin.UsersTable.Name' }),
     dataIndex: 'name',
     key: 'name',
     width: 300,
@@ -31,7 +34,7 @@ export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: st
     responsive: ['sm'],
   },
   {
-    title: 'Email',
+    title: intl.formatMessage({ id: 'Admin.UsersTable.Email' }),
     dataIndex: 'email',
     key: 'email',
     width: 300,
@@ -39,13 +42,13 @@ export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: st
     responsive: ['md'],
   },
   {
-    title: 'Username',
+    title: intl.formatMessage({ id: 'Admin.UsersTable.Username' }),
     dataIndex: 'username',
     key: 'username',
     render: (text: any) => text,
   },
   {
-    title: 'Permissions',
+    title: intl.formatMessage({ id: 'Admin.UsersTable.Permissions' }),
     dataIndex: 'encodedPermissions',
     key: 'permissions',
     width: 500,
@@ -53,7 +56,7 @@ export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: st
     responsive: ['lg'],
   },
   {
-    title: 'Action',
+    title: intl.formatMessage({ id: 'Admin.UsersTable.Actions' }),
     key: 'action',
     width: 50,
     render: (_: any, record: UserModel) => <ActionColumn user={record} dataChanged={dataChanged} />,
