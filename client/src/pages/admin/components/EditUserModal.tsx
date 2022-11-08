@@ -16,6 +16,7 @@ import { useForm } from 'antd/lib/form/Form';
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useEditUserMutation, UserModel } from '../../../graphql/generated/graphql';
 
 const { Text } = Typography;
@@ -51,6 +52,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
   const [okDisabled, setOkDisabled] = useState(false);
   const [form] = useForm();
   const [editUserMutation, { loading }] = useEditUserMutation();
+  const intl = useIntl();
 
   const allPermissions = useMemo(
     () => Object.values(Permission).map((perm) => ({ value: perm })),
@@ -122,7 +124,9 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
     <Modal
       title={(
         <Space>
-          <Text strong>Edit user</Text>
+          <Text strong>
+            <FormattedMessage id="Admin.EditAccount.Modal.Title" />
+          </Text>
           <small>
             <Text type="secondary">{user.id}</Text>
           </small>
@@ -136,8 +140,8 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
       okButtonProps={{
         disabled: okDisabled,
       }}
-      okText="Save"
-      cancelText="Cancel"
+      okText={intl.formatMessage({ id: 'Admin.EditAccount.Modal.Save' })}
+      cancelText={intl.formatMessage({ id: 'Admin.EditAccount.Modal.Cancel' })}
     >
       <Form
         onFieldsChange={onFieldsChange}
@@ -151,8 +155,12 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
       >
         <Form.Item
           name={['user', 'name']}
-          rules={[{ required: true }]}
-          label={<Text strong>Name</Text>}
+          rules={[{ required: true, message: intl.formatMessage({ id: 'Rules.Name.Required' }) }]}
+          label={(
+            <Text strong>
+              <FormattedMessage id="Admin.EditAccount.Modal.Name" />
+            </Text>
+          )}
         >
           <Input />
         </Form.Item>
@@ -161,15 +169,26 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
           rules={[
             {
               required: true,
-              message: 'E-mail cannot be empty',
+              message: intl.formatMessage({ id: 'Rules.Email.Required' }),
             },
-            { type: 'email', message: 'Not a valid e-mail address' },
+            { type: 'email', message: intl.formatMessage({ id: 'Rules.Name.Type' }) },
           ]}
-          label={<Text strong>Email</Text>}
+          label={(
+            <Text strong>
+              <FormattedMessage id="Admin.EditAccount.Modal.Email" />
+            </Text>
+          )}
         >
           <Input />
         </Form.Item>
-        <Form.Item name={['user', 'lastName']} label={<Text strong>Last name</Text>}>
+        <Form.Item
+          name={['user', 'lastName']}
+          label={(
+            <Text strong>
+              <FormattedMessage id="Admin.EditAccount.Modal.Lastname" />
+            </Text>
+          )}
+        >
           <Input />
         </Form.Item>
         <Form.Item
@@ -180,9 +199,14 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
               type: 'string',
               min: 4,
               max: 20,
+              message: intl.formatMessage({ id: 'Rules.Username.Required' }),
             },
           ]}
-          label={<Text strong>Username</Text>}
+          label={(
+            <Text strong>
+              <FormattedMessage id="Admin.EditAccount.Modal.Username" />
+            </Text>
+          )}
         >
           <Input />
         </Form.Item>
@@ -190,10 +214,12 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
           name={['user', 'permissions']}
           label={(
             <Space direction="vertical" size={0}>
-              <Text strong>Permissions</Text>
+              <Text strong>
+                <FormattedMessage id="Admin.EditAccount.Modal.Permissions" />
+              </Text>
               <small>
                 <Text type="secondary">
-                  Changes in permissions can take up to 10 minutes to come into effect.
+                  <FormattedMessage id="Admin.EditAccount.Modal.Permission.Text" />
                 </Text>
               </small>
             </Space>
@@ -209,7 +235,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
               >
                 <PlusOutlined />
                 {' '}
-                Add permission
+                <FormattedMessage id="Admin.EditAccount.Modal.Permission.Add" />
               </Button>
             )}
             {tagInputVisible && (
@@ -223,7 +249,9 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
                   setTagInputVisible(false);
                   setOptions(allPermissions);
                 }}
-                placeholder="Permission…"
+                placeholder={`${intl.formatMessage({
+                  id: 'Admin.EditAccount.Modal.Permissions',
+                })}…`}
               />
             )}
             <Space size={0}>
@@ -248,11 +276,15 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
         </Form.Item>
       </Form>
       <small>
-        <Text strong>Last online at:</Text>
+        <Text strong>
+          <FormattedMessage id="Admin.EditAccount.Modal.Lastonline" />
+        </Text>
         {' '}
         <Text italic>{user.lastOnlineAt}</Text>
         <br />
-        <Text strong>Created at:</Text>
+        <Text strong>
+          <FormattedMessage id="Admin.EditAccount.Modal.Createdat" />
+        </Text>
         {' '}
         <Text italic>{user.createdAt}</Text>
       </small>
