@@ -81,6 +81,7 @@
   "Admin.EditAccount.Modal.Title": "Edit user",
   "Admin.EditAccount.Modal.Save": "Save",
   "Admin.EditAccount.Modal.Cancel": "Cancel",
+  "Admin.EditAccount.Modal.ImageDelete": "Delete profile picture",
   "Admin.EditAccount.Modal.Name": "Name",
   "Admin.EditAccount.Modal.Email": "E-mail",
   "Admin.EditAccount.Modal.Lastname": "Last name",

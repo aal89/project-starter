@@ -1,7 +1,8 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { decode, encode, Permission } from '@project-starter/shared/build';
 import {
   AutoComplete,
+  Avatar,
   Button,
   Form,
   Input,
@@ -18,6 +19,7 @@ import React, {
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEditUserMutation, UserModel } from '../../../graphql/generated/graphql';
+import { getImageUrl } from '../../../user';
 
 const { Text } = Typography;
 
@@ -53,6 +55,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
   const [form] = useForm();
   const [editUserMutation, { loading }] = useEditUserMutation();
   const intl = useIntl();
+  const [deleteImage, setDeleteImage] = useState(false);
 
   const allPermissions = useMemo(
     () => Object.values(Permission).map((perm) => ({ value: perm })),
@@ -104,6 +107,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
             lastName: form.getFieldValue(['user', 'lastName']),
             name: form.getFieldValue(['user', 'name']),
             email: form.getFieldValue(['user', 'email']),
+            image: deleteImage ? null : user.image,
             permissions: encode(tags),
             oldUsername: user.username,
           },
@@ -153,6 +157,24 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
         }}
         validateMessages={validateMessages}
       >
+        <Form.Item>
+          <Space>
+            <Avatar
+              src={getImageUrl(user.image)}
+              shape="circle"
+              size={64}
+              icon={<UserOutlined />}
+            />
+            <Button
+              type={deleteImage ? 'primary' : 'ghost'}
+              shape="round"
+              size="small"
+              onClick={() => setDeleteImage(!deleteImage)}
+            >
+              <FormattedMessage id="Admin.EditAccount.Modal.ImageDelete" />
+            </Button>
+          </Space>
+        </Form.Item>
         <Form.Item
           name={['user', 'name']}
           rules={[{ required: true, message: intl.formatMessage({ id: 'Rules.Name.Required' }) }]}

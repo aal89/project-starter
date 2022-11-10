@@ -81,6 +81,7 @@
   "Admin.EditAccount.Modal.Title": "Gebruiker aanpassen",
   "Admin.EditAccount.Modal.Save": "Opslaan",
   "Admin.EditAccount.Modal.Cancel": "Annuleren",
+  "Admin.EditAccount.Modal.ImageDelete": "Verwijder profielfoto",
   "Admin.EditAccount.Modal.Name": "Naam",
   "Admin.EditAccount.Modal.Email": "E-mail",
   "Admin.EditAccount.Modal.Lastname": "Achternaam",
