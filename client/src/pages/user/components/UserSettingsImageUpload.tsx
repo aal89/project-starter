@@ -105,7 +105,7 @@ export const UserSettingsImageUpload: React.FC<UserSettingsImageUploadProps> = (
         <FormattedMessage id="Settings.User.Picture.Title" />
       </Title>
       <Spinner enabled={uploading}>
-        <Avatar src={getImageUrl(user)} shape="circle" size={128} icon={<UserOutlined />} />
+        <Avatar src={getImageUrl(user.image)} shape="circle" size={128} icon={<UserOutlined />} />
       </Spinner>
       <ImgCrop
         rotate

@@ -30,7 +30,7 @@ export const columns: (props: ColumnsProps) => ColumnsType<UserModel & { key: st
     dataIndex: 'name',
     key: 'name',
     width: 300,
-    render: (text: string) => <NameColumn text={text} />,
+    render: (text: string, user: UserModel) => <NameColumn text={text} avatarUrl={user.image} />,
     responsive: ['sm'],
   },
   {
