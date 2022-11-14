@@ -38,4 +38,11 @@ export const env = {
     bucket: () => process.env.AWS_BUCKET ?? '',
     signExpiry: () => Number(process.env.AWS_BUCKEY_SIGN_EXPIRY ?? 0),
   },
+  mail: {
+    pool: () => process.env.MAIL_POOL ?? '',
+    host: () => process.env.MAIL_HOST ?? '',
+    port: () => Number(process.env.MAIL_PORT ?? 0),
+    username: () => process.env.MAIL_USERNAME ?? '',
+    password: () => process.env.MAIL_PASSWORD ?? '',
+  },
 };
