@@ -7,6 +7,7 @@ export const env = {
   httpPort: () => Number(process.env.HTTP_PORT ?? 8000),
   httpsPort: () => Number(process.env.HTTPS_PORT ?? 8433),
   dateLocale: () => process.env.DATE_LOCALE ?? 'en-US',
+  projectName: () => process.env.PROJECT_NAME ?? 'Starter',
   signAccessTokenSecret: () => process.env.SIGN_ACCESS_SECRET ?? '',
   signRefreshTokenSecret: () => process.env.SIGN_REFRESH_SECRET ?? '',
   dataSource: {
@@ -44,5 +45,6 @@ export const env = {
     port: () => Number(process.env.MAIL_PORT ?? 0),
     username: () => process.env.MAIL_USERNAME ?? '',
     password: () => process.env.MAIL_PASSWORD ?? '',
+    from: () => process.env.MAIL_FROM ?? '',
   },
 };

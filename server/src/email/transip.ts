@@ -1,6 +1,9 @@
 import * as nodemailer from 'nodemailer';
 import { env } from '../env';
+import { log } from '../logger/log';
 import { EmailService } from './EmailService';
+
+log.info('Setting up TransIP mail service');
 
 const smtpTransport = nodemailer.createTransport({
   pool: true,

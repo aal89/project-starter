@@ -2,6 +2,7 @@ import { ok } from 'assert';
 import { Permission } from '@project-starter/shared/build';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
+import { sendResetPasswordMail } from '../../email/templates/reset-password';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
@@ -36,6 +37,8 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     const newPassword = randomString();
     await user.setPassword(newPassword);
     await user.save();
+
+    await sendResetPasswordMail(user.name, user.email, newPassword);
 
     return newPassword;
   },
