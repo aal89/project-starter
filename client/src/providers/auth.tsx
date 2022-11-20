@@ -12,6 +12,7 @@ import {
   useLoginMutation,
   useMeLazyQuery,
   UserModel,
+  useActivateMutation,
 } from '../graphql/generated/graphql';
 import { Path } from '../routing/Path';
 import {
@@ -21,6 +22,8 @@ import {
 type Auth = {
   user: UserModel | null;
   isLoggedIn: boolean;
+  activate: (username: string, code: string) => Promise<void>;
+  activateLoading: boolean;
   userCan: (permission: Permission) => boolean;
   login: (username: string, password: string, rememberMe: boolean) => Promise<void>;
   loginLoading: boolean;
@@ -35,6 +38,8 @@ type Auth = {
 export const AuthContext = createContext<Auth>({
   user: null,
   isLoggedIn: false,
+  activate: () => Promise.reject(),
+  activateLoading: false,
   userCan: () => false,
   login: () => Promise.reject(),
   loginLoading: false,
@@ -49,6 +54,7 @@ export const AuthContext = createContext<Auth>({
 export const AuthProvider: React.FC = ({ children }) => {
   const intl = useIntl();
   const navigate = useNavigate();
+  const [activateMutation, { loading: activateLoading }] = useActivateMutation();
   const [signupMutation, { loading: signupLoading }] = useSignupMutation();
   const [loginMutation, { loading: loginLoading }] = useLoginMutation();
   const [meQuery, { data: meData, refetch: refetchMe }] = useMeLazyQuery();
@@ -108,6 +114,22 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   };
 
+  const activate = async (username: string, code: string) => {
+    try {
+      await activateMutation({
+        variables: {
+          username,
+          code,
+        },
+      });
+
+      goLogin();
+      message.success(intl.formatMessage({ id: 'Auth.Activate.Success' }));
+    } catch (err) {
+      message.error((err as ApolloError).message ?? intl.formatMessage({ id: 'Generic.UnknownError' }));
+    }
+  };
+
   const signup = async (username: string, password: string, email: string, name: string) => {
     try {
       await signupMutation({
@@ -152,6 +174,8 @@ export const AuthProvider: React.FC = ({ children }) => {
       value={{
         user,
         isLoggedIn,
+        activate,
+        activateLoading,
         userCan,
         login,
         loginLoading,

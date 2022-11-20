@@ -6,6 +6,7 @@ import { Path } from './Path';
 import { RouteNoMatch } from './RouteNoMatch';
 
 const Home = React.lazy(() => import('../pages/Home'));
+const Activate = React.lazy(() => import('../pages/user/Activate'));
 const LoginCreate = React.lazy(() => import('../pages/user/LoginCreate'));
 const Logout = React.lazy(() => import('../pages/user/Logout'));
 const Settings = React.lazy(() => import('../pages/user/Settings'));
@@ -19,6 +20,7 @@ export const Routing: React.FC = () => (
   <Routes>
     <Route path={Path.home} element={<Layout />}>
       <Route index element={Suspended(<Home />)} />
+      <Route path={Path.userActivate} element={Suspended(<Activate />)} />
       <Route path={Path.userLogin} element={Suspended(<LoginCreate tab="login" />)} />
       <Route path={Path.userSignup} element={Suspended(<LoginCreate tab="signup" />)} />
       <Route path={Path.userLogout} element={Suspended(<Logout />)} />

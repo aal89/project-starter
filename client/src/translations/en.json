@@ -3,6 +3,7 @@
   "Generic.NotFound": "Not found",
   "Auth.Login.MissingData": "No login information found in response from server",
   "Auth.Login.Success": "Logged in successfully!",
+  "Auth.Activate.Success": "Account activated successfully! You can now login.",
   "Auth.Signup.Success": "Account created successfully!",
   "Auth.Logout.Success": "Logged out successfully!",
   "Home.Title": "Home",

@@ -8,8 +8,16 @@ export const env = {
   httpsPort: () => Number(process.env.HTTPS_PORT ?? 8433),
   dateLocale: () => process.env.DATE_LOCALE ?? 'en-US',
   projectName: () => process.env.PROJECT_NAME ?? 'Starter',
+  projectUrl: (path: string) => {
+    try {
+      return new URL(path, process.env.PROJECT_URL ?? '');
+    } catch {
+      return new URL('');
+    }
+  },
   signAccessTokenSecret: () => process.env.SIGN_ACCESS_SECRET ?? '',
   signRefreshTokenSecret: () => process.env.SIGN_REFRESH_SECRET ?? '',
+  otpSecret: () => process.env.OTP_SECRET ?? '',
   dataSource: {
     connection: () => process.env.TYPEORM_CONNECTION ?? '',
     host: () => process.env.TYPEORM_HOST ?? '',

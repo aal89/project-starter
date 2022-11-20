@@ -2,10 +2,12 @@ import { ok } from 'assert';
 import { Permission } from '@project-starter/shared/build';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
+import { sendActivateAccountMail } from '../../email/templates/activate-account';
 import { sendResetPasswordMail } from '../../email/templates/reset-password';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
+import { log } from '../../logger/log';
 import { randomString } from '../../utils/string';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
@@ -23,6 +25,7 @@ const authTypeDefs = gql`
     login(username: String!, password: String!): Tokens!
     refresh(token: String!): Tokens!
     resetPassword(id: String!): String!
+    activate(username: String!, code: String!): Void
   }
 `;
 
@@ -55,14 +58,12 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await validateOrReject(user);
 
-      const canLogin = await PermissionData.find({
-        where: { name: Permission.LOGIN },
-      });
-
-      user.permissions = canLogin;
-
       await user.save();
+
+      await sendActivateAccountMail(user);
     } catch (err) {
+      log.error(err);
+
       const translatedError = translateError(err);
       if (translatedError === DatabaseError.DuplicateUsername) {
         throw new Error('This username is already taken, please pick another');
@@ -131,6 +132,31 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       };
     } catch {
       throw new Error('Unknown user');
+    }
+  },
+  activate: async (_, { code, username }) => {
+    try {
+      const user = await User.findOneOrFail({
+        where: { username },
+        cache: true,
+        relations: ['permissions'],
+      });
+
+      const userOtp = await user.getOtp();
+
+      ok(user.neverLoggedIn(), 'You can only activate new accounts');
+      ok(userOtp === code, 'Incorrect code');
+
+      const canLogin = await PermissionData.find({
+        where: { name: Permission.LOGIN },
+      });
+      user.permissions = canLogin;
+
+      await user.save();
+    } catch (err) {
+      log.error(err);
+
+      throw err;
     }
   },
 };

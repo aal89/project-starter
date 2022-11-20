@@ -26,6 +26,7 @@ export type ImageUploadParameters = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activate?: Maybe<Scalars['Void']>;
   changePassword?: Maybe<Scalars['Void']>;
   deleteAccount?: Maybe<Scalars['Void']>;
   edit: UserModel;
@@ -33,6 +34,12 @@ export type Mutation = {
   refresh: Tokens;
   resetPassword: Scalars['String'];
   signup?: Maybe<Scalars['Void']>;
+};
+
+
+export type MutationActivateArgs = {
+  code: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -242,6 +249,7 @@ export type ImageUploadParametersResolvers<ContextType = any, ParentType extends
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  activate?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationActivateArgs, 'code' | 'username'>>;
   changePassword?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
   deleteAccount?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationDeleteAccountArgs, 'id'>>;
   edit?: Resolver<ResolversTypes['UserModel'], ParentType, ContextType, RequireFields<MutationEditArgs, 'user'>>;

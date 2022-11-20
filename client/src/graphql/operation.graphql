@@ -20,6 +20,10 @@ mutation Login(
   }
 }
 
+mutation Activate($username: String! $code: String!) {
+  activate(username: $username, code: $code)
+}
+
 mutation Signup(
   $username: String!
   $password: String!

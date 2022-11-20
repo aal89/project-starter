@@ -3,6 +3,7 @@
   "Generic.NotFound": "Niet gevonden",
   "Auth.Login.MissingData": "Geen login informatie gevonden in het antwoord van de server",
   "Auth.Login.Success": "Succesvol ingelogd!",
+  "Auth.Activate.Success": "Account succesvol geactiveerd. Je kan nu inloggen.",
   "Auth.Signup.Success": "Account succesvol gecreëerd!",
   "Auth.Logout.Success": "Succesvol uitgelogd!",
   "Home.Title": "Home",

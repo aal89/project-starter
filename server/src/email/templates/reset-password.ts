@@ -15,15 +15,11 @@ export const sendResetPasswordMail = async (name: string, email: string, passwor
   ${env.projectName()}
   `;
 
-  const result = await mailService.send(
-    env.mail.from(),
-    email,
-    'New account password',
-    body,
-    body,
-  );
+  const result = await mailService.send(env.mail.from(), email, 'New account password', body, body);
 
-  log.info(`ResetPassword mail sent success to ${result.recipient}. MessageId: ${result.messageId}`);
+  log.info(
+    `ResetPassword mail sent success to ${result.recipient}. MessageId: ${result.messageId}`,
+  );
 
   return result;
 };

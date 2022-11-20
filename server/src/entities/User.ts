@@ -10,6 +10,7 @@ import {
 import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
+import { generateDailyTotp } from '../otp';
 import { Permission } from './Permission';
 
 @Entity()
@@ -75,6 +76,14 @@ export class User extends BaseEntity {
       newImage: this.image,
       changedImage: oldImage !== this.image,
     };
+  }
+
+  neverLoggedIn() {
+    return this.createdAt.getTime() === this.lastOnlineAt.getTime();
+  }
+
+  async getOtp() {
+    return generateDailyTotp(this.username);
   }
 
   toJSON() {
