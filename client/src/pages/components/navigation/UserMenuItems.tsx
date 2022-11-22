@@ -4,6 +4,8 @@ import {
   LogoutOutlined,
   SettingFilled,
   ControlOutlined,
+  LockOutlined,
+  MailOutlined,
 } from '@ant-design/icons';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React from 'react';
@@ -44,6 +46,24 @@ const loggedOutMenu: ItemType[] = [
     ),
     icon: <UserAddOutlined />,
     key: '0',
+  },
+  {
+    label: (
+      <Link to={Path.userRequestPassword}>
+        <FormattedMessage id="Menu.PasswordReset" />
+      </Link>
+    ),
+    icon: <LockOutlined />,
+    key: '1',
+  },
+  {
+    label: (
+      <Link to={Path.userRequestActivate}>
+        <FormattedMessage id="Menu.ResendActivation" />
+      </Link>
+    ),
+    icon: <MailOutlined />,
+    key: '2',
   },
   {
     type: 'divider',

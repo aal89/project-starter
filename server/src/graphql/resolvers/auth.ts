@@ -26,6 +26,7 @@ const authTypeDefs = gql`
     refresh(token: String!): Tokens!
     resetPassword(id: String!): String!
     activate(username: String!, code: String!): Void
+    sendActivate(email: String!): Void
   }
 `;
 
@@ -153,6 +154,24 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       user.permissions = canLogin;
 
       await user.save();
+    } catch (err) {
+      log.error(err);
+
+      throw err;
+    }
+  },
+  sendActivate: async (_, { email }, { can }) => {
+    try {
+      const user = await User.findOneOrFail({
+        where: { email },
+        cache: true,
+        relations: ['permissions'],
+      });
+
+      ok(user.neverLoggedIn(), 'You can only activate new accounts');
+      ok(!can(Permission.LOGIN, user.encodedPermissions), 'This account is already activated');
+
+      await sendActivateAccountMail(user);
     } catch (err) {
       log.error(err);
 

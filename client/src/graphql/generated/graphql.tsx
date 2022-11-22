@@ -34,6 +34,7 @@ export type Mutation = {
   login: Tokens;
   refresh: Tokens;
   resetPassword: Scalars['String'];
+  sendActivate?: Maybe<Scalars['Void']>;
   signup?: Maybe<Scalars['Void']>;
 };
 
@@ -73,6 +74,11 @@ export type MutationRefreshArgs = {
 
 export type MutationResetPasswordArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationSendActivateArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -157,6 +163,13 @@ export type ActivateMutationVariables = Exact<{
 
 
 export type ActivateMutation = { __typename?: 'Mutation', activate?: void | null };
+
+export type SendActivateMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type SendActivateMutation = { __typename?: 'Mutation', sendActivate?: void | null };
 
 export type SignupMutationVariables = Exact<{
   username: Scalars['String'];
@@ -319,6 +332,37 @@ export function useActivateMutation(baseOptions?: Apollo.MutationHookOptions<Act
 export type ActivateMutationHookResult = ReturnType<typeof useActivateMutation>;
 export type ActivateMutationResult = Apollo.MutationResult<ActivateMutation>;
 export type ActivateMutationOptions = Apollo.BaseMutationOptions<ActivateMutation, ActivateMutationVariables>;
+export const SendActivateDocument = gql`
+    mutation SendActivate($email: String!) {
+  sendActivate(email: $email)
+}
+    `;
+export type SendActivateMutationFn = Apollo.MutationFunction<SendActivateMutation, SendActivateMutationVariables>;
+
+/**
+ * __useSendActivateMutation__
+ *
+ * To run a mutation, you first call `useSendActivateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendActivateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendActivateMutation, { data, loading, error }] = useSendActivateMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useSendActivateMutation(baseOptions?: Apollo.MutationHookOptions<SendActivateMutation, SendActivateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendActivateMutation, SendActivateMutationVariables>(SendActivateDocument, options);
+      }
+export type SendActivateMutationHookResult = ReturnType<typeof useSendActivateMutation>;
+export type SendActivateMutationResult = Apollo.MutationResult<SendActivateMutation>;
+export type SendActivateMutationOptions = Apollo.BaseMutationOptions<SendActivateMutation, SendActivateMutationVariables>;
 export const SignupDocument = gql`
     mutation Signup($username: String!, $password: String!, $email: String!, $name: String!) {
   signup(username: $username, password: $password, email: $email, name: $name)
