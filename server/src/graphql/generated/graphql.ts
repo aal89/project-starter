@@ -28,10 +28,12 @@ export type Mutation = {
   __typename?: 'Mutation';
   activate?: Maybe<Scalars['Void']>;
   changePassword?: Maybe<Scalars['Void']>;
+  changePasswordByCode?: Maybe<Scalars['Void']>;
   deleteAccount?: Maybe<Scalars['Void']>;
   edit: UserModel;
   login: Tokens;
   refresh: Tokens;
+  requestPasswordReset?: Maybe<Scalars['Void']>;
   resetPassword: Scalars['String'];
   sendActivate?: Maybe<Scalars['Void']>;
   signup?: Maybe<Scalars['Void']>;
@@ -47,6 +49,13 @@ export type MutationActivateArgs = {
 export type MutationChangePasswordArgs = {
   newPassword: Scalars['String'];
   oldPassword: Scalars['String'];
+};
+
+
+export type MutationChangePasswordByCodeArgs = {
+  code: Scalars['String'];
+  newPassword: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -68,6 +77,11 @@ export type MutationLoginArgs = {
 
 export type MutationRefreshArgs = {
   token: Scalars['String'];
+};
+
+
+export type MutationRequestPasswordResetArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -257,10 +271,12 @@ export type ImageUploadParametersResolvers<ContextType = any, ParentType extends
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   activate?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationActivateArgs, 'code' | 'username'>>;
   changePassword?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'oldPassword'>>;
+  changePasswordByCode?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationChangePasswordByCodeArgs, 'code' | 'newPassword' | 'username'>>;
   deleteAccount?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationDeleteAccountArgs, 'id'>>;
   edit?: Resolver<ResolversTypes['UserModel'], ParentType, ContextType, RequireFields<MutationEditArgs, 'user'>>;
   login?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   refresh?: Resolver<ResolversTypes['Tokens'], ParentType, ContextType, RequireFields<MutationRefreshArgs, 'token'>>;
+  requestPasswordReset?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationRequestPasswordResetArgs, 'email'>>;
   resetPassword?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'id'>>;
   sendActivate?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSendActivateArgs, 'email'>>;
   signup?: Resolver<Maybe<ResolversTypes['Void']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'email' | 'name' | 'password' | 'username'>>;

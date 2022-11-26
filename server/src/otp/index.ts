@@ -14,8 +14,15 @@ const derivePassword = (str: string) => {
   return pbkdf2(env.otpSecret(), md5(str), 10000, KEYSIZE, 'sha512');
 };
 
-export const generateDailyTotp = (secret: string, offsetEpoch: number = Date.now()) => {
-  return generateTotp(secret, SECONDS_IN_DAY, offsetEpoch);
+export const generateDailyTotp = (secret: string) => {
+  return generateTotp(secret, SECONDS_IN_DAY, Date.now());
+};
+
+export const generateCustomTotp = (
+  secret: string,
+  seconds: number,
+) => {
+  return generateTotp(secret, seconds, Date.now());
 };
 
 export const generateTotp = async (

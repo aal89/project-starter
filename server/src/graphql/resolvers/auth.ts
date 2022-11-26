@@ -3,12 +3,11 @@ import { Permission } from '@project-starter/shared/build';
 import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { sendActivateAccountMail } from '../../email/templates/activate-account';
-import { sendResetPasswordMail } from '../../email/templates/reset-password';
+import { sendRequestPasswordResetMail } from '../../email/templates/request-password-reset';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
 import { log } from '../../logger/log';
-import { randomString } from '../../utils/string';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
 import { createTokens, validateRefreshToken } from '../auth/token';
@@ -24,27 +23,29 @@ const authTypeDefs = gql`
     signup(username: String!, password: String!, email: String!, name: String!): Void
     login(username: String!, password: String!): Tokens!
     refresh(token: String!): Tokens!
-    resetPassword(id: String!): String!
+    requestPasswordReset(email: String!): Void
     activate(username: String!, code: String!): Void
     sendActivate(email: String!): Void
   }
 `;
 
 const mutationResolvers: MutationResolvers<ContextType> = {
-  resetPassword: async (_, { id }, { userCan }) => {
-    ok(
-      userCan(Permission.LOGIN, Permission.ADMINISTRATE),
-      'User is not allowed to reset passwords',
-    );
+  requestPasswordReset: async (_, { email }, { can }) => {
+    try {
+      const user = await User.findOneOrFail({
+        where: { email },
+        cache: true,
+        relations: ['permissions'],
+      });
 
-    const user = await User.findOneOrFail({ where: { id } });
-    const newPassword = randomString();
-    await user.setPassword(newPassword);
-    await user.save();
+      ok(can(Permission.LOGIN, user.encodedPermissions), 'This account is locked');
 
-    await sendResetPasswordMail(user.name, user.email, newPassword);
+      await sendRequestPasswordResetMail(user);
+    } catch (err) {
+      log.error((err as Error).message);
 
-    return newPassword;
+      throw err;
+    }
   },
   signup: async (_, {
     username, password, email, name,
@@ -173,7 +174,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await sendActivateAccountMail(user);
     } catch (err) {
-      log.error(err);
+      log.error((err as Error).message);
 
       throw err;
     }

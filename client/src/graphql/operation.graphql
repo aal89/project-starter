@@ -10,17 +10,14 @@ fragment UserModelFields on UserModel {
   createdAt
 }
 
-mutation Login(
-  $username: String!
-  $password: String!
-) {
+mutation Login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
     accessToken
     refreshToken
   }
 }
 
-mutation Activate($username: String! $code: String!) {
+mutation Activate($username: String!, $code: String!) {
   activate(username: $username, code: $code)
 }
 
@@ -28,72 +25,52 @@ mutation SendActivate($email: String!) {
   sendActivate(email: $email)
 }
 
-mutation Signup(
-  $username: String!
-  $password: String!
-  $email: String!
-  $name: String!
-) {
+mutation Signup($username: String!, $password: String!, $email: String!, $name: String!) {
   signup(username: $username, password: $password, email: $email, name: $name)
 }
 
-mutation Refresh(
-  $refreshToken: String!
-) {
+mutation Refresh($refreshToken: String!) {
   refresh(token: $refreshToken) {
     accessToken
     refreshToken
   }
 }
 
-mutation EditUser(
-  $input: UserModelInput!
-) {
+mutation EditUser($input: UserModelInput!) {
   edit(user: $input) {
     id
   }
 }
 
-mutation EditMe(
-  $name: String!
-  $lastName: String
-  $image: String
-) {
-  edit(user: {
-    name: $name
-    lastName: $lastName
-    image: $image
-  }) {
+mutation EditMe($name: String!, $lastName: String, $image: String) {
+  edit(user: { name: $name, lastName: $lastName, image: $image }) {
     name
     lastName
     image
   }
 }
 
-mutation ChangePassword(
-  $oldPassword: String!
-  $newPassword: String!
-) {
+mutation ChangePassword($oldPassword: String!, $newPassword: String!) {
   changePassword(oldPassword: $oldPassword, newPassword: $newPassword)
 }
 
-mutation ResetPassword(
-  $id: String!
-) {
+mutation ChangePasswordByCode($username: String!, $code: String!, $newPassword: String!) {
+  changePasswordByCode(username: $username, code: $code, newPassword: $newPassword)
+}
+
+mutation ResetPassword($id: String!) {
   resetPassword(id: $id)
 }
 
-mutation DeleteAccount(
-  $id: String!
-) {
+mutation RequestPasswordReset($email: String!) {
+  requestPasswordReset(email: $email)
+}
+
+mutation DeleteAccount($id: String!) {
   deleteAccount(id: $id)
 }
 
-query GetUsers(
-  $username: String
-  $offset: Int!
-  $limit: Int!
-) {
+query GetUsers($username: String, $offset: Int!, $limit: Int!) {
   users(username: $username, offset: $offset, limit: $limit) {
     total
     users {

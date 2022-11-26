@@ -13,10 +13,10 @@ export const sendActivateAccountMail = async (user: User) => {
   const body = `
   Hello ${user.name},
   <p>
-  Your account has been created to activate it click the following <a href="${url}">link</a>.
+  Your account has been created, to activate it click the following <a href="${url}">link</a>.
   </p>
   <p>
-  This link is valid for 24 hour
+  This link is valid for 24 hours.
   </p>
   Thank you,
   <br>

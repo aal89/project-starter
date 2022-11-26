@@ -4,10 +4,12 @@ import { gql } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { In, Like } from 'typeorm';
 import { getS3UploadUrl, s3DeleteObject } from '../../aws';
+import { sendResetPasswordMail } from '../../email/templates/reset-password';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
-import { randomFilename } from '../../utils/string';
+import { log } from '../../logger/log';
+import { randomFilename, randomString } from '../../utils/string';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
 import { MutationResolvers, QueryResolvers } from '../generated/graphql';
@@ -53,7 +55,9 @@ const userTypeDefs = gql`
 
   extend type Mutation {
     edit(user: UserModelInput!): UserModel!
+    resetPassword(id: String!): String!
     changePassword(oldPassword: String!, newPassword: String!): Void
+    changePasswordByCode(username: String!, code: String!, newPassword: String!): Void
     deleteAccount(id: String!): Void
   }
 `;
@@ -102,6 +106,21 @@ const queryResolvers: QueryResolvers<ContextType> = {
 };
 
 const mutationResolvers: MutationResolvers<ContextType> = {
+  resetPassword: async (_, { id }, { userCan }) => {
+    ok(
+      userCan(Permission.LOGIN, Permission.ADMINISTRATE),
+      'User is not allowed to reset passwords',
+    );
+
+    const user = await User.findOneOrFail({ where: { id } });
+    const newPassword = randomString();
+    await user.setPassword(newPassword);
+    await user.save();
+
+    await sendResetPasswordMail(user.name, user.email, newPassword);
+
+    return newPassword;
+  },
   deleteAccount: async (_, { id }, { userCan, user }) => {
     ok(
       userCan(Permission.LOGIN, Permission.ADMINISTRATE),
@@ -126,6 +145,27 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     await compareOrReject(oldPassword, user.password);
     await user.setPassword(newPassword);
     await user.save();
+  },
+  changePasswordByCode: async (_, { username, code, newPassword }, { can }) => {
+    try {
+      const user = await User.findOneOrFail({
+        where: { username },
+        cache: true,
+        relations: ['permissions'],
+      });
+
+      const userOtp = await user.getPasswordOtp();
+
+      ok(can(Permission.LOGIN, user.encodedPermissions), 'This account is locked');
+      ok(userOtp === code, 'Incorrect code');
+
+      await user.setPassword(newPassword);
+      await user.save();
+    } catch (err) {
+      log.error(err);
+
+      throw err;
+    }
   },
   edit: async (
     _,
@@ -177,7 +217,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       return user;
     } catch (err) {
-      logger.error(err);
+      logger.error((err as Error).message);
 
       const translatedError = translateError(err);
       if (translatedError === DatabaseError.DuplicateUsername) {

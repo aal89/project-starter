@@ -10,8 +10,11 @@ import {
 import {
   Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinTable, ManyToMany,
 } from 'typeorm';
-import { generateDailyTotp } from '../otp';
+import { generateCustomTotp, generateDailyTotp } from '../otp';
 import { Permission } from './Permission';
+
+// in seconds
+const PASSWORD_RESET_EXPIRY = 600;
 
 @Entity()
 export class User extends BaseEntity {
@@ -84,6 +87,10 @@ export class User extends BaseEntity {
 
   async getOtp() {
     return generateDailyTotp(this.username);
+  }
+
+  async getPasswordOtp() {
+    return generateCustomTotp(this.username, PASSWORD_RESET_EXPIRY);
   }
 
   toJSON() {

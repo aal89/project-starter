@@ -9,6 +9,7 @@ const Home = React.lazy(() => import('../pages/Home'));
 const Activate = React.lazy(() => import('../pages/user/Activate'));
 const RequestActivate = React.lazy(() => import('../pages/user/RequestActivate'));
 const RequestPassword = React.lazy(() => import('../pages/user/RequestPassword'));
+const ResetPassword = React.lazy(() => import('../pages/user/ResetPassword'));
 const LoginCreate = React.lazy(() => import('../pages/user/LoginCreate'));
 const Logout = React.lazy(() => import('../pages/user/Logout'));
 const Settings = React.lazy(() => import('../pages/user/Settings'));
@@ -25,6 +26,7 @@ export const Routing: React.FC = () => (
       <Route path={Path.userActivate} element={Suspended(<Activate />)} />
       <Route path={Path.userRequestActivate} element={Suspended(<RequestActivate />)} />
       <Route path={Path.userRequestPassword} element={Suspended(<RequestPassword />)} />
+      <Route path={Path.userResetPassword} element={Suspended(<ResetPassword />)} />
       <Route path={Path.userLogin} element={Suspended(<LoginCreate tab="login" />)} />
       <Route path={Path.userSignup} element={Suspended(<LoginCreate tab="signup" />)} />
       <Route path={Path.userLogout} element={Suspended(<Logout />)} />
