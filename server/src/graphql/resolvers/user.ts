@@ -117,7 +117,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     await user.setPassword(newPassword);
     await user.save();
 
-    await sendResetPasswordMail(user.name, user.email, newPassword);
+    await sendResetPasswordMail(user, newPassword);
 
     return newPassword;
   },

@@ -6,7 +6,7 @@ export const env = {
   isDevelopment: () => process.env.NODE_ENV === 'development',
   httpPort: () => Number(process.env.HTTP_PORT ?? 8000),
   httpsPort: () => Number(process.env.HTTPS_PORT ?? 8433),
-  dateLocale: () => process.env.DATE_LOCALE ?? 'en-US',
+  locale: () => process.env.LOCALE ?? 'en',
   projectName: () => process.env.PROJECT_NAME ?? 'Starter',
   projectUrl: (path: string) => {
     try {

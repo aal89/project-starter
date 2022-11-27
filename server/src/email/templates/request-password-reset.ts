@@ -1,5 +1,6 @@
 import { User } from '../../entities/User';
 import { env } from '../../env';
+import { formatMessage } from '../../locales';
 import { log } from '../../logger/log';
 import { getEmailService } from '../EmailService';
 
@@ -10,23 +11,15 @@ export const sendRequestPasswordResetMail = async (user: User) => {
   const code = await user.getPasswordOtp();
   const url = requestPasswordResetUrl(user.username, code);
 
-  const body = `
-  Hello ${user.name},
-  <p>
-  You can reset your password <a href="${url}">here</a>.
-  </p>
-  Thank you,
-  <br>
-  ${env.projectName()}
-  `;
+  const body = formatMessage('Email.RequestPasswordReset').interpolate({
+    username: user.name,
+    url: url.toString(),
+    senderName: env.projectName(),
+  });
 
-  const result = await mailService.send(
-    env.mail.from(),
-    user.email,
-    'New account password',
-    body,
-    body,
-  );
+  const { message: subject } = formatMessage('Email.RequestPasswordReset.Subject');
+
+  const result = await mailService.send(env.mail.from(), user.email, subject, body, body);
 
   log.info(
     `RequestPasswordReset mail sent success to ${result.recipient}. MessageId: ${result.messageId}. Url: ${url}`,

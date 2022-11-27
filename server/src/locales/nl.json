@@ -1,0 +1,8 @@
+{
+  "Email.Activate": "Hallo ${username},<p>Jouw account is aangemaakt, om hem te activeren klik je op de volgende <a href='${url}'>link</a>.</p><p>Deze link is 24 uur lang geldig.</p>Met vriendelijke groet,<br>${senderName}",
+  "Email.Activate.Subject": "Activeer account",
+  "Email.RequestPasswordReset": "Hallo ${username},<p>Je kunt je wachtwoord <a href='${url}'>hier</a> resetten.</p>Met vriendelijke groet,<br>${senderName}",
+  "Email.RequestPasswordReset.Subject": "Nieuw account wachtwoord",
+  "Email.ResetPassword": "Hallo ${username},<p>Jouw account wachtwoord is gewijzigd naar: ${password}</p>Met vriendelijke groet,<br>${senderName}",
+  "Email.ResetPassword.Subject": "Nieuw account wachtwoord"
+}

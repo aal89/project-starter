@@ -1,5 +1,6 @@
 import { User } from '../../entities/User';
 import { env } from '../../env';
+import { formatMessage } from '../../locales';
 import { log } from '../../logger/log';
 import { getEmailService } from '../EmailService';
 
@@ -10,20 +11,15 @@ export const sendActivateAccountMail = async (user: User) => {
   const code = await user.getOtp();
   const url = activateUrl(user.username, code);
 
-  const body = `
-  Hello ${user.name},
-  <p>
-  Your account has been created, to activate it click the following <a href="${url}">link</a>.
-  </p>
-  <p>
-  This link is valid for 24 hours.
-  </p>
-  Thank you,
-  <br>
-  ${env.projectName()}
-  `;
+  const body = formatMessage('Email.Activate').interpolate({
+    username: user.name,
+    url: url.toString(),
+    senderName: env.projectName(),
+  });
 
-  const result = await mailService.send(env.mail.from(), user.email, 'Activate account', body, body);
+  const { message: subject } = formatMessage('Email.Activate.Subject');
+
+  const result = await mailService.send(env.mail.from(), user.email, subject, body, body);
 
   log.info(
     `ActivateAccount mail sent success to ${result.recipient}. MessageId: ${result.messageId}. Url: ${url}`,
