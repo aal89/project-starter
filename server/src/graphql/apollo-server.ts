@@ -10,7 +10,7 @@ export type ContextType = {
   user?: UserModel;
   userCan: (...permissions: Permission[]) => boolean;
   can: typeof sharedCan;
-  logger: typeof log;
+  log: typeof log;
   trace: string;
 };
 
@@ -31,14 +31,14 @@ export default async (app: express.Application) => {
         user,
         userCan,
         can: sharedCan,
-        logger,
+        log: logger,
         trace,
       };
     } catch {
       return {
         userCan: () => false,
         can: sharedCan,
-        logger,
+        log: logger,
         trace,
       };
     }

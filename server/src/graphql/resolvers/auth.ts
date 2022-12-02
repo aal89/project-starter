@@ -7,7 +7,6 @@ import { sendRequestPasswordResetMail } from '../../email/templates/request-pass
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
-import { log } from '../../logger/log';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
 import { createTokens, validateRefreshToken } from '../auth/token';
@@ -30,15 +29,17 @@ const authTypeDefs = gql`
 `;
 
 const mutationResolvers: MutationResolvers<ContextType> = {
-  requestPasswordReset: async (_, { email }, { can }) => {
+  requestPasswordReset: async (_, { email }, { can, log }) => {
     try {
-      const user = await User.findOneOrFail({
+      const user = await User.findOne({
         where: { email },
         cache: true,
-        relations: ['permissions'],
       });
 
+      ok(user, `No user found by ${email}`);
       ok(can(Permission.LOGIN, user.encodedPermissions), 'This account is locked');
+
+      log.info(`Password reset requested for account: ${user.username}`);
 
       await sendRequestPasswordResetMail(user);
     } catch (err) {
@@ -49,7 +50,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
   },
   signup: async (_, {
     username, password, email, name,
-  }) => {
+  }, { log }) => {
     try {
       const user = new User();
 
@@ -64,7 +65,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await sendActivateAccountMail(user);
     } catch (err) {
-      log.error(err);
+      log.error((err as Error).message);
 
       const translatedError = translateError(err);
       if (translatedError === DatabaseError.DuplicateUsername) {
@@ -82,18 +83,18 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       throw new Error('Something went wrong, please try again');
     }
   },
-  login: async (_, { username, password }, { can }) => {
+  login: async (_, { username, password }, { can, log }) => {
     try {
-      const user = await User.findOneOrFail({
+      const user = await User.findOne({
         where: { username },
         cache: true,
         relations: ['permissions'],
       });
-      await compareOrReject(password, user?.password ?? '');
 
-      if (!can(Permission.LOGIN, user.encodedPermissions)) {
-        throw new Error('User is not allowed to login');
-      }
+      ok(user, `No user found by ${username}`);
+      ok(can(Permission.LOGIN, user.encodedPermissions), 'This account is locked');
+
+      await compareOrReject(password, user?.password ?? '');
 
       const { accessToken, refreshToken } = await createTokens(user);
 
@@ -104,22 +105,23 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         accessToken,
         refreshToken,
       };
-    } catch {
+    } catch (err) {
+      log.error((err as Error).message);
+
       throw new Error('Incorrect password');
     }
   },
-  refresh: async (_, { token }, { can }) => {
+  refresh: async (_, { token }, { can, log }) => {
     try {
       const { username } = await validateRefreshToken(token);
-      const user = await User.findOneOrFail({
+      const user = await User.findOne({
         where: { username },
         cache: true,
         relations: ['permissions'],
       });
 
-      if (!can(Permission.LOGIN, user.encodedPermissions)) {
-        throw new Error('User is not allowed to login');
-      }
+      ok(user, `No user found by ${username}`);
+      ok(can(Permission.LOGIN, user.encodedPermissions), 'This account is locked');
 
       // TODO: invalidate refresh token
 
@@ -132,22 +134,23 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         accessToken,
         refreshToken,
       };
-    } catch {
+    } catch (err) {
+      log.error((err as Error).message);
+
       throw new Error('Unknown user');
     }
   },
-  activate: async (_, { code, username }) => {
+  activate: async (_, { code, username }, { log }) => {
     try {
-      const user = await User.findOneOrFail({
+      const user = await User.findOne({
         where: { username },
         cache: true,
         relations: ['permissions'],
       });
 
-      const userOtp = await user.getOtp();
-
+      ok(user, `No user found by ${username}`);
       ok(user.neverLoggedIn(), 'You can only activate new accounts');
-      ok(userOtp === code, 'Incorrect code');
+      ok((await user.getOtp()) === code, 'Incorrect code');
 
       const canLogin = await PermissionData.find({
         where: { name: Permission.LOGIN },
@@ -156,21 +159,24 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await user.save();
     } catch (err) {
-      log.error(err);
+      log.error((err as Error).message);
 
       throw err;
     }
   },
-  sendActivate: async (_, { email }, { can }) => {
+  sendActivate: async (_, { email }, { can, log }) => {
     try {
-      const user = await User.findOneOrFail({
+      const user = await User.findOne({
         where: { email },
         cache: true,
         relations: ['permissions'],
       });
 
+      ok(user, `No user found by ${email}`);
       ok(user.neverLoggedIn(), 'You can only activate new accounts');
       ok(!can(Permission.LOGIN, user.encodedPermissions), 'This account is already activated');
+
+      log.info(`Resending activation email to: ${user.username}`);
 
       await sendActivateAccountMail(user);
     } catch (err) {

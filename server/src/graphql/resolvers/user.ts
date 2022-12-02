@@ -1,6 +1,7 @@
 import { ok } from 'assert';
 import { decode, Permission } from '@project-starter/shared/build';
 import { gql } from 'apollo-server-express';
+import Logger from 'bunyan';
 import { validateOrReject } from 'class-validator';
 import { In, Like } from 'typeorm';
 import { getS3UploadUrl, s3DeleteObject } from '../../aws';
@@ -8,7 +9,6 @@ import { sendResetPasswordMail } from '../../email/templates/reset-password';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
-import { log } from '../../logger/log';
 import { randomFilename, randomString } from '../../utils/string';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
@@ -63,11 +63,21 @@ const userTypeDefs = gql`
 `;
 
 const queryResolvers: QueryResolvers<ContextType> = {
-  me: (_, __, { user, userCan }) => {
-    ok(userCan(Permission.LOGIN), 'User is not allowed to retrieve itself');
-    ok(user);
+  me: async (_, __, { user, userCan, log }) => {
+    try {
+      ok(user);
+      ok(userCan(Permission.LOGIN), 'This account is locked');
 
-    return User.findOneOrFail({ where: { id: user.id }, relations: ['permissions'] });
+      const latestUser = await User.findOne({ where: { id: user.id }, relations: ['permissions'] });
+
+      ok(latestUser, `No user found by ${user.id}`);
+
+      return latestUser;
+    } catch (err) {
+      log.error((err as Error).message);
+
+      throw err;
+    }
   },
   users: async (_, { username, offset, limit }, { userCan }) => {
     ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to list users');
@@ -88,8 +98,8 @@ const queryResolvers: QueryResolvers<ContextType> = {
       users,
     };
   },
-  getImageUploadUrl: async (_, { contentType }, { userCan }) => {
-    ok(userCan(Permission.LOGIN));
+  getImageUploadUrl: async (_, { contentType }, { userCan, log }) => {
+    ok(userCan(Permission.LOGIN), 'This account is locked');
     ok(
       ['image/jpeg', 'image/bmp', 'image/png'].includes(contentType),
       'Unsupported image type, try another',
@@ -97,6 +107,8 @@ const queryResolvers: QueryResolvers<ContextType> = {
 
     const filename = randomFilename('jpg');
     const url = await getS3UploadUrl(filename, contentType);
+
+    log.info(`Created a S3 upload url (${url})`);
 
     return {
       url,
@@ -106,53 +118,69 @@ const queryResolvers: QueryResolvers<ContextType> = {
 };
 
 const mutationResolvers: MutationResolvers<ContextType> = {
-  resetPassword: async (_, { id }, { userCan }) => {
+  resetPassword: async (_, { id }, { userCan, log }) => {
     ok(
       userCan(Permission.LOGIN, Permission.ADMINISTRATE),
       'User is not allowed to reset passwords',
     );
 
-    const user = await User.findOneOrFail({ where: { id } });
+    const user = await User.findOne({ where: { id } });
+
+    ok(user, `No user found by ${id}`);
+
     const newPassword = randomString();
     await user.setPassword(newPassword);
     await user.save();
 
     await sendResetPasswordMail(user, newPassword);
 
+    log.info(`Password resetted by admin for account: ${user.username}`);
+
     return newPassword;
   },
-  deleteAccount: async (_, { id }, { userCan, user }) => {
-    ok(
-      userCan(Permission.LOGIN, Permission.ADMINISTRATE),
-      'User is not allowed to delete accounts',
-    );
+  deleteAccount: async (_, { id }, { userCan, user, log }) => {
+    try {
+      ok(
+        userCan(Permission.LOGIN, Permission.ADMINISTRATE),
+        'User is not allowed to delete accounts',
+      );
+      ok(user?.id !== id, 'Cannot delete your own account');
 
-    if (user?.id === id) {
-      throw new Error('Cannot delete your own account');
+      log.info(`Deleting account: ${id}`);
+
+      await User.delete(id);
+    } catch (err) {
+      log.error((err as Error).message);
+
+      throw err;
     }
-
-    await User.delete(id);
   },
-  changePassword: async (_, { oldPassword, newPassword }, { user: contextUser, userCan }) => {
-    ok(userCan(Permission.LOGIN), 'User is not allowed to login');
+  changePassword: async (_, { oldPassword, newPassword }, { user: contextUser, userCan, log }) => {
+    ok(userCan(Permission.LOGIN), 'This account is locked');
     ok(oldPassword !== newPassword, 'New password cannot be the same as your old password');
     ok(contextUser, 'Missing context');
 
-    const user = await User.findOneOrFail({
+    const user = await User.findOne({
       where: { username: contextUser.username },
     });
+
+    ok(user, `No user found by ${contextUser.username}`);
 
     await compareOrReject(oldPassword, user.password);
     await user.setPassword(newPassword);
     await user.save();
+
+    log.info(`User ${contextUser.username} changed it's password by email`);
   },
-  changePasswordByCode: async (_, { username, code, newPassword }, { can }) => {
+  changePasswordByCode: async (_, { username, code, newPassword }, { can, log }) => {
     try {
-      const user = await User.findOneOrFail({
+      const user = await User.findOne({
         where: { username },
         cache: true,
         relations: ['permissions'],
       });
+
+      ok(user, `No user found by ${username}`);
 
       const userOtp = await user.getPasswordOtp();
 
@@ -161,6 +189,8 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await user.setPassword(newPassword);
       await user.save();
+
+      log.info(`User ${username} changed it's password by code`);
     } catch (err) {
       log.error(err);
 
@@ -174,9 +204,9 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         oldUsername, username, name, email, lastName, permissions, image,
       },
     },
-    { user: contextUser, userCan, logger },
+    { user: contextUser, userCan, log },
   ) => {
-    ok(userCan(Permission.LOGIN), 'User is not allowed to login');
+    ok(userCan(Permission.LOGIN), 'This account is locked');
     ok(contextUser);
 
     const isAdmin = userCan(Permission.ADMINISTRATE);
@@ -184,10 +214,11 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     const whereUsername = isAdmin && oldUsername ? oldUsername : contextUser.username;
 
     try {
-      const user = await User.findOneOrFail({
+      const user = await User.findOne({
         where: { username: whereUsername },
         relations: ['permissions'],
       });
+      ok(user, `No user found by ${username}`);
 
       if (isAdmin) {
         user.username = username ?? user.username;
@@ -217,7 +248,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       return user;
     } catch (err) {
-      logger.error((err as Error).message);
+      log.error((err as Error).message);
 
       const translatedError = translateError(err);
       if (translatedError === DatabaseError.DuplicateUsername) {
