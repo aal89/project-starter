@@ -1,7 +1,6 @@
 import { ok } from 'assert';
 import { decode, Permission } from '@project-starter/shared/build';
 import { gql } from 'apollo-server-express';
-import Logger from 'bunyan';
 import { validateOrReject } from 'class-validator';
 import { In, Like } from 'typeorm';
 import { getS3UploadUrl, s3DeleteObject } from '../../aws';
