@@ -7,6 +7,21 @@ import { getS3UploadUrl, s3DeleteObject } from '../../aws';
 import { sendResetPasswordMail } from '../../email/templates/reset-password';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
+import {
+  DeleteOwnAccountError,
+  EmailAddressTakenError,
+  IncorrectOTPError,
+  NotAllowedDeleteAccountError,
+  NotAllowedListUsersError,
+  NotAllowedResetPasswordError,
+  PasswordConstraintError,
+  SomethingWentWrong,
+  UnsupportedImageTypeError,
+  UserLockedError,
+  UsernameLengthError,
+  UsernameTakenError,
+  UserNotFoundError,
+} from '../../errors';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
 import { randomFilename, randomString } from '../../utils/string';
 import { ContextType } from '../apollo-server';
@@ -65,11 +80,11 @@ const queryResolvers: QueryResolvers<ContextType> = {
   me: async (_, __, { user, userCan, log }) => {
     try {
       ok(user);
-      ok(userCan(Permission.LOGIN), 'This account is locked');
+      ok(userCan(Permission.LOGIN), new UserLockedError(user.username));
 
       const latestUser = await User.findOne({ where: { id: user.id }, relations: ['permissions'] });
 
-      ok(latestUser, `No user found by ${user.id}`);
+      ok(latestUser, new UserNotFoundError(user.id));
 
       return latestUser;
     } catch (err) {
@@ -79,7 +94,7 @@ const queryResolvers: QueryResolvers<ContextType> = {
     }
   },
   users: async (_, { username, offset, limit }, { userCan }) => {
-    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), 'User is not allowed to list users');
+    ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), new NotAllowedListUsersError());
 
     const pageSize = Math.max(1, Math.min(limit, 25));
     const pageOffset = Math.max(0, offset);
@@ -97,11 +112,12 @@ const queryResolvers: QueryResolvers<ContextType> = {
       users,
     };
   },
-  getImageUploadUrl: async (_, { contentType }, { userCan, log }) => {
-    ok(userCan(Permission.LOGIN), 'This account is locked');
+  getImageUploadUrl: async (_, { contentType }, { userCan, user, log }) => {
+    ok(user);
+    ok(userCan(Permission.LOGIN), new UserLockedError(user.username));
     ok(
       ['image/jpeg', 'image/bmp', 'image/png'].includes(contentType),
-      'Unsupported image type, try another',
+      new UnsupportedImageTypeError(),
     );
 
     const filename = randomFilename('jpg');
@@ -118,32 +134,32 @@ const queryResolvers: QueryResolvers<ContextType> = {
 
 const mutationResolvers: MutationResolvers<ContextType> = {
   resetPassword: async (_, { id }, { userCan, log }) => {
-    ok(
-      userCan(Permission.LOGIN, Permission.ADMINISTRATE),
-      'User is not allowed to reset passwords',
-    );
+    try {
+      ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), new NotAllowedResetPasswordError());
 
-    const user = await User.findOne({ where: { id } });
+      const user = await User.findOne({ where: { id } });
 
-    ok(user, `No user found by ${id}`);
+      ok(user, new UserNotFoundError(id));
 
-    const newPassword = randomString();
-    await user.setPassword(newPassword);
-    await user.save();
+      const newPassword = randomString();
+      await user.setPassword(newPassword);
+      await user.save();
 
-    await sendResetPasswordMail(user, newPassword);
+      await sendResetPasswordMail(user, newPassword);
 
-    log.info(`Password resetted by admin for account: ${user.username}`);
+      log.info(`Password resetted by admin for account: ${user.username}`);
 
-    return newPassword;
+      return newPassword;
+    } catch (err) {
+      log.error((err as Error).message);
+
+      throw err;
+    }
   },
   deleteAccount: async (_, { id }, { userCan, user, log }) => {
     try {
-      ok(
-        userCan(Permission.LOGIN, Permission.ADMINISTRATE),
-        'User is not allowed to delete accounts',
-      );
-      ok(user?.id !== id, 'Cannot delete your own account');
+      ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), new NotAllowedDeleteAccountError());
+      ok(user?.id !== id, new DeleteOwnAccountError());
 
       log.info(`Deleting account: ${id}`);
 
@@ -155,15 +171,15 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     }
   },
   changePassword: async (_, { oldPassword, newPassword }, { user: contextUser, userCan, log }) => {
-    ok(userCan(Permission.LOGIN), 'This account is locked');
-    ok(oldPassword !== newPassword, 'New password cannot be the same as your old password');
-    ok(contextUser, 'Missing context');
+    ok(contextUser);
+    ok(userCan(Permission.LOGIN), new UserLockedError(contextUser.username));
+    ok(oldPassword !== newPassword, new PasswordConstraintError());
 
     const user = await User.findOne({
       where: { username: contextUser.username },
     });
 
-    ok(user, `No user found by ${contextUser.username}`);
+    ok(user, new UserNotFoundError(contextUser.username));
 
     await compareOrReject(oldPassword, user.password);
     await user.setPassword(newPassword);
@@ -179,12 +195,12 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         relations: ['permissions'],
       });
 
-      ok(user, `No user found by ${username}`);
+      ok(user, new UserNotFoundError(username));
 
       const userOtp = await user.getPasswordOtp();
 
-      ok(can(Permission.LOGIN, user.encodedPermissions), 'This account is locked');
-      ok(userOtp === code, 'Incorrect code');
+      ok(can(Permission.LOGIN, user.encodedPermissions), new UserLockedError(username));
+      ok(userOtp === code, new IncorrectOTPError());
 
       await user.setPassword(newPassword);
       await user.save();
@@ -205,8 +221,8 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     },
     { user: contextUser, userCan, log },
   ) => {
-    ok(userCan(Permission.LOGIN), 'This account is locked');
     ok(contextUser);
+    ok(userCan(Permission.LOGIN), new UserLockedError(contextUser.username));
 
     const isAdmin = userCan(Permission.ADMINISTRATE);
 
@@ -217,7 +233,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         where: { username: whereUsername },
         relations: ['permissions'],
       });
-      ok(user, `No user found by ${username}`);
+      ok(user, new UserNotFoundError(whereUsername));
 
       if (isAdmin) {
         user.username = username ?? user.username;
@@ -251,18 +267,18 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       const translatedError = translateError(err);
       if (translatedError === DatabaseError.DuplicateUsername) {
-        throw new Error('This username is already taken, please pick another');
+        throw new UsernameTakenError();
       }
 
       if (translatedError === DatabaseError.DuplicateEmail) {
-        throw new Error('This email address is already taken, please pick another');
+        throw new EmailAddressTakenError();
       }
 
       if (translatedError === ValidationError.Username4MinLength) {
-        throw new Error('Username needs to be at least 4 characters');
+        throw new UsernameLengthError();
       }
 
-      throw new Error('Something went wrong, please try again');
+      throw new SomethingWentWrong();
     }
   },
 };

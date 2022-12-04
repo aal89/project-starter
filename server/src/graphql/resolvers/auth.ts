@@ -13,14 +13,17 @@ import {
   SomethingWentWrong,
   UserNotFoundError,
   UserLockedError,
+  UnknownUserError,
+  OnlyNewActivationError,
+  IncorrectOTPError,
+  AlreadyActivatedError,
 } from '../../errors';
+import { IncorrectPasswordError } from '../../errors/IncorrectPasswordError';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
-import { formatMessage } from '../../locales';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
 import { createTokens, validateRefreshToken } from '../auth/token';
 import { MutationResolvers } from '../generated/graphql';
-import { IncorrectPasswordError } from '../../errors/IncorrectPasswordError';
 
 const authTypeDefs = gql`
   type Tokens {
@@ -130,8 +133,8 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         relations: ['permissions'],
       });
 
-      ok(user, `No user found by ${username}`);
-      ok(can(Permission.LOGIN, user.encodedPermissions), 'This account is locked');
+      ok(user, new UserNotFoundError(username));
+      ok(can(Permission.LOGIN, user.encodedPermissions), new UserLockedError(user.username));
 
       // TODO: invalidate refresh token
 
@@ -147,7 +150,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     } catch (err) {
       log.error((err as Error).message);
 
-      throw new Error('Unknown user');
+      throw new UnknownUserError();
     }
   },
   activate: async (_, { code, username }, { log }) => {
@@ -158,9 +161,9 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         relations: ['permissions'],
       });
 
-      ok(user, `No user found by ${username}`);
-      ok(user.neverLoggedIn(), 'You can only activate new accounts');
-      ok((await user.getOtp()) === code, 'Incorrect code');
+      ok(user, new UserNotFoundError(username));
+      ok(user.neverLoggedIn(), new OnlyNewActivationError());
+      ok((await user.getOtp()) === code, new IncorrectOTPError());
 
       const canLogin = await PermissionData.find({
         where: { name: Permission.LOGIN },
@@ -182,9 +185,9 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         relations: ['permissions'],
       });
 
-      ok(user, `No user found by ${email}`);
-      ok(user.neverLoggedIn(), 'You can only activate new accounts');
-      ok(!can(Permission.LOGIN, user.encodedPermissions), 'This account is already activated');
+      ok(user, new UserNotFoundError(email));
+      ok(user.neverLoggedIn(), new OnlyNewActivationError());
+      ok(!can(Permission.LOGIN, user.encodedPermissions), new AlreadyActivatedError());
 
       log.info(`Resending activation email to: ${user.username}`);
 
