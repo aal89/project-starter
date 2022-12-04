@@ -6,11 +6,21 @@ import { sendActivateAccountMail } from '../../email/templates/activate-account'
 import { sendRequestPasswordResetMail } from '../../email/templates/request-password-reset';
 import { Permission as PermissionData } from '../../entities/Permission';
 import { User } from '../../entities/User';
+import {
+  UsernameTakenError,
+  EmailAddressTakenError,
+  UsernameLengthError,
+  SomethingWentWrong,
+  UserNotFoundError,
+  UserLockedError,
+} from '../../errors';
 import { translateError, DatabaseError, ValidationError } from '../../errors/translateError';
+import { formatMessage } from '../../locales';
 import { ContextType } from '../apollo-server';
 import { compareOrReject } from '../auth/auth';
 import { createTokens, validateRefreshToken } from '../auth/token';
 import { MutationResolvers } from '../generated/graphql';
+import { IncorrectPasswordError } from '../../errors/IncorrectPasswordError';
 
 const authTypeDefs = gql`
   type Tokens {
@@ -36,8 +46,8 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         cache: true,
       });
 
-      ok(user, `No user found by ${email}`);
-      ok(can(Permission.LOGIN, user.encodedPermissions), 'This account is locked');
+      ok(user, new UserNotFoundError(email));
+      ok(can(Permission.LOGIN, user.encodedPermissions), new UserLockedError(user.username));
 
       log.info(`Password reset requested for account: ${user.username}`);
 
@@ -69,18 +79,18 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       const translatedError = translateError(err);
       if (translatedError === DatabaseError.DuplicateUsername) {
-        throw new Error('This username is already taken, please pick another');
+        throw new UsernameTakenError();
       }
 
       if (translatedError === DatabaseError.DuplicateEmail) {
-        throw new Error('This email address is already taken, please pick another');
+        throw new EmailAddressTakenError();
       }
 
       if (translatedError === ValidationError.Username4MinLength) {
-        throw new Error('Username needs to be at least 4 characters');
+        throw new UsernameLengthError();
       }
 
-      throw new Error('Something went wrong, please try again');
+      throw new SomethingWentWrong();
     }
   },
   login: async (_, { username, password }, { can, log }) => {
@@ -91,15 +101,15 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         relations: ['permissions'],
       });
 
-      ok(user, `No user found by ${username}`);
-      ok(can(Permission.LOGIN, user.encodedPermissions), 'This account is locked');
+      ok(user, new UserNotFoundError(username));
+      ok(can(Permission.LOGIN, user.encodedPermissions), new UserLockedError(user.username));
 
       await compareOrReject(password, user?.password ?? '');
 
-      const { accessToken, refreshToken } = await createTokens(user);
-
       user.lastOnlineAt = new Date();
       await user.save();
+
+      const { accessToken, refreshToken } = await createTokens(user);
 
       return {
         accessToken,
@@ -108,7 +118,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
     } catch (err) {
       log.error((err as Error).message);
 
-      throw new Error('Incorrect password');
+      throw new IncorrectPasswordError();
     }
   },
   refresh: async (_, { token }, { can, log }) => {
