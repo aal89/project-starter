@@ -7,7 +7,7 @@ import { getEmailService } from '../EmailService';
 export const sendResetPasswordMail = async (user: User, password: string) => {
   const mailService = await getEmailService();
 
-  const body = formatMessage('Email.ResetPassword').interpolate({
+  const { message: body } = formatMessage('Email.ResetPassword', {
     username: user.name,
     password,
     senderName: env.projectName(),

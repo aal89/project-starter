@@ -1,7 +1,8 @@
 import { formatMessage } from '../locales';
+import { FormatError } from './FormatError';
 
-export class PasswordConstraintError extends Error {
+export class PasswordConstraintError extends FormatError {
   constructor() {
-    super(formatMessage('User.ChangePasswordConstraint').message);
+    super(formatMessage('User.ChangePasswordConstraint'));
   }
 }

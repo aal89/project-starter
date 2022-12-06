@@ -11,7 +11,7 @@ export const sendActivateAccountMail = async (user: User) => {
   const code = await user.getOtp();
   const url = activateUrl(user.username, code);
 
-  const body = formatMessage('Email.Activate').interpolate({
+  const { message: body } = formatMessage('Email.Activate', {
     username: user.name,
     url: url.toString(),
     senderName: env.projectName(),

@@ -11,7 +11,7 @@ export const sendRequestPasswordResetMail = async (user: User) => {
   const code = await user.getPasswordOtp();
   const url = requestPasswordResetUrl(user.username, code);
 
-  const body = formatMessage('Email.RequestPasswordReset').interpolate({
+  const { message: body } = formatMessage('Email.RequestPasswordReset', {
     username: user.name,
     url: url.toString(),
     senderName: env.projectName(),

@@ -47,6 +47,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
       const user = await User.findOne({
         where: { email },
         cache: true,
+        relations: ['permissions'],
       });
 
       ok(user, new UserNotFoundError(email));
@@ -56,7 +57,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await sendRequestPasswordResetMail(user);
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       throw err;
     }
@@ -66,10 +67,13 @@ const mutationResolvers: MutationResolvers<ContextType> = {
   }, { log }) => {
     try {
       const user = new User();
+      const now = new Date();
 
       user.username = username;
       user.name = name;
       user.email = email;
+      user.createdAt = now;
+      user.lastOnlineAt = now;
       await user.setPassword(password);
 
       await validateOrReject(user);
@@ -78,7 +82,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await sendActivateAccountMail(user);
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       const translatedError = translateError(err);
       if (translatedError === DatabaseError.DuplicateUsername) {
@@ -119,7 +123,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         refreshToken,
       };
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       throw new IncorrectPasswordError();
     }
@@ -148,7 +152,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
         refreshToken,
       };
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       throw new UnknownUserError();
     }
@@ -172,7 +176,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await user.save();
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       throw err;
     }
@@ -193,7 +197,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await sendActivateAccountMail(user);
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       throw err;
     }

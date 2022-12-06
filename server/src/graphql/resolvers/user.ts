@@ -88,7 +88,7 @@ const queryResolvers: QueryResolvers<ContextType> = {
 
       return latestUser;
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       throw err;
     }
@@ -151,7 +151,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       return newPassword;
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       throw err;
     }
@@ -165,7 +165,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       await User.delete(id);
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       throw err;
     }
@@ -207,7 +207,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       log.info(`User ${username} changed it's password by code`);
     } catch (err) {
-      log.error(err);
+      log.error((err as Error).toString());
 
       throw err;
     }
@@ -263,7 +263,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
 
       return user;
     } catch (err) {
-      log.error((err as Error).message);
+      log.error((err as Error).toString());
 
       const translatedError = translateError(err);
       if (translatedError === DatabaseError.DuplicateUsername) {

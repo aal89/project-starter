@@ -1,7 +1,8 @@
 import { formatMessage } from '../locales';
+import { FormatError } from './FormatError';
 
-export class NotAllowedDeleteAccountError extends Error {
+export class NotAllowedDeleteAccountError extends FormatError {
   constructor() {
-    super(formatMessage('User.NotAllowedToDeleteAccounts').message);
+    super(formatMessage('User.NotAllowedToDeleteAccounts'));
   }
 }

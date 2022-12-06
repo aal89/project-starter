@@ -1,7 +1,8 @@
 import { formatMessage } from '../locales';
+import { FormatError } from './FormatError';
 
-export class UnknownUserError extends Error {
+export class UnknownUserError extends FormatError {
   constructor() {
-    super(formatMessage('User.Unknown').message);
+    super(formatMessage('User.Unknown'));
   }
 }

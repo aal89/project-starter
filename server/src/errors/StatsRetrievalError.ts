@@ -1,7 +1,8 @@
 import { formatMessage } from '../locales';
+import { FormatError } from './FormatError';
 
-export class StatsRetrievalError extends Error {
+export class StatsRetrievalError extends FormatError {
   constructor() {
-    super(formatMessage('Stats.NotAllowed').message);
+    super(formatMessage('Stats.NotAllowed'));
   }
 }
