@@ -13,7 +13,7 @@
   "Menu.Logout": "Uitloggen",
   "Menu.Admin": "Admin",
   "Menu.CreateAccount": "Account aanmaken",
-  "Menu.PasswordReset": "Wachtwoord opvragen",
+  "Menu.PasswordReset": "Wachtwoord resetten",
   "Menu.ResendActivation": "Activeer account",
   "Rules.Username.Required": "Gebruikersnaam is verplicht",
   "Rules.Password.Required": "Wachtwoord is verplicht",
