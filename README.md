@@ -1,6 +1,41 @@
 # project-starter
 
-Very opinionated Node.js v16 monorepo project starter using npm workspaces, TypeScript, React + router, GraphQL (Apollo) + codegen, AntDesign, Express, TypeORM + postgres connection, ESLint + prettier, GitHub Actions for CI and AWS S3 for storage solutions.
+This repository contains code to quickly start a new React+GraphQL project with authentication/authorization features built in. It has the following (end-user facing) features:
+
+* Simple and clear layout
+* Translations (i18n)
+* Account creation
+* Account activation through email
+* Password reset through email
+* User can change their profile (picture)
+* Admin has access to a fully fledged Admin panel in which he can manage all users
+* Admin has access to some simple statistics about the usage of the site
+* Responsive design (mobile and desktop)
+
+To get a better visual picture of what this all means see screenshots below.
+
+This codebase is a very opinionated Node.js v16 monorepo using npm workspaces, TypeScript, React + router, GraphQL (Apollo) + codegen, AntDesign, Express, TypeORM (postgres), ESLint + prettier, GitHub Actions for CI and AWS S3 for storage solutions. If you have a basic grasp of these technologies then this codebase should be easily extendable for you.
+
+Documentation is scarces for this project. Try understanding this README completely and study the npm scripts in the `package.json` files and you should come a long way.
+
+## Screenshots
+
+### Home
+_Mouse is hovering over the user menu icon top right._
+![(logged out) home and menu view](./screenshots/home%2Bmenu.png)
+
+### Create account
+![(logged out) create account view](./screenshots/create_account.png)
+
+### User settings
+![(logged in) user settings view](./screenshots/usersettings.png)
+
+### Administrator and menu
+_Mouse is hovering over the user menu icon top right._
+![(logged in) admin and menu view](./screenshots/admin%2Bmenu.png)
+
+### Administrator manage user
+![(logged in) admin manage user view](./screenshots/admin_manage_user.png)
 
 ## Development setup
 
@@ -19,11 +54,11 @@ This most likely throws an error, something along the lines of "cannot set 'dev'
 
 Follow these steps to setup and develop the server:
 1) Install docker and pull in a postgres image.
-2) Run postgres container
-3) Copy .env.default to .env and set values to your liking
+2) Run a postgres container (execute `npm run postgres:start` in root)
+3) Copy `.env.default` to `.env` and set values to your liking
 4) Create database named 'test' (or w/e you called it in your .env file)
-5) Run migration to setup database and seed it
-6) Optionally set synchronize to true to develop quicker (use migration:generate after changes to automatically generate migrations)
+5) Run migration to setup database and seed it (see below for more elaboration on migrations)
+6) Optionally set `synchronize` to true in the `.env` file to develop quicker
 
 After, you can start server with:
 
@@ -68,21 +103,32 @@ $ npm run migration:run
 $ npm run migration:revert
 ```
 
-## Build
+## Build & Deploy
 
-### Client
-```
-$ npm i -w client
-$ npm run build -w shared
-$ npm run build -w client
-```
-then copy `client/build` folder to prod server
+Build and deploy are quite peculiar. Study the next text well.
 
-### Server
-```
-$ npm i -w server
-$ npm run build -w shared
-$ npm run build -w server
-```
-then copy `server/build` & `server/node_modules` & `./node_modules` & `./shared/build` to prod server
+### Build
 
+To build the whole repository at once execute `npm run build` in the root directory. Before running the build command for each workspace `npm i` is invoked in order to install new dependencies that might have been installed during development.
+
+This will output compiled code in `build` folders in all workspaces. You will find the following directories: `./client/build`, `./server/build` and `./shared/build`.
+
+The ones who are paying attention will notice that the `npm run build` also generates and copies over self-signed certificates to the build directory. If this is unwanted behaviour change it yourself. The server will try to read out the certificate using a very specific filename, you can find these variables in the `./server/index.ts` file.
+
+### Deploy
+
+The deploy is quite opionated. The server expect the built client to be found at `../../client/build` (relative to `./server/build`). From here the express server will be serving static content (the frontend). That means that all the `build` folders should be deployed on the same machine with the same directory structure as found in this repository.
+
+In production the server expects to be ran and managed by `pm2`. See the `npm run start:production` command. Note that `authbind` is used in case you're planning to use port 80 directly. Make sure `authbind` alongside with `pm2` is installed on your production machine.
+
+In production mode the server will have https redirect enabled. Because of it you will need to supply certificates yourself or generate self-signed certificates using `npm run certificate:generate`. This will generate a self-signed certificate based on `req.conf` in the scripts directory. The certificate pem files need to go in the server root directory, with a specific name. The key must go here: `./server/build/self_signed_key.pem` and the certificate must go here: `./server/build/self_signed_certificate.pem`.
+
+To finalize the deploy; copy the following files and folder to your production machine and you will be up and running:
+
+* `./node_modules`
+* `./shared/build`
+* `./server/node_modules`
+* `./server/build`
+* `./client/build`
+
+You might need to copy one or more files over to complete the deploy. For example you can have a production version of the `.env` file. Copy this file into the `./server/build` folder. To run the server you have two options. Either install `npm` on your prod machine and copy over the `./server/package.json` file then run `npm run start:production`. Or, you could setup an own script that executes the equivalent of the `npm run start:production` command and _not_ install `npm`.
