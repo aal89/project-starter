@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class UsernameTakenError extends FormatError {
+export class UsernameTakenError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.UsernameTaken'));
+    super('This username is already taken, please pick another.', errors.UsernameTaken());
   }
 }

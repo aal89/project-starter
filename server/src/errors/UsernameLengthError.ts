@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class UsernameLengthError extends FormatError {
+export class UsernameLengthError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.NameConstraint'));
+    super('Username needs to be at least 4 characters.', errors.UsernameLength());
   }
 }

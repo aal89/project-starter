@@ -1,10 +1,11 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class UserLockedError extends FormatError {
+export class UserLockedError extends SimpleGraphQLError {
   constructor(username: string) {
     super(
-      formatMessage('User.Locked', {
+      `Account ${username} is locked`,
+      errors.UserLocked({
         username,
       }),
     );

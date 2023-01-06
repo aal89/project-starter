@@ -1,10 +1,11 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class UserNotFoundError extends FormatError {
+export class UserNotFoundError extends SimpleGraphQLError {
   constructor(attribute: string) {
     super(
-      formatMessage('User.NotFound', {
+      `No user found by ${attribute}.`,
+      errors.UserNotFound({
         attribute,
       }),
     );

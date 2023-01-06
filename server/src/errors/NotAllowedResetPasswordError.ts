@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class NotAllowedResetPasswordError extends FormatError {
+export class NotAllowedResetPasswordError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.NotAllowedToResetPassword'));
+    super('User is not allowed to reset passwords.', errors.NotAllowedResetPassword());
   }
 }

@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class DeleteOwnAccountError extends FormatError {
+export class DeleteOwnAccountError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.CantDeleteOwn'));
+    super('Cannot delete your own account.', errors.DeletingOwnAccount());
   }
 }

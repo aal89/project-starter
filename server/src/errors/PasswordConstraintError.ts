@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class PasswordConstraintError extends FormatError {
+export class PasswordConstraintError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.ChangePasswordConstraint'));
+    super('New password cannot be the same as your old password.', errors.PasswordConstraint());
   }
 }

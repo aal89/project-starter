@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class NotAllowedListUsersError extends FormatError {
+export class NotAllowedListUsersError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.NotAllowedToList'));
+    super('User is not allowed to list users.', errors.NotAllowedListUsers());
   }
 }

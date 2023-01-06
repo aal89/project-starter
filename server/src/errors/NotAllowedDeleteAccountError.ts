@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class NotAllowedDeleteAccountError extends FormatError {
+export class NotAllowedDeleteAccountsError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.NotAllowedToDeleteAccounts'));
+    super('User is not allowed to delete accounts.', errors.NotAllowedDeleteAccounts());
   }
 }

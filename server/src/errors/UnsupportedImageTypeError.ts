@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class UnsupportedImageTypeError extends FormatError {
+export class UnsupportedImageTypeError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.UploadUnsupportedImageType'));
+    super('Unsupported image type, try another image.', errors.UnsupportedImageType());
   }
 }

@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class OnlyNewActivationError extends FormatError {
+export class OnlyNewActivationError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.OnlyNewActivation'));
+    super('You can only activate new accounts.', errors.OnlyNewActivation());
   }
 }

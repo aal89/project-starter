@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class IncorrectOTPError extends FormatError {
+export class IncorrectOTPError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.WrongOTP'));
+    super('Incorrect code.', errors.IncorrectOtp());
   }
 }

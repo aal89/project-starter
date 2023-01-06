@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class StatsRetrievalError extends FormatError {
+export class StatsRetrievalError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('Stats.NotAllowed'));
+    super('User is not allowed to retrieve stats.', errors.StatsRetrieval());
   }
 }

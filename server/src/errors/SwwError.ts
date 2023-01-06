@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class SomethingWentWrong extends FormatError {
+export class SomethingWentWrong extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('Error.SWW'));
+    super('Something went wrong, please try again', errors.Sww());
   }
 }

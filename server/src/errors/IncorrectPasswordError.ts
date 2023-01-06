@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class IncorrectPasswordError extends FormatError {
+export class IncorrectPasswordError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.WrongPassword'));
+    super('Incorrect username and password combination.', errors.IncorrectPassword());
   }
 }

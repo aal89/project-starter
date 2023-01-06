@@ -1,8 +1,8 @@
-import { formatMessage } from '../locales';
-import { FormatError } from './FormatError';
+import { errors } from '@project-starter/shared/build';
+import { SimpleGraphQLError } from './SimpleGraphQLError';
 
-export class AlreadyActivatedError extends FormatError {
+export class AlreadyActivatedError extends SimpleGraphQLError {
   constructor() {
-    super(formatMessage('User.AlreadyActivated'));
+    super('This account is already activated.', errors.AlreadyActivated());
   }
 }
