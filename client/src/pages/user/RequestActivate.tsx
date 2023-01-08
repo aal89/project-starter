@@ -9,6 +9,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { useSendActivateMutation } from '../../graphql/generated/graphql';
 import { useLayoutVars } from '../../hooks/layout-vars';
+import { getFormatId } from '../../locales';
 
 const RequestActivate: React.FC = () => {
   const { setTitle } = useLayoutVars();
@@ -36,7 +37,8 @@ const RequestActivate: React.FC = () => {
 
       message.success(intl.formatMessage({ id: 'RequestActivate.Success' }));
     } catch (err) {
-      message.error((err as Error).message);
+      const { formatId, meta } = getFormatId(err);
+      message.error(intl.formatMessage(formatId, meta));
     }
   };
 

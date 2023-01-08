@@ -13,6 +13,6 @@
     "noEmit": true,
     "jsx": "react-jsx",
   },
-  "include": ["src", "src/translations/*.json"],
+  "include": ["src", "src/locales/*.json"],
   "references": [{ "path": "../shared" }]
 }

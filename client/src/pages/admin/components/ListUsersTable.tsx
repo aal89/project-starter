@@ -5,6 +5,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useGetUsersQuery } from '../../../graphql/generated/graphql';
+import { getFormatId } from '../../../locales';
 import { columns } from '../columns';
 
 const PAGE_SIZE = 25;
@@ -26,7 +27,8 @@ export const ListUsersTable: React.FC = () => {
 
   useEffect(() => {
     if (error) {
-      message.error(error.message);
+      const { formatId, meta } = getFormatId(error);
+      message.error(intl.formatMessage(formatId, meta));
     }
   }, [error]);
 

@@ -11,7 +11,7 @@ import {
   DeleteOwnAccountError,
   EmailAddressTakenError,
   IncorrectOTPError,
-  NotAllowedDeleteAccountError,
+  NotAllowedDeleteAccountsError,
   NotAllowedListUsersError,
   NotAllowedResetPasswordError,
   PasswordConstraintError,
@@ -158,7 +158,7 @@ const mutationResolvers: MutationResolvers<ContextType> = {
   },
   deleteAccount: async (_, { id }, { userCan, user, log }) => {
     try {
-      ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), new NotAllowedDeleteAccountError());
+      ok(userCan(Permission.LOGIN, Permission.ADMINISTRATE), new NotAllowedDeleteAccountsError());
       ok(user?.id !== id, new DeleteOwnAccountError());
 
       log.info(`Deleting account: ${id}`);

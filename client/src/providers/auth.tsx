@@ -1,4 +1,3 @@
-import { ApolloError } from '@apollo/client';
 import { can as sharedCan, Permission } from '@project-starter/shared/build';
 import { message } from 'antd';
 import React, {
@@ -14,6 +13,7 @@ import {
   UserModel,
   useActivateMutation,
 } from '../graphql/generated/graphql';
+import { getFormatId } from '../locales';
 import { Path } from '../routing/Path';
 import {
   getAccessToken, getUserFromToken, isExpired, setAccessToken, setRefreshToken,
@@ -110,7 +110,8 @@ export const AuthProvider: React.FC = ({ children }) => {
       message.success(intl.formatMessage({ id: 'Auth.Login.Success' }));
       goHome();
     } catch (err) {
-      message.error((err as ApolloError).message ?? intl.formatMessage({ id: 'Generic.UnknownError' }));
+      const { formatId, meta } = getFormatId(err);
+      message.error(intl.formatMessage(formatId, meta));
     }
   };
 
@@ -126,7 +127,8 @@ export const AuthProvider: React.FC = ({ children }) => {
       goLogin();
       message.success(intl.formatMessage({ id: 'Auth.Activate.Success' }));
     } catch (err) {
-      message.error((err as ApolloError).message ?? intl.formatMessage({ id: 'Generic.UnknownError' }));
+      const { formatId, meta } = getFormatId(err);
+      message.error(intl.formatMessage(formatId, meta));
     }
   };
 
@@ -144,7 +146,8 @@ export const AuthProvider: React.FC = ({ children }) => {
       message.success(intl.formatMessage({ id: 'Auth.Signup.Success' }));
       goLogin();
     } catch (err) {
-      message.error((err as ApolloError).message ?? intl.formatMessage({ id: 'Generic.UnknownError' }));
+      const { formatId, meta } = getFormatId(err);
+      message.error(intl.formatMessage(formatId, meta));
     }
   };
 

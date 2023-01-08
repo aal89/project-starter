@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
-import en from '../translations/en.json';
-import nl from '../translations/nl.json';
+import en from '../locales/en.json';
+import nl from '../locales/nl.json';
 
 const messages = {
   nl,

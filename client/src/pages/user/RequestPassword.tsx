@@ -9,6 +9,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { useRequestPasswordResetMutation } from '../../graphql/generated/graphql';
 import { useLayoutVars } from '../../hooks/layout-vars';
+import { getFormatId } from '../../locales';
 
 const RequestPassword: React.FC = () => {
   const { setTitle } = useLayoutVars();
@@ -36,7 +37,8 @@ const RequestPassword: React.FC = () => {
 
       message.success(intl.formatMessage({ id: 'RequestPassword.Success' }));
     } catch (err) {
-      message.error((err as Error).message);
+      const { formatId, meta } = getFormatId(err);
+      message.error(intl.formatMessage(formatId, meta));
     }
   };
 

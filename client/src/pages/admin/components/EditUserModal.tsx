@@ -19,6 +19,7 @@ import React, {
 } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useEditUserMutation, UserModel } from '../../../graphql/generated/graphql';
+import { getFormatId } from '../../../locales';
 import { getImageUrl } from '../../../user';
 
 const { Text } = Typography;
@@ -115,7 +116,8 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose }) =
       });
       setModalVisible(false);
     } catch (err) {
-      message.error((err as Error).message);
+      const { formatId, meta } = getFormatId(err);
+      message.error(intl.formatMessage(formatId, meta));
     }
   };
 
