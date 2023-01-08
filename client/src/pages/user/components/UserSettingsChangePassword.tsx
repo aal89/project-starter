@@ -4,6 +4,7 @@ import {
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useChangePasswordMutation } from '../../../graphql/generated/graphql';
+import { getFormatId } from '../../../locales';
 
 export const UserSettingsChangePassword: React.FC = () => {
   const [changePasswordMutation, { loading }] = useChangePasswordMutation();
@@ -23,9 +24,8 @@ export const UserSettingsChangePassword: React.FC = () => {
 
       message.success(intl.formatMessage({ id: 'Settings.Password.Success' }));
     } catch (err) {
-      message.error(
-        (err as Error).message ?? intl.formatMessage({ id: 'Settings.Password.Error' }),
-      );
+      const { formatId, meta } = getFormatId(err, { id: 'Settings.Password.Error' });
+      message.error(intl.formatMessage(formatId, meta));
     }
   };
 

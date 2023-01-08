@@ -8,6 +8,7 @@ import { withCleanLayoutVars } from '../../enhancers/withCleanLayoutVars';
 import { useChangePasswordByCodeMutation } from '../../graphql/generated/graphql';
 import { useAuth } from '../../hooks/auth';
 import { useLayoutVars } from '../../hooks/layout-vars';
+import { getFormatId } from '../../locales';
 
 const ResetPassword: React.FC = () => {
   const { setTitle } = useLayoutVars();
@@ -42,9 +43,8 @@ const ResetPassword: React.FC = () => {
 
       message.success(intl.formatMessage({ id: 'Settings.Password.Success' }));
     } catch (err) {
-      message.error(
-        (err as Error).message ?? intl.formatMessage({ id: 'Settings.Password.Error' }),
-      );
+      const { formatId, meta } = getFormatId(err, { id: 'Settings.Password.Error' });
+      message.error(intl.formatMessage(formatId, meta));
     }
   };
 
