@@ -121,7 +121,7 @@ The deploy is quite opionated. The server expect the built client to be found at
 
 In production the server expects to be ran and managed by `pm2`. See the `npm run start:production` command. Note that `authbind` is used in case you're planning to use port 80 directly. Make sure `authbind` alongside with `pm2` is installed on your production machine.
 
-In production mode the server will have https redirect enabled. Because of it you will need to supply certificates yourself or generate self-signed certificates using `npm run certificate:generate`. This will generate a self-signed certificate based on `req.conf` in the scripts directory. The certificate pem files need to go in the server root directory, with a specific name. The key must go here: `./server/build/self_signed_key.pem` and the certificate must go here: `./server/build/self_signed_certificate.pem`.
+In production mode the server will have https redirect enabled. Because of it you will need to supply certificates yourself or generate self-signed certificates using `npm run certificate:generate`. This will generate a self-signed certificate based on `req.conf` in the scripts directory. The certificate pem files need to go in the server root directory, with a specific name. The key must go here: `./server/build/key.pem` and the certificate must go here: `./server/build/certificate.pem`.
 
 To finalize the deploy; copy the following files and folder to your production machine and you will be up and running:
 

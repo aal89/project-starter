@@ -1,10 +1,12 @@
 #!/bin/bash
 
-if [[ -f ../src/self_signed_certificate.pem && -f ../src/self_signed_key.pem ]]
+if [[ -f ../src/certificate.pem && -f ../src/key.pem ]]
 then
-  echo 'Cert and key already exist... Exiting...'
+  echo 'Cert/key already exist. Not generating new ones...'
   exit
 fi
+
+echo 'Generating certificate and key...'
 
 openssl req -newkey rsa:4096 \
             -x509 \
@@ -13,5 +15,5 @@ openssl req -newkey rsa:4096 \
             -nodes \
             -config req.conf \
             -extensions 'v3_req' \
-            -out ../src/self_signed_certificate.pem \
-            -keyout ../src/self_signed_key.pem
+            -out ../src/certificate.pem \
+            -keyout ../src/key.pem

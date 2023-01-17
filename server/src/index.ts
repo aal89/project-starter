@@ -38,16 +38,20 @@ const client = (file = '') => path.join(__dirname, '../../client/build', file);
     res.sendFile(client('index.html'));
   });
 
-  const options = {
-    key: readFileSync(path.join(__dirname, './self_signed_key.pem')),
-    cert: readFileSync(path.join(__dirname, './self_signed_certificate.pem')),
-  };
+  try {
+    const options = {
+      key: readFileSync(path.join(__dirname, './key.pem')),
+      cert: readFileSync(path.join(__dirname, './certificate.pem')),
+    };
 
-  http.createServer(app).listen(env.httpPort(), () => {
-    log.info(`http live on ${env.httpPort()}`);
-  });
+    http.createServer(app).listen(env.httpPort(), () => {
+      log.info(`http live on ${env.httpPort()}`);
+    });
 
-  https.createServer(options, app).listen(env.httpsPort(), () => {
-    log.info(`https live on ${env.httpsPort()}`);
-  });
+    https.createServer(options, app).listen(env.httpsPort(), () => {
+      log.info(`https live on ${env.httpsPort()}`);
+    });
+  } catch (err) {
+    log.error('Could not start webservers.', err);
+  }
 })();
