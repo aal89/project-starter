@@ -68,6 +68,61 @@ $ npm run start -w server
 
 The `-w server` is optional. You can also just start the product with the start script directly in the server directory.
 
+#### s3 bucket setup
+
+Create a new S3 bucket and set **Block all public access** to _off_. Set Object Ownership to **Bucket owner preferred**. Set the bucket policy to something similar to:
+
+_Note: I used `bucket-user` and `bucketname` as examples._
+
+```json
+{
+    "Version": "2012-10-17",
+    "Id": "Policy1574855570149",
+    "Statement": [
+        {
+            "Sid": "Stmt1574855564698",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::123456789123:user/bucket-user"
+            },
+            "Action": [
+                "s3:DeleteObject",
+                "s3:PutObject",
+                "s3:PutObjectAcl"
+            ],
+            "Resource": "arn:aws:s3:::bucketname/*"
+        }
+    ]
+}
+```
+
+Next allow CORS:
+
+_Note: set allowed origins to your origins only._
+
+```json
+[
+    {
+        "AllowedHeaders": [
+            "*"
+        ],
+        "AllowedMethods": [
+            "PUT",
+            "POST",
+            "DELETE",
+            "GET"
+        ],
+        "AllowedOrigins": [
+            "*"
+        ],
+        "ExposeHeaders": []
+    }
+]
+```
+
+Lastly, generate an **Access key** for `bucket-user` and copy key and secret into the .env file inside the server directory. Don't forget to set all other AWS properties as well.
+
+
 #### client setup
 
 Before developing the client you should build the shared module. The current babel config for react-scripts does not have loaders for externally included typescript (outside of /src). So, to include the shared module you first have to build it and then include the js.
