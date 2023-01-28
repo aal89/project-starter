@@ -39,9 +39,17 @@ _Mouse is hovering over the user menu icon top right._
 
 ## Development setup
 
+### Bootstrap project
+
+A helper script exists in the root directory of this project to help you setup a clean newly named project.
+
+Run `./bootstrap_project.sh`
+
+It removes the screenshots and .git directories. Removes the README.md and the scriptfile itself. And, ofcourse, it will set a name of choosing for all products.
+
 ### Dependencies
 
-`npm i` in the root and let npm workspaces install everything everywhere.
+This codebase is a npm workspaces monorepo. Running `npm i` in the root will install everything everywhere.
 
 ### Un/installing a dependency
 
